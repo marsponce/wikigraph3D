@@ -16,7 +16,7 @@ export default function Sidebar({ className, node }: SidebarProps) {
   return (
     <>
       <div
-        className={`pointer-events-none absolute top-0 right-0 w-80  bg-transparent shadow-lg z-50 overflow-y-auto overflow-x-hidden ${className ?? ""}`}
+        className={`pointer-events-none absolute top-0 right-0 w-80  bg-transparent shadow-lg z-50 overflow-x-hidden ${className ?? ""}`}
       >
         <button
           onClick={toggleSidebar}
@@ -25,13 +25,13 @@ export default function Sidebar({ className, node }: SidebarProps) {
           {isOpen ? ">>" : "<<"}
         </button>
         <div
-          className={`p-4 border rounded bg-black/50 transform transition-transform duration-300 ${isOpen ? "translate-x-0" : "translate-x-full"}`}
+          className={`p-4 max-h-screen bg-black/80 overflow-y-auto overflow-x-hidden rounded transform transition-transform duration-300 ${isOpen ? "translate-x-0" : "translate-x-full"}`}
         >
           {node ? (
             <>
               <h1 className="font-bold">{node.name}</h1>
               {node.extract && (
-                <div className="pointer-events-auto prose">
+                <div className="pointer-events-auto prose ">
                   <h2 className="font-bold">Extract</h2>
                   {parse(he.decode(node.extract))}
                 </div>

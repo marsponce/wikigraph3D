@@ -9,7 +9,7 @@ export default function Main() {
   return (
     <div className="relative">
       <Graph onNodeSelect={setSelectedNode} className="" />
-      <Sidebar node={selectedNode} className="" />
+      <Sidebar node={selectedNode} className="z-99" />
     </div>
   );
 }

@@ -18,3 +18,10 @@ export async function fetchLinkedNodes(
   const { nodes } = await res.json();
   return nodes as Node[];
 }
+
+// Given a Node node, fetch the html article of it from wikipedia
+export async function fetchNodeInfo(node: Node): Promise<string> {
+  const res = await fetch(`${API}/info?title=${node.name}`);
+  const { html } = await res.json();
+  return html;
+}

@@ -21,6 +21,7 @@ export default function Sidebar({ className, node }: SidebarProps) {
         <button
           onClick={toggleSidebar}
           className="pointer-events-auto absolute top-2 right-2 bg-gray-800 text-white px-2 py-1 rounded z-60"
+          title={isOpen ? "Close Sidebar" : "Open Sidebar"}
         >
           {isOpen ? ">>" : "<<"}
         </button>

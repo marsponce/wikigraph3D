@@ -81,10 +81,11 @@ function createNodeObject(node: Node, hoverNode: Node): THREE.Sprite {
 }
 
 type GraphProps = {
+  className?: string;
   onNodeSelect: (node: Node) => void;
 };
 
-export default function Graph({ onNodeSelect }) {
+export default function Graph({ className, onNodeSelect }: GraphProps) {
   const [data, setData] = useState<GraphData>({ nodes: [], links: [] });
 
   const fgRef = useRef();
@@ -133,12 +134,11 @@ export default function Graph({ onNodeSelect }) {
         3000,
       );
     }
-    if (!node.html) node.html = await fetchNodeInfo(node);
     onNodeSelect(node);
   };
 
   return (
-    <div className="">
+    <div className={`${className ?? ""}`}>
       <ForceGraph3D
         graphData={data}
         onNodeRightClick={expandGraph}
@@ -154,6 +154,7 @@ export default function Graph({ onNodeSelect }) {
         ref={fgRef}
         d3AlphaDecay={0.02} // slower stabilization
         d3VelocityDecay={0.2} // friction-like damping
+        showNavInfo={false}
       />
     </div>
   );

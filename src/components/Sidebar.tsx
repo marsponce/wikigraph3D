@@ -10,37 +10,68 @@ type SidebarProps = {
 
 export default function Sidebar({ className, node }: SidebarProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [isFullscreen, setFullscreen] = useState(false);
 
   const toggleSidebar = () => setIsOpen(!isOpen);
+  const toggleFullscreen = () => setFullscreen(!isFullscreen);
 
   return (
     <>
       <div
-        className={`pointer-events-none absolute top-0 right-0 w-80  bg-transparent shadow-lg z-50 overflow-x-hidden ${className ?? ""}`}
+        className={`
+					pointer-events-none
+					absolute top-0 right-0
+					bg-transparent shadow-lg z-60
+					overflow-x-hidden
+					transition-all duration-600 ${isFullscreen ? "w-screen h-screen pointer-events-auto" : "w-100 min-h-full"} ${className ?? ""}
+				`}
       >
+        {/* sidebar button */}
         <button
           onClick={toggleSidebar}
-          className="pointer-events-auto absolute top-2 right-2 bg-gray-800 text-white px-2 py-1 rounded z-60"
+          className={`
+						pointer-events-auto
+						pr-1 absolute top-2 right-2
+						bg-gray-800 text-white size-7 rounded z-61
+					`}
           title={isOpen ? "Close Sidebar" : "Open Sidebar"}
         >
-          {isOpen ? ">>" : "<<"}
+          {isOpen ? "󰞔" : "󰋽"}
+        </button>
+        <button
+          onClick={toggleFullscreen}
+          className={`
+						pointer-events-auto
+						absolute top-10 right-2 pr-1
+						bg-gray-800 text-white size-7 rounded z-61
+						transform transition-transform duration-600 ${isOpen ? "translate-x-0" : "translate-x-20"}`}
+          title={isFullscreen ? "Minimize Sidebar" : "Maximize Sidebar"}
+        >
+          {isFullscreen ? "󰘕" : "󰘖"}
         </button>
         <div
-          className={`p-4 max-h-screen bg-black/80 overflow-y-auto overflow-x-hidden rounded transform transition-transform duration-300 ${isOpen ? "translate-x-0" : "translate-x-full"}`}
+          className={`
+						p-4
+						max-h-screen
+						bg-black/80
+						overflow-y-auto overflow-x-hidden
+						transform transition-transform duration-600
+						${isOpen ? "translate-x-0" : "translate-x-full"} ${isFullscreen ? "w-screen h-screen " : "rounded"}`}
         >
+          {/* full screen button */}
           {node ? (
             <>
               <h1 className="font-bold">{node.name}</h1>
-              {node.extract && (
-                <div className="pointer-events-auto prose ">
-                  <h2 className="font-bold">Extract</h2>
-                  {parse(he.decode(node.extract))}
-                </div>
-              )}
               {node.description && (
-                <div className="pointer-events-auto prose">
+                <div className="pointer-events-auto prose text-justify">
                   <h2 className="font-bold">Description</h2>
                   {parse(he.decode(node.description))}
+                </div>
+              )}
+              {node.extract && (
+                <div className="pointer-events-auto prose text-justify">
+                  <h2 className="font-bold">Extract</h2>
+                  {parse(he.decode(node.extract))}
                 </div>
               )}
             </>

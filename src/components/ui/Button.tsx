@@ -6,7 +6,7 @@ const baseClasses =
   "pointer-events-auto size-7 rounded transition-colors duration-300";
 
 const variants = {
-  sidebar: "bg-gray-800 text-white hover:bg-sky-500 active:bg-sky",
+  sidebar: "bg-gray-800 text-white hover:bg-sky-600 active:bg-sky-100",
   primary: "bg-blue-600 text-white hover:bg-blue-700 active:bg-blue-800",
   secondary: "bg-gray-200 text-black hover:bg-gray-300 active:bg-gray-400",
 };

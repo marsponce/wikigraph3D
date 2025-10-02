@@ -38,7 +38,7 @@ export default function RootLayout({
         <main className="w-full">{children}</main>
 
         {/* Footer fixed at the bottom */}
-        <Footer className="fixed bottom-0 left-0 w-full h-16 z-50" />
+        <Footer className="fixed bottom-0 left-0 w-full h-8 z-50" />
       </body>
     </html>
   );

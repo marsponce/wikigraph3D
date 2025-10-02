@@ -10,6 +10,7 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@base-ui-components/react": "^1.0.0-beta.4",
     "he": "^1.2.0",
     "html-react-parser": "^5.2.6",
     "husky": "^9.1.7",

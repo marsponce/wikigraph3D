@@ -2,6 +2,7 @@
 "use client";
 import Graph from "./Graph";
 import Sidebar from "./Sidebar";
+import Searchbar from "./Searchbar";
 import { useState } from "react";
 
 export default function Main() {
@@ -9,7 +10,8 @@ export default function Main() {
   return (
     <div className="relative">
       <Graph onNodeSelect={setSelectedNode} className="" />
-      <Sidebar node={selectedNode} className="z-99" />
+      <Searchbar />
+      <Sidebar node={selectedNode} className="z-2" />
     </div>
   );
 }

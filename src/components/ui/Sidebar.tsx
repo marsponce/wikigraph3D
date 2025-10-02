@@ -2,7 +2,7 @@
 import parse from "html-react-parser";
 import he from "he";
 import { useState } from "react";
-import { Button } from "@headlessui/react";
+import { Button } from "./Button";
 
 type SidebarProps = {
   className?: string;
@@ -30,13 +30,8 @@ export default function Sidebar({ className, node }: SidebarProps) {
         {/* sidebar button */}
         <Button
           onClick={toggleSidebar}
-          className={`
-						pointer-events-auto
-						pr-1 absolute top-2 right-2
-						bg-gray-800 text-white size-7 rounded z-61
-						data-hover:bg-sky-500 data-hover:data-active:bg-sky-700
-						transition duration-300
-					`}
+          variant="sidebar"
+          className="pr-1 absolute top-2 right-2 z-61"
           title={isOpen ? "Close Sidebar" : "Open Sidebar"}
         >
           {isOpen ? "󰞔" : "󰋽"}

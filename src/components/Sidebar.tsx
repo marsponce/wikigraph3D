@@ -23,7 +23,7 @@ export default function Sidebar({ className, node }: SidebarProps) {
 					absolute top-0 right-0
 					bg-transparent shadow-lg z-60
 					overflow-x-hidden
-					transition-all duration-600 ${isFullscreen ? "w-screen h-screen pointer-events-auto" : "w-100 min-h-full"} ${className ?? ""}
+					${isFullscreen ? "w-screen h-screen pointer-events-auto" : "w-100 min-h-full"} ${className ?? ""}
 				`}
       >
         {/* sidebar button */}
@@ -54,6 +54,7 @@ export default function Sidebar({ className, node }: SidebarProps) {
 						p-4
 						max-h-screen
 						bg-black/80
+						pointer-events-auto
 						overflow-y-auto overflow-x-hidden
 						transform transition-transform duration-600
 						${isOpen ? "translate-x-0" : "translate-x-full"} ${isFullscreen ? "w-screen h-screen " : "rounded"}`}
@@ -63,13 +64,13 @@ export default function Sidebar({ className, node }: SidebarProps) {
             <>
               <h1 className="font-bold">{node.name}</h1>
               {node.description && (
-                <div className="pointer-events-auto prose text-justify">
+                <div className="prose text-justify">
                   <h2 className="font-bold">Description</h2>
                   {parse(he.decode(node.description))}
                 </div>
               )}
               {node.extract && (
-                <div className="pointer-events-auto prose text-justify">
+                <div className="prose text-justify">
                   <h2 className="font-bold">Extract</h2>
                   {parse(he.decode(node.extract))}
                 </div>

@@ -1,7 +1,7 @@
 // src/app/components/Main.tsx
 "use client";
 import Graph from "./Graph";
-import Sidebar from "./Sidebar";
+import Sidebar from "../ui/Sidebar";
 import Searchbar from "./Searchbar";
 import { useState } from "react";
 
@@ -10,7 +10,7 @@ export default function Main() {
   return (
     <div className="relative">
       <Graph onNodeSelect={setSelectedNode} className="" />
-      <Searchbar />
+      {/* <Searchbar /> */}
       <Sidebar node={selectedNode} className="z-2" />
     </div>
   );

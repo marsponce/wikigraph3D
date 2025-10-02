@@ -2,6 +2,7 @@
 import parse from "html-react-parser";
 import he from "he";
 import { useState } from "react";
+import { Button } from "@headlessui/react";
 
 type SidebarProps = {
   className?: string;
@@ -27,28 +28,33 @@ export default function Sidebar({ className, node }: SidebarProps) {
 				`}
       >
         {/* sidebar button */}
-        <button
+        <Button
           onClick={toggleSidebar}
           className={`
 						pointer-events-auto
 						pr-1 absolute top-2 right-2
 						bg-gray-800 text-white size-7 rounded z-61
+						data-hover:bg-sky-500 data-hover:data-active:bg-sky-700
+						transition duration-300
 					`}
           title={isOpen ? "Close Sidebar" : "Open Sidebar"}
         >
           {isOpen ? "󰞔" : "󰋽"}
-        </button>
-        <button
+        </Button>
+        <Button
           onClick={toggleFullscreen}
           className={`
 						pointer-events-auto
 						absolute top-10 right-2 pr-1
 						bg-gray-800 text-white size-7 rounded z-61
-						transform transition-transform duration-600 ${isOpen ? "translate-x-0" : "translate-x-20"}`}
+						transform transition-transform duration-600 ${isOpen ? "translate-x-0" : "translate-x-20"}
+						data-hover:bg-sky-500 data-hover:data-active:bg-sky-700
+						transition duration-300
+					`}
           title={isFullscreen ? "Minimize Sidebar" : "Maximize Sidebar"}
         >
           {isFullscreen ? "󰘕" : "󰘖"}
-        </button>
+        </Button>
         <div
           className={`
 						p-4

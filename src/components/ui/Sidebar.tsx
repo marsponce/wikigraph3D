@@ -1,9 +1,10 @@
-// src/app/components/Sidebar.tsx
+// src/app/components/ui/Sidebar.tsx
 import parse from "html-react-parser";
 import he from "he";
 import { useState, useRef } from "react";
 import { Transition, TransitionChild } from "@headlessui/react";
 import { Button } from "./Button";
+import Searchbar from "./Searchbar";
 import clsx from "clsx";
 
 type SidebarProps = {
@@ -20,6 +21,13 @@ export default function Sidebar({ className, node }: SidebarProps) {
     if (!isOpen) setIsOpen(true);
     setFullscreen(!isFullscreen);
   };
+
+  const graphData = [
+    { id: 1, name: "node1" },
+    { id: 2, name: "node2" },
+    { id: 3, name: "node3" },
+    { id: 4, name: "node4" },
+  ];
 
   return (
     <>
@@ -61,6 +69,8 @@ export default function Sidebar({ className, node }: SidebarProps) {
               isFullscreen ? "w-screen h-screen" : "w-100",
             )}
           >
+            {/* searchbar */}
+            <Searchbar graphData={graphData} />
             {/* full screen button */}
             <Button
               onClick={toggleFullscreen}
@@ -93,17 +103,7 @@ export default function Sidebar({ className, node }: SidebarProps) {
               <p>No node selected</p>
             )}
             {/*
-						<Transition show={isFullscreen} >
-						<div
-							className={clsx(
-								'transition duration-900',
-								'data-closed:w-100',
-								'data-enter:data-closed:w-screen',
-								'data-leave:data-closed:w-100'
-							)}
-						>
-						</div>
-						</Transition>
+								TODO: Finish fullscreen transition
 						*/}
           </div>
         </Transition>

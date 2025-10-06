@@ -2,7 +2,9 @@
 import parse from "html-react-parser";
 import he from "he";
 import { useState, useRef } from "react";
+import { Transition, TransitionChild } from "@headlessui/react";
 import { Button } from "./Button";
+import clsx from "clsx";
 
 type SidebarProps = {
   className?: string;
@@ -44,53 +46,52 @@ export default function Sidebar({ className, node }: SidebarProps) {
         >
           {isOpen ? "󰞔" : "󰋽"}
         </Button>
-        <div
-          className={`
-						p-4
-						bg-black/80
-						pointer-events-auto
-						absolute top-0 right-0
-						overflow-y-auto overflow-x-hidden
-						origin-top-right
-						rounded
-						h-auto min-h-20
-						transform transition-transform duration-900
-						${isOpen ? "translate-x-0" : "translate-x-full"}
-						${isFullscreen ? "w-screen h-screen rounded-none" : "w-xs "}
-					`}
-        >
-          {/* full screen button */}
-          <Button
-            onClick={toggleFullscreen}
-            toggled={isFullscreen}
-            variant="sidebar"
-            className={`
-							absolute top-10 right-2 pr-1 z-61
-						`}
-            title={isFullscreen ? "Minimize Sidebar" : "Maximize Sidebar"}
+        <Transition show={isOpen}>
+          <div
+            className={clsx(
+              "p-4 bg-black/80 pointer-events-auto",
+              "absolute top-0 right-0",
+              "overflow-y-auto overflow-x-hidden origin-top-right",
+              "rounded h-auto min-h-20",
+              "transition duration-600",
+              "data-closed:translate-x-full",
+              "data-enter:data-closed:translate-x-full",
+              "data-leave:data-closed:transalte-x-0",
+            )}
           >
-            {isFullscreen ? "󰘕" : "󰘖"}
-          </Button>
-          {node ? (
-            <>
-              <h1 className="font-bold pr-8">{node.name}</h1>
-              {node.description && (
-                <div className="prose text-justify">
-                  <h2 className="font-bold ">Description</h2>
-                  {parse(he.decode(node.description))}
-                </div>
-              )}
-              {node.extract && (
-                <div className="prose text-justify">
-                  <h2 className="font-bold">Extract</h2>
-                  {parse(he.decode(node.extract))}
-                </div>
-              )}
-            </>
-          ) : (
-            <p>No node selected</p>
-          )}
-        </div>
+            {/* full screen button */}
+            <Button
+              onClick={toggleFullscreen}
+              toggled={isFullscreen}
+              variant="sidebar"
+              className={`
+								absolute top-10 right-2 pr-1 z-61
+							`}
+              title={isFullscreen ? "Minimize Sidebar" : "Maximize Sidebar"}
+            >
+              {isFullscreen ? "󰘕" : "󰘖"}
+            </Button>
+            {node ? (
+              <>
+                <h1 className="font-bold pr-8">{node.name}</h1>
+                {node.description && (
+                  <div className="prose text-justify">
+                    <h2 className="font-bold ">Description</h2>
+                    {parse(he.decode(node.description))}
+                  </div>
+                )}
+                {node.extract && (
+                  <div className="prose text-justify">
+                    <h2 className="font-bold">Extract</h2>
+                    {parse(he.decode(node.extract))}
+                  </div>
+                )}
+              </>
+            ) : (
+              <p>No node selected</p>
+            )}
+          </div>
+        </Transition>
       </div>
     </>
   );

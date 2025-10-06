@@ -54,9 +54,11 @@ export default function Sidebar({ className, node }: SidebarProps) {
               "overflow-y-auto overflow-x-hidden origin-top-right",
               "rounded h-auto min-h-20",
               "transition duration-600",
+              "transition duration-600",
               "data-closed:translate-x-full",
               "data-enter:data-closed:translate-x-full",
               "data-leave:data-closed:transalte-x-0",
+              isFullscreen ? "w-screen h-screen" : "w-100",
             )}
           >
             {/* full screen button */}
@@ -65,8 +67,8 @@ export default function Sidebar({ className, node }: SidebarProps) {
               toggled={isFullscreen}
               variant="sidebar"
               className={`
-								absolute top-10 right-2 pr-1 z-61
-							`}
+									absolute top-10 right-2 pr-1 z-61
+								`}
               title={isFullscreen ? "Minimize Sidebar" : "Maximize Sidebar"}
             >
               {isFullscreen ? "󰘕" : "󰘖"}
@@ -90,6 +92,19 @@ export default function Sidebar({ className, node }: SidebarProps) {
             ) : (
               <p>No node selected</p>
             )}
+            {/*
+						<Transition show={isFullscreen} >
+						<div
+							className={clsx(
+								'transition duration-900',
+								'data-closed:w-100',
+								'data-enter:data-closed:w-screen',
+								'data-leave:data-closed:w-100'
+							)}
+						>
+						</div>
+						</Transition>
+						*/}
           </div>
         </Transition>
       </div>

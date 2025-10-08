@@ -124,26 +124,6 @@ export default function Graph({
     });
   }, []);
 
-  //  const handleNodeClick = async (node) => {
-  //    const distance = 100;
-  //    const hypot = Math.hypot(node.x, node.y, node.z);
-  //    if (hypot == 0) {
-  //      fgRef.current.cameraPosition(
-  //        { x: node.x, y: node.y, z: node.z + distance + 1 },
-  //        node,
-  //        3000,
-  //      );
-  //    } else {
-  //      const distRatio = 1 + distance / Math.hypot(node.x, node.y, node.z);
-  //      fgRef.current.cameraPosition(
-  //        { x: node.x * distRatio, y: node.y * distRatio, z: node.z * distRatio },
-  //        node,
-  //        3000,
-  //      );
-  //    }
-  //    setSelectedNode(node);
-  //  };
-
   const handleNodeClick = async (node) => {
     setSelectedNode(node);
   };

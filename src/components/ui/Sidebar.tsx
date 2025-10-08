@@ -32,17 +32,17 @@ export default function Sidebar({
   return (
     <>
       <div
-        className={`
-					pointer-events-none
-					absolute top-0 right-0
-					bg-transparent shadow-lg z-50
-					overflow-x-hidden
-					overflow-y-hidden
-					origin-top-right
-					${className ?? ""}
-					h-full
-					w-full
-				`}
+        className={clsx(
+          "pointer-events-none",
+          "absolute top-0 right-0",
+          "bg-transparent shadow-lg z-50",
+          "overflow-x-hidden",
+          "overflow-y-hidden",
+          "origin-top-right",
+          className ?? "",
+          "h-full",
+          "w-full",
+        )}
       >
         {/* sidebar button */}
         <Button
@@ -57,7 +57,7 @@ export default function Sidebar({
         <Transition show={isOpen}>
           <div
             className={clsx(
-              "p-4 bg-black/80 pointer-events-auto",
+              "p-3 bg-black/80 pointer-events-auto",
               "absolute top-0 right-0",
               "overflow-hidden origin-top-right",
               "rounded h-auto min-h-20",
@@ -74,9 +74,7 @@ export default function Sidebar({
               onClick={toggleFullscreen}
               toggled={isFullscreen}
               variant="sidebar"
-              className={`
-									absolute top-10 right-2 pr-1
-								`}
+              className={clsx("absolute top-10 right-2 pr-1 z-51")}
               title={isFullscreen ? "Minimize Sidebar" : "Maximize Sidebar"}
             >
               {isFullscreen ? "󰘕" : "󰘖"}

@@ -5,7 +5,6 @@ import { useState } from "react";
 import { GraphData } from "@/lib/types";
 
 export default function Main() {
-  // State for the app
   const [selectedNode, setSelectedNode] = useState(null);
   const [graphData, setGraphData] = useState<GraphData>({
     nodes: [],

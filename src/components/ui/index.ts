@@ -1,6 +1,5 @@
 // /src/components/ui/index.ts
-export { Button } from "./Button";
-export { Input } from "./Input";
-export { Sidebar } from "./Sidebar";
-export { Searchbar } from "./Searchbar";
-// export { Modal } from "./Modal"
+export { default as Button } from "./Button";
+export { default as Sidebar } from "./Sidebar";
+export { default as Searchbar } from "./Searchbar";
+export { default as Graph } from "./Graph";

@@ -17,7 +17,7 @@ const toggledVariants = {
   secondary: "bg-gray-300 text-black",
 };
 
-export function Button({
+export default function Button({
   variant = "primary",
   toggled = false,
   className,

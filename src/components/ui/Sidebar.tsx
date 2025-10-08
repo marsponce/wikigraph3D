@@ -3,8 +3,7 @@ import parse from "html-react-parser";
 import he from "he";
 import { useState, useRef } from "react";
 import { Transition } from "@headlessui/react";
-import { Button } from "./Button";
-import Searchbar from "./Searchbar";
+import { Button, Searchbar } from "@/components/ui";
 import clsx from "clsx";
 import { GraphData } from "@/lib/types";
 

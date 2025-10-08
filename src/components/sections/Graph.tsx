@@ -82,26 +82,26 @@ function createNodeObject(node: Node, hoverNode: Node): THREE.Sprite {
 
 type GraphProps = {
   className?: string;
-  onNodeSelect: (node: Node) => void;
+  selectedNode: Node;
+  setSelectedNode: (node: Node) => void;
   data: graphData;
   setData: (graphData: graphData) => void;
 };
 
 export default function Graph({
   className,
-  onNodeSelect,
+  selectedNode,
+  setSelectedNode,
   data,
   setData,
 }: GraphProps) {
-  //  const [data, setData] = useState<GraphData>({ nodes: [], links: [] });
-
   const fgRef = useRef();
 
   useEffect(() => {
     (async () => {
       const root = await fetchInitialNode();
       setData({ nodes: [{ ...root, x: 0.1, y: 0.1, z: 0.1 }], links: [] });
-      onNodeSelect(root);
+      setSelectedNode(root);
     })();
   }, []);
 
@@ -124,25 +124,60 @@ export default function Graph({
     });
   }, []);
 
+  //  const handleNodeClick = async (node) => {
+  //    const distance = 100;
+  //    const hypot = Math.hypot(node.x, node.y, node.z);
+  //    if (hypot == 0) {
+  //      fgRef.current.cameraPosition(
+  //        { x: node.x, y: node.y, z: node.z + distance + 1 },
+  //        node,
+  //        3000,
+  //      );
+  //    } else {
+  //      const distRatio = 1 + distance / Math.hypot(node.x, node.y, node.z);
+  //      fgRef.current.cameraPosition(
+  //        { x: node.x * distRatio, y: node.y * distRatio, z: node.z * distRatio },
+  //        node,
+  //        3000,
+  //      );
+  //    }
+  //    setSelectedNode(node);
+  //  };
+
   const handleNodeClick = async (node) => {
+    setSelectedNode(node);
+  };
+
+  useEffect(() => {
+    if (!selectedNode || !fgRef.current) return;
+
     const distance = 100;
-    const hypot = Math.hypot(node.x, node.y, node.z);
+    const hypot = Math.hypot(selectedNode.x, selectedNode.y, selectedNode.z);
     if (hypot == 0) {
       fgRef.current.cameraPosition(
-        { x: node.x, y: node.y, z: node.z + distance + 1 },
-        node,
+        {
+          x: selectedNode.x,
+          y: selectedNode.y,
+          z: selectedNode.z + distance + 1,
+        },
+        selectedNode,
         3000,
       );
     } else {
-      const distRatio = 1 + distance / Math.hypot(node.x, node.y, node.z);
+      const distRatio =
+        1 +
+        distance / Math.hypot(selectedNode.x, selectedNode.y, selectedNode.z);
       fgRef.current.cameraPosition(
-        { x: node.x * distRatio, y: node.y * distRatio, z: node.z * distRatio },
-        node,
+        {
+          x: selectedNode.x * distRatio,
+          y: selectedNode.y * distRatio,
+          z: selectedNode.z * distRatio,
+        },
+        selectedNode,
         3000,
       );
     }
-    onNodeSelect(node);
-  };
+  }, [selectedNode]);
 
   return (
     <div className={`${className ?? ""}`}>

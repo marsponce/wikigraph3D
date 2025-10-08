@@ -16,12 +16,18 @@ export default function Main() {
   return (
     <div className="relative">
       <Graph
-        onNodeSelect={setSelectedNode}
+        selectedNode={selectedNode}
+        setSelectedNode={setSelectedNode}
         data={graphData}
         setData={setGraphData}
         className=""
       />
-      <Sidebar node={selectedNode} graphData={graphData} className="z-2" />
+      <Sidebar
+        selectedNode={selectedNode}
+        setSelectedNode={setSelectedNode}
+        graphData={graphData}
+        className="z-2"
+      />
     </div>
   );
 }

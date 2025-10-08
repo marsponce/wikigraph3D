@@ -2,7 +2,7 @@
 import parse from "html-react-parser";
 import he from "he";
 import { useState, useRef } from "react";
-import { Transition, TransitionChild } from "@headlessui/react";
+import { Transition } from "@headlessui/react";
 import { Button } from "./Button";
 import Searchbar from "./Searchbar";
 import clsx from "clsx";
@@ -10,11 +10,17 @@ import { GraphData } from "@/lib/types";
 
 type SidebarProps = {
   className?: string;
-  node: Node;
+  selectedNode: Node;
+  setSelectedNode: (node: Node) => void;
   data: GraphData;
 };
 
-export default function Sidebar({ className, node, graphData }: SidebarProps) {
+export default function Sidebar({
+  className,
+  selectedNode,
+  setSelectedNode,
+  graphData,
+}: SidebarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isFullscreen, setFullscreen] = useState(false);
 
@@ -65,7 +71,11 @@ export default function Sidebar({ className, node, graphData }: SidebarProps) {
             )}
           >
             {/* searchbar */}
-            <Searchbar graphData={graphData} />
+            <Searchbar
+              graphData={graphData}
+              selectedNode={selectedNode}
+              setSelectedNode={setSelectedNode}
+            />
             {/* full screen button */}
             <Button
               onClick={toggleFullscreen}
@@ -78,19 +88,19 @@ export default function Sidebar({ className, node, graphData }: SidebarProps) {
             >
               {isFullscreen ? "󰘕" : "󰘖"}
             </Button>
-            {node ? (
+            {selectedNode ? (
               <>
-                <h1 className="font-bold pr-8">{node.name}</h1>
-                {node.description && (
+                <h1 className="font-bold pr-8">{selectedNode.name}</h1>
+                {selectedNode.description && (
                   <div className="prose text-justify">
                     <h2 className="font-bold ">Description</h2>
-                    {parse(he.decode(node.description))}
+                    {parse(he.decode(selectedNode.description))}
                   </div>
                 )}
-                {node.extract && (
+                {selectedNode.extract && (
                   <div className="prose text-justify">
                     <h2 className="font-bold">Extract</h2>
-                    {parse(he.decode(node.extract))}
+                    {parse(he.decode(selectedNode.extract))}
                   </div>
                 )}
               </>

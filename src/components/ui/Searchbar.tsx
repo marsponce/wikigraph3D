@@ -14,10 +14,16 @@ import clsx from "clsx";
 type SearchbarProps = {
   className?: string;
   graphData?: GraphData;
+  selectedNode: Node;
+  setSelectedNode: (node: Node) => void;
 };
 
-export default function Searchbar({ className, graphData }: SearchbarProps) {
-  const [selectedNode, setSelectedNode] = useState(null);
+export default function Searchbar({
+  className,
+  graphData,
+  selectedNode,
+  setSelectedNode,
+}: SearchbarProps) {
   const [query, setQuery] = useState("");
 
   console.log("This is the data:");
@@ -53,7 +59,7 @@ export default function Searchbar({ className, graphData }: SearchbarProps) {
           <ComboboxOptions
             anchor="bottom start"
             portal
-            className="container fixed w-(--input-width) mt-1 rounded-xl border border-white/5 bg-black/90 p-1 max-h-60 overflow-auto z-50"
+            className="container fixed w-(--input-width) mt-1 rounded-xl border border-white/5 bg-black/90 p-1 max-h-screen overflow-auto z-50"
           >
             {filteredNodes.map((node) => (
               <ComboboxOption

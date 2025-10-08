@@ -6,13 +6,15 @@ import { Transition, TransitionChild } from "@headlessui/react";
 import { Button } from "./Button";
 import Searchbar from "./Searchbar";
 import clsx from "clsx";
+import { GraphData } from "@/lib/types";
 
 type SidebarProps = {
   className?: string;
   node: Node;
+  data: GraphData;
 };
 
-export default function Sidebar({ className, node }: SidebarProps) {
+export default function Sidebar({ className, node, graphData }: SidebarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isFullscreen, setFullscreen] = useState(false);
 
@@ -21,13 +23,6 @@ export default function Sidebar({ className, node }: SidebarProps) {
     if (!isOpen) setIsOpen(true);
     setFullscreen(!isFullscreen);
   };
-
-  const graphData = [
-    { id: 1, name: "node1" },
-    { id: 2, name: "node2" },
-    { id: 3, name: "node3" },
-    { id: 4, name: "node4" },
-  ];
 
   return (
     <>

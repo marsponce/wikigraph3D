@@ -83,10 +83,17 @@ function createNodeObject(node: Node, hoverNode: Node): THREE.Sprite {
 type GraphProps = {
   className?: string;
   onNodeSelect: (node: Node) => void;
+  data: graphData;
+  setData: (graphData: graphData) => void;
 };
 
-export default function Graph({ className, onNodeSelect }: GraphProps) {
-  const [data, setData] = useState<GraphData>({ nodes: [], links: [] });
+export default function Graph({
+  className,
+  onNodeSelect,
+  data,
+  setData,
+}: GraphProps) {
+  //  const [data, setData] = useState<GraphData>({ nodes: [], links: [] });
 
   const fgRef = useRef();
 

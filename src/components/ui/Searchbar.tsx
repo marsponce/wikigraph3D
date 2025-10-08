@@ -17,13 +17,16 @@ type SearchbarProps = {
 };
 
 export default function Searchbar({ className, graphData }: SearchbarProps) {
-  const [selectedNode, setSelectedNode] = useState(graphData[0]);
+  const [selectedNode, setSelectedNode] = useState(null);
   const [query, setQuery] = useState("");
+
+  console.log("This is the data:");
+  console.log(graphData.nodes);
 
   const filteredNodes =
     query === ""
-      ? graphData
-      : graphData.filter((node) => {
+      ? graphData.nodes
+      : graphData.nodes.filter((node) => {
           return node.name.toLowerCase().includes(query.toLowerCase());
         });
 

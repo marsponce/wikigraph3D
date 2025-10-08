@@ -35,7 +35,7 @@ export default function Sidebar({ className, node }: SidebarProps) {
         className={`
 					pointer-events-none
 					absolute top-0 right-0
-					bg-transparent shadow-lg z-60
+					bg-transparent shadow-lg z-50
 					overflow-x-hidden
 					overflow-y-hidden
 					origin-top-right
@@ -49,7 +49,7 @@ export default function Sidebar({ className, node }: SidebarProps) {
           onClick={toggleSidebar}
           toggled={isOpen}
           variant="sidebar"
-          className="pr-1 absolute top-2 right-2 z-61"
+          className="pr-1 absolute top-2 right-2 z-51"
           title={isOpen ? "Close Sidebar" : "Open Sidebar"}
         >
           {isOpen ? "󰞔" : "󰋽"}
@@ -77,7 +77,7 @@ export default function Sidebar({ className, node }: SidebarProps) {
               toggled={isFullscreen}
               variant="sidebar"
               className={`
-									absolute top-10 right-2 pr-1 z-61
+									absolute top-10 right-2 pr-1
 								`}
               title={isFullscreen ? "Minimize Sidebar" : "Maximize Sidebar"}
             >

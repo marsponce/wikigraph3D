@@ -38,18 +38,20 @@ export default function Searchbar({ className, graphData }: SearchbarProps) {
           <div className="relative">
             <ComboboxInput
               aria-label="Node"
-              displayValue={(node) =>
-                node?.name ?? "Search for a node in the graph"
-              }
+              displayValue={(node) => node?.name ?? "Select a node.."}
               onChange={(e) => setQuery(e.target.value)}
-              className="w-full rounded-lg border-none bg-black/100 py-1.5 pr-8 pl-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-white/25"
+              className="container rounded-lg border-none bg-black/100 py-1.5 pr-8 pl-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-white/25"
             />
-            <ComboboxButton className="absolute inset-y-0 right-0 px-2.5">
+            <ComboboxButton className="group absolute inset-y-0 right-0 px-2.5">
               <ChevronDownIcon className="size-4 fill-white/60 group-data-hover:fill-white" />
             </ComboboxButton>
           </div>
 
-          <ComboboxOptions className="absolute w-full mt-1 rounded-xl border border-white/5 bg-black/90 p-1 max-h-60 overflow-auto z-50">
+          <ComboboxOptions
+            anchor="bottom start"
+            portal
+            className="container fixed w-(--input-width) mt-1 rounded-xl border border-white/5 bg-black/90 p-1 max-h-60 overflow-auto z-50"
+          >
             {filteredNodes.map((node) => (
               <ComboboxOption
                 key={node.id}

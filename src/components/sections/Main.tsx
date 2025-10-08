@@ -25,7 +25,7 @@ export default function Main() {
         selectedNode={selectedNode}
         setSelectedNode={setSelectedNode}
         graphData={graphData}
-        className="z-2"
+        className=""
       />
     </div>
   );

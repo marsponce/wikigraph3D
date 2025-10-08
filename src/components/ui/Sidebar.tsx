@@ -59,7 +59,7 @@ export default function Sidebar({
             className={clsx(
               "p-4 bg-black/80 pointer-events-auto",
               "absolute top-0 right-0",
-              "overflow-y-auto overflow-x-hidden origin-top-right",
+              "overflow-hidden origin-top-right",
               "rounded h-auto min-h-20",
               "transition duration-600",
               "transition duration-600",
@@ -69,12 +69,6 @@ export default function Sidebar({
               isFullscreen ? "w-screen h-screen" : "w-100",
             )}
           >
-            {/* searchbar */}
-            <Searchbar
-              graphData={graphData}
-              selectedNode={selectedNode}
-              setSelectedNode={setSelectedNode}
-            />
             {/* full screen button */}
             <Button
               onClick={toggleFullscreen}
@@ -87,25 +81,33 @@ export default function Sidebar({
             >
               {isFullscreen ? "󰘕" : "󰘖"}
             </Button>
-            {selectedNode ? (
-              <>
-                <h1 className="font-bold pr-8">{selectedNode.name}</h1>
-                {selectedNode.description && (
-                  <div className="prose text-justify">
-                    <h2 className="font-bold ">Description</h2>
-                    {parse(he.decode(selectedNode.description))}
-                  </div>
-                )}
-                {selectedNode.extract && (
-                  <div className="prose text-justify">
-                    <h2 className="font-bold">Extract</h2>
-                    {parse(he.decode(selectedNode.extract))}
-                  </div>
-                )}
-              </>
-            ) : (
-              <p>No node selected</p>
-            )}
+            {/* searchbar */}
+            <Searchbar
+              graphData={graphData}
+              selectedNode={selectedNode}
+              setSelectedNode={setSelectedNode}
+            />
+            <div className="overflow-y-scroll">
+              {selectedNode ? (
+                <>
+                  {/*<h1 className="font-bold pr-8">{selectedNode.name}</h1>*/}
+                  {selectedNode.description && (
+                    <div className="prose text-justify">
+                      <h2 className="font-bold ">Description</h2>
+                      {parse(he.decode(selectedNode.description))}
+                    </div>
+                  )}
+                  {selectedNode.extract && (
+                    <div className="prose text-justify">
+                      <h2 className="font-bold">Extract</h2>
+                      {parse(he.decode(selectedNode.extract))}
+                    </div>
+                  )}
+                </>
+              ) : (
+                <p>No node selected</p>
+              )}
+            </div>
             {/*
 								TODO: Finish fullscreen transition
 						*/}

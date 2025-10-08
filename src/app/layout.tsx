@@ -29,17 +29,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="antialiased min-h-screen min-w-screen">
-        <div className="root">
-          {/* Header fixed at the top */}
-          <Header className="fixed top-0 left-0 w-full z-50">
-            <Navbar />
-          </Header>
-
+        <div className="root headlessui-portal-root">
           {/* Main content */}
           <main className="w-full">{children}</main>
-
+          {/* Header fixed at the top */}
+          <Header className="fixed top-0 left-0 w-full">
+            <Navbar />
+          </Header>
           {/* Footer fixed at the bottom */}
-          <Footer className="fixed bottom-0 left-0 w-full h-8 z-50" />
+          <Footer className="fixed bottom-0 left-0 w-full h-8" />
         </div>
       </body>
     </html>

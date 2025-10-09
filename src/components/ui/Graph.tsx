@@ -4,17 +4,13 @@ import dynamic from "next/dynamic";
 import { useEffect, useState, useCallback, useRef } from "react";
 import * as THREE from "three";
 import SpriteText from "three-spritetext";
-import TWEEN from "@tweenjs/tween.js";
 import { WIKIPEDIA_ICON_URL } from "@/lib/constants";
 import { Node, Link, GraphData } from "@/lib/types";
-import { API } from "@/lib/constants";
 import { fetchInitialNode, fetchLinkedNodes, fetchNodeInfo } from "@/lib/graph";
 
 const ForceGraph3D = dynamic(() => import("react-force-graph-3d"), {
   ssr: false,
 });
-
-function handleNodeClick(node: Node) {}
 
 function mergeGraphData(
   node: Node,

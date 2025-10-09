@@ -1,5 +1,5 @@
 // src/app/components/ui/Searchbar.tsx
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import {
   Combobox,
   ComboboxInput,
@@ -25,13 +25,36 @@ export default function Searchbar({
   setSelectedNode,
 }: SearchbarProps) {
   const [query, setQuery] = useState("");
+  const [debouncedQuery, setDebouncedQuery] = useState(query);
 
-  const filteredNodes =
-    query === ""
-      ? graphData.nodes
-      : graphData.nodes.filter((node) => {
-          return node.name.toLowerCase().includes(query.toLowerCase());
-        });
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedQuery(query), 200);
+    return () => clearTimeout(timer);
+  }, [query]);
+
+  const MAX_RESULTS = 16;
+
+  const filteredNodes = useMemo(() => {
+    return debouncedQuery === ""
+      ? graphData.nodes.slice(0, MAX_RESULTS)
+      : graphData.nodes
+          .filter((node) => {
+            return node.name
+              .toLowerCase()
+              .includes(debouncedQuery.toLowerCase());
+          })
+          .slice(0, MAX_RESULTS);
+  }, [graphData.nodes, debouncedQuery]);
+
+  const totalMatchingNodes = useMemo(() => {
+    return debouncedQuery === ""
+      ? graphData.nodes.length
+      : graphData.nodes.filter((node) =>
+          node.name.toLowerCase().includes(debouncedQuery.toLowerCase()),
+        ).length;
+  }, [graphData.nodes, debouncedQuery]);
+
+  const hiddenCount = Math.max(0, totalMatchingNodes - MAX_RESULTS);
 
   return (
     <>
@@ -71,6 +94,17 @@ export default function Searchbar({
                 <div className="text-sm text-white">{node.name}</div>
               </ComboboxOption>
             ))}
+            {hiddenCount > 0 && (
+              <ComboboxOption
+                key="hidden-count"
+                value={{ id: "hidden-count" }}
+                disabled
+                className="flex cursor-default items-center gap-2 rounded-lg px-3 py-1.5 select-none italic text-gray-400"
+              >
+                ... ({hiddenCount} more{" "}
+                {hiddenCount === 1 ? "result" : "results"} hidden)
+              </ComboboxOption>
+            )}
           </ComboboxOptions>
         </Combobox>
       </div>

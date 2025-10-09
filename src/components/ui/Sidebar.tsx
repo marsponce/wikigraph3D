@@ -20,7 +20,7 @@ export default function Sidebar({
   setSelectedNode,
   graphData,
 }: SidebarProps) {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
   const [isFullscreen, setFullscreen] = useState(false);
 
   const toggleSidebar = () => setIsOpen(!isOpen);

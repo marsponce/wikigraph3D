@@ -192,51 +192,46 @@ export default function Graph({
     setHighlightLinks(newHighlightLinks);
   };
 
-  const nodeObjects = useRef(new Map<Node, THREE.Group>());
+  const nodeObjects = useRef<Map<Node, THREE.Sprite>>(new Map());
 
-  const createNodeObject = (node) => {
+  const createNodeObject = (node: Node): THREE.Sprite => {
     const sprite = createNodeSprite(node);
-    const label = createNodeLabel(node, sprite.scale.y); // TODO: Use CSS2D label instead
 
-    const isHighlighted = highlightNodes.has(node);
+    // Set initial highlight state
+    updateSpriteHighlight(sprite, highlightNodes.has(node));
 
-    if (isHighlighted) {
-      (sprite.material as THREE.SpriteMaterial).color.setHex(0xffffff);
-      (sprite.material as THREE.SpriteMaterial).opacity = 1;
-      // label.color = node.color;
-    } else {
-      (sprite.material as THREE.SpriteMaterial).color.setHex(0x222222);
-      (sprite.material as THREE.SpriteMaterial).opacity = 0.2;
-      // label.color = 0x222222;
-    }
-
-    const group = new THREE.Group();
-    group.add(sprite);
-    // group.add(label);
-    return group;
+    return sprite;
   };
 
-  const createNodeObjectCached = (node) => {
-    if (nodeObjects.current.has(node)) {
-      const group = nodeObjects.current.get(node);
-      const sprite = group.children[0] as THREE.Sprite;
-      // const label = group.children[1] as SpriteText;
-      const isHighlighted = highlightNodes.has(node);
-
-      if (isHighlighted) {
-        (sprite.material as THREE.SpriteMaterial).color.setHex(0xffffff);
-        (sprite.material as THREE.SpriteMaterial).opacity = 1;
-        // label.color = node.color;
-      } else {
-        (sprite.material as THREE.SpriteMaterial).color.setHex(0x222222);
-        (sprite.material as THREE.SpriteMaterial).opacity = 0.2;
-        // label.color = 0x222222;
-      }
+  // Helper to update sprite based on highlight
+  const updateSpriteHighlight = (
+    sprite: THREE.Sprite,
+    isHighlighted: boolean,
+  ) => {
+    const material = sprite.material as THREE.SpriteMaterial;
+    if (isHighlighted) {
+      material.color.setHex(0xffffff);
+      material.opacity = 1;
     } else {
-      const group = createNodeObject(node);
-      nodeObjects.current.set(node, group);
-      return group;
+      material.color.setHex(0x222222);
+      material.opacity = 0.2;
     }
+  };
+
+  // Cached version
+  const createNodeObjectCached = (node: Node): THREE.Sprite => {
+    let sprite = nodeObjects.current.get(node);
+
+    if (!sprite) {
+      sprite = createNodeObject(node);
+      nodeObjects.current.set(node, sprite);
+    }
+
+    if (sprite) {
+      updateSpriteHighlight(sprite, highlightNodes.has(node));
+    }
+
+    return sprite;
   };
 
   return (
@@ -254,14 +249,14 @@ export default function Graph({
           return "rgba(0,0,0,0.5)";
         }}
         linkWidth={(link) => {
-          highlightLinks.has(link) ? 2 : 0.05;
+          highlightLinks.has(link) ? 5 : 0.05;
         }}
         linkOpacity={(link) => {
           highlightLinks.has(link) ? 1 : 0.5;
         }}
         linkDirectionalArrowLength={3.5}
         linkDirectionalArrowRelPos={1} // put arrow at the target end
-        nodeThreeObject={createNodeObject}
+        nodeThreeObject={createNodeObjectCached}
         ref={fgRef}
         // d3AlphaDecay={0.02} // slower stabilization
         // d3VelocityDecay={0.2} // friction-like damping

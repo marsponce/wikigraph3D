@@ -82,7 +82,94 @@ function createNodeLabel(node: Node, spriteHeight: number): SpriteText {
   return label;
 }
 
-function focusCameraOnNode(
+function focusCameraOnNode(fgRef, selectedNode: Node, data: graphData) {
+  if (!selectedNode || !fgRef.current) return;
+
+  const camera = fgRef.current.camera();
+  const distanceBase = 100; // base distance from node
+  const neighborFactor = 0.75; // extra distance per connected node
+
+  // Count connected neighbors using your `data` prop/state
+  const connectedNodes = data.links.filter(
+    (link) => link.source === selectedNode || link.target === selectedNode,
+  ).length;
+
+  const distance = distanceBase + connectedNodes * neighborFactor;
+
+  // Compute direction from current camera position to the selected node
+  const dir = new THREE.Vector3(
+    selectedNode.x - camera.position.x,
+    selectedNode.y - camera.position.y,
+    selectedNode.z - camera.position.z,
+  ).normalize();
+
+  // Move camera back along that direction by the distance
+  const newCameraPos = new THREE.Vector3(
+    selectedNode.x - dir.x * distance,
+    selectedNode.y - dir.y * distance,
+    selectedNode.z - dir.z * distance,
+  );
+
+  // Ensure camera up vector is y-up
+  camera.up.set(0, 1, 0);
+
+  // Smooth transition to new camera position
+  fgRef.current.cameraPosition(
+    newCameraPos,
+    new THREE.Vector3(selectedNode.x, selectedNode.y, selectedNode.z),
+    1500, // transition duration in ms
+  );
+}
+
+function getGraphCenter(data: graphData): THREE.Vector3 {
+  if (!data.nodes || data.nodes.length === 0) return new THREE.Vector3(0, 0, 0);
+
+  let sumX = 0,
+    sumY = 0,
+    sumZ = 0;
+
+  data.nodes.forEach((node) => {
+    sumX += node.x;
+    sumY += node.y;
+    sumZ += node.z;
+  });
+
+  const n = data.nodes.length;
+  return new THREE.Vector3(sumX / n, sumY / n, sumZ / n);
+}
+
+function getGraphRadius(data: graphData, center: THREE.Vector3): number {
+  let maxDist = 0;
+  data.nodes.forEach((node) => {
+    const dx = node.x - center.x;
+    const dy = node.y - center.y;
+    const dz = node.z - center.z;
+    const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+    if (dist > maxDist) maxDist = dist;
+  });
+  return maxDist;
+}
+
+function resetGraphView(fgRef, data: graphData) {
+  if (!fgRef.current || !data.nodes || data.nodes.length === 0) return;
+
+  const center = getGraphCenter(data);
+  const radius = getGraphRadius(data, center);
+
+  // Pull the camera back along z-axis (or any preferred direction)
+  const cameraOffset = new THREE.Vector3(0, 0, radius * 2); // multiply to give padding
+  const newCameraPos = center.clone().add(cameraOffset);
+
+  fgRef.current.camera().up.set(0, 1, 0); // y-up
+
+  fgRef.current.cameraPosition(
+    newCameraPos,
+    center, // look at graph center
+    1500, // transition duration
+  );
+}
+
+function focusCameraOnNodeOld(
   fgRef,
   node: Node,
   distance: number = 100,
@@ -163,9 +250,9 @@ export default function Graph({
   };
 
   useEffect(() => {
-    focusCameraOnNode(fgRef, selectedNode);
+    focusCameraOnNode(fgRef, selectedNode, data);
     HighlightNode(selectedNode);
-  }, [selectedNode]);
+  }, [selectedNode, data]);
 
   const [highlightNodes, setHighlightNodes] = useState(new Set());
   const [highlightLinks, setHighlightLinks] = useState(new Set());
@@ -213,7 +300,7 @@ export default function Graph({
       material.color.setHex(0xffffff);
       material.opacity = 1;
     } else {
-      material.color.setHex(0x222222);
+      material.color.setHex(0x888888);
       material.opacity = 0.2;
     }
   };
@@ -248,12 +335,8 @@ export default function Graph({
           }
           return "rgba(0,0,0,0.5)";
         }}
-        linkWidth={(link) => {
-          highlightLinks.has(link) ? 5 : 0.05;
-        }}
-        linkOpacity={(link) => {
-          highlightLinks.has(link) ? 1 : 0.5;
-        }}
+        linkWidth={(link) => (highlightLinks.has(link) ? 1 : 0.1)}
+        linkOpacity={(link) => (highlightLinks.has(link) ? 1 : 0.5)}
         linkDirectionalArrowLength={3.5}
         linkDirectionalArrowRelPos={1} // put arrow at the target end
         nodeThreeObject={createNodeObjectCached}

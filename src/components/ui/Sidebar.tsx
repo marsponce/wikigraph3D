@@ -11,9 +11,12 @@ import {
   ArrowsPointingOutIcon,
   ArrowLeftEndOnRectangleIcon,
   ArrowRightStartOnRectangleIcon,
+  ViewfinderCircleIcon,
 } from "@heroicons/react/24/outline";
+import { GraphHandle } from "./Graph";
 
 type SidebarProps = {
+  graphRef: refObject<GraphHandle>;
   className?: string;
   selectedNode: Node;
   setSelectedNode: (node: Node) => void;
@@ -21,6 +24,7 @@ type SidebarProps = {
 };
 
 export default function Sidebar({
+  graphRef,
   className,
   selectedNode,
   setSelectedNode,
@@ -33,6 +37,11 @@ export default function Sidebar({
   const toggleFullscreen = () => {
     if (!isOpen) setIsOpen(true);
     setFullscreen(!isFullscreen);
+  };
+  const centerCamera = () => {
+    if (graphRef.current) {
+      graphRef.current.resetCamera();
+    }
   };
 
   return (
@@ -70,7 +79,7 @@ export default function Sidebar({
               "p-3 bg-black/80 pointer-events-auto",
               "absolute top-0 right-0",
               "overflow-hidden origin-top-right",
-              "rounded h-auto min-h-20",
+              "rounded h-auto min-h-28",
               "transition duration-600",
               "transition duration-600",
               "data-closed:translate-x-full",
@@ -92,6 +101,14 @@ export default function Sidebar({
               ) : (
                 <ArrowsPointingOutIcon />
               )}
+            </Button>
+            <Button
+              onClick={centerCamera}
+              variant="sidebar"
+              className={clsx("absolute top-18 right-2 z-51")}
+              title={"Center Camera"}
+            >
+              <ViewfinderCircleIcon />
             </Button>
             {/* searchbar */}
             <Searchbar

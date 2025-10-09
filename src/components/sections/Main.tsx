@@ -1,7 +1,8 @@
 // src/app/components/sections/Main.tsx
 "use client";
-import { Graph, Sidebar, Searchbar } from "../ui";
-import { useState } from "react";
+import { Sidebar, Searchbar } from "../ui";
+import Graph, { GraphHandle } from "../ui/Graph";
+import { useState, useRef } from "react";
 import { GraphData } from "@/lib/types";
 
 export default function Main() {
@@ -11,10 +12,12 @@ export default function Main() {
     nodes: [],
     links: [],
   });
+  const graphRef = useRef<GraphHandle>(null);
 
   return (
     <div className="relative">
       <Graph
+        ref={graphRef}
         selectedNode={selectedNode}
         setSelectedNode={setSelectedNode}
         data={graphData}
@@ -22,6 +25,7 @@ export default function Main() {
         className=""
       />
       <Sidebar
+        graphRef={graphRef}
         selectedNode={selectedNode}
         setSelectedNode={setSelectedNode}
         graphData={graphData}

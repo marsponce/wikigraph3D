@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
-import Navbar from "@/components/Navbar";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+import Navbar from "@/components/layout/Navbar";
+import Header from "@/components/layout/Header";
+import Footer from "@/components/layout/Footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -17,27 +17,29 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-	title: "Wikigraph",
-	description: "A 3D graph of Wikipedia articles connected by their hyperlinks",
+  title: "Wikigraph",
+  description: "A 3D graph of Wikipedia articles connected by their hyperlinks",
 };
 
 export default function RootLayout({
-	children,
+  children,
 }: {
-	children: React.ReactNode
+  children: React.ReactNode;
 }) {
-	return (
-		<html lang="en">
-			<body
-				className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-			>
-				<Navbar />
-				<Header />
-				<main>
-					{children}
-				</main>
-				<Footer />
-			</body>
-		</html>
-	)
+  return (
+    <html lang="en">
+      <body className="antialiased min-h-screen min-w-screen">
+        <div className="root headlessui-portal-root">
+          {/* Main content */}
+          <main className="w-full">{children}</main>
+          {/* Header fixed at the top */}
+          <Header className="fixed top-0 left-0 w-full">
+            <Navbar />
+          </Header>
+          {/* Footer fixed at the bottom */}
+          <Footer className="fixed bottom-0 left-0 w-full h-8" />
+        </div>
+      </body>
+    </html>
+  );
 }

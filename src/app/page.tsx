@@ -1,4 +1,4 @@
-import DynamicGraph3DBatched from "@/components/DynamicGraph3DBatched";
+import Main from "@/components/sections/Main";
 export default function Page() {
-  return <DynamicGraph3DBatched />;
+  return <Main />;
 }

@@ -64,6 +64,7 @@ export interface Node {
     };
   };
   relevance?: number;
+  html?: string;
 }
 
 // Link Object

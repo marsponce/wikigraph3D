@@ -1,0 +1,148 @@
+// src/app/components/ui/Sidebar.tsx
+import parse from "html-react-parser";
+import he from "he";
+import { useState, useRef } from "react";
+import { Transition } from "@headlessui/react";
+import { Button, Searchbar } from "@/components/ui";
+import clsx from "clsx";
+import { GraphData } from "@/lib/types";
+import {
+  ArrowsPointingInIcon,
+  ArrowsPointingOutIcon,
+  ArrowLeftEndOnRectangleIcon,
+  ArrowRightStartOnRectangleIcon,
+  ViewfinderCircleIcon,
+} from "@heroicons/react/24/outline";
+import { GraphHandle } from "./Graph";
+
+type SidebarProps = {
+  graphRef: refObject<GraphHandle>;
+  className?: string;
+  selectedNode: Node;
+  setSelectedNode: (node: Node) => void;
+  data: GraphData;
+};
+
+export default function Sidebar({
+  graphRef,
+  className,
+  selectedNode,
+  setSelectedNode,
+  graphData,
+}: SidebarProps) {
+  const [isOpen, setIsOpen] = useState(true);
+  const [isFullscreen, setFullscreen] = useState(false);
+
+  const toggleSidebar = () => setIsOpen(!isOpen);
+  const toggleFullscreen = () => {
+    if (!isOpen) setIsOpen(true);
+    setFullscreen(!isFullscreen);
+  };
+  const centerCamera = () => {
+    if (graphRef.current) {
+      graphRef.current.resetCamera();
+    }
+  };
+
+  return (
+    <>
+      <div
+        className={clsx(
+          "pointer-events-none",
+          "absolute top-0 right-0",
+          "bg-transparent shadow-lg z-50",
+          "overflow-x-hidden",
+          "overflow-y-hidden",
+          "origin-top-right",
+          className ?? "",
+          "h-full",
+          "w-full",
+        )}
+      >
+        {/* sidebar button */}
+        <Button
+          onClick={toggleSidebar}
+          toggled={isOpen}
+          variant="sidebar"
+          className="pr-1 absolute top-2 right-2 z-51"
+          title={isOpen ? "Close Sidebar" : "Open Sidebar"}
+        >
+          {isOpen ? (
+            <ArrowRightStartOnRectangleIcon />
+          ) : (
+            <ArrowLeftEndOnRectangleIcon />
+          )}
+        </Button>
+        <Transition show={isOpen}>
+          <div
+            className={clsx(
+              "p-3 bg-black/80 pointer-events-auto",
+              "absolute top-0 right-0",
+              "overflow-hidden origin-top-right",
+              "rounded h-auto min-h-28",
+              "transition duration-600",
+              "transition duration-600",
+              "data-closed:translate-x-full",
+              "data-enter:data-closed:translate-x-full",
+              "data-leave:data-closed:transalte-x-0",
+              isFullscreen ? "w-screen h-screen" : "w-100",
+            )}
+          >
+            {/* full screen button */}
+            <Button
+              onClick={toggleFullscreen}
+              toggled={isFullscreen}
+              variant="sidebar"
+              className={clsx("absolute top-10 right-2 z-51")}
+              title={isFullscreen ? "Minimize Sidebar" : "Maximize Sidebar"}
+            >
+              {isFullscreen ? (
+                <ArrowsPointingInIcon />
+              ) : (
+                <ArrowsPointingOutIcon />
+              )}
+            </Button>
+            <Button
+              onClick={centerCamera}
+              variant="sidebar"
+              className={clsx("absolute top-18 right-2 z-51")}
+              title={"Center Camera"}
+            >
+              <ViewfinderCircleIcon />
+            </Button>
+            {/* searchbar */}
+            <Searchbar
+              graphData={graphData}
+              selectedNode={selectedNode}
+              setSelectedNode={setSelectedNode}
+            />
+            <div className="overflow-y-scroll">
+              {selectedNode ? (
+                <>
+                  {/*<h1 className="font-bold pr-8">{selectedNode.name}</h1>*/}
+                  {selectedNode.description && (
+                    <div className="prose text-justify">
+                      <h2 className="font-bold ">Description</h2>
+                      {parse(he.decode(selectedNode.description))}
+                    </div>
+                  )}
+                  {selectedNode.extract && (
+                    <div className="prose text-justify">
+                      <h2 className="font-bold">Extract</h2>
+                      {parse(he.decode(selectedNode.extract))}
+                    </div>
+                  )}
+                </>
+              ) : (
+                <p>No node selected</p>
+              )}
+            </div>
+            {/*
+								TODO: Finish fullscreen transition
+						*/}
+          </div>
+        </Transition>
+      </div>
+    </>
+  );
+}

@@ -26,9 +26,6 @@ export default function Searchbar({
 }: SearchbarProps) {
   const [query, setQuery] = useState("");
 
-  console.log("This is the data:");
-  console.log(graphData.nodes);
-
   const filteredNodes =
     query === ""
       ? graphData.nodes

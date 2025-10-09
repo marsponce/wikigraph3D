@@ -41,11 +41,14 @@ function mergeGraphData(
   } as GraphData;
 }
 
-function createNodeObject(node: Node, hoverNode: Node): THREE.Sprite {
+function createNodeSprite(node: Node): THREE.Group {
   const texture = new THREE.TextureLoader().load(
     node.thumbnail?.source || WIKIPEDIA_ICON_URL,
   );
-  const material = new THREE.SpriteMaterial({ map: texture });
+  const material = new THREE.SpriteMaterial({
+    map: texture,
+    transparent: true,
+  });
   const sprite = new THREE.Sprite(material);
 
   // Default size
@@ -64,20 +67,52 @@ function createNodeObject(node: Node, hoverNode: Node): THREE.Sprite {
   }
   sprite.scale.set(width, height, 1);
 
-  // Text Label
+  return sprite;
+}
+
+function createNodeLabel(node: Node, spriteHeight: number): SpriteText {
   const label = new SpriteText(node.name || node.id);
   label.material.depthWrite = false; // background transparent
   label.color = node.color;
   label.textHeight = 2;
 
-  // Position the label above the image
-  label.position.set(0, height / 2, 0);
+  // Offset below the image
+  label.position.set(0, -spriteHeight / 2, 0);
 
-  const group = new THREE.Group();
-  group.add(sprite);
-  group.add(label);
+  return label;
+}
 
-  return group;
+function focusCameraOnNode(
+  fgRef,
+  node: Node,
+  distance: number = 100,
+  duration: number = 3000,
+) {
+  if (!node || !fgRef.current) return;
+
+  const hypot = Math.hypot(node.x, node.y, node.z);
+  if (hypot == 0) {
+    fgRef.current.cameraPosition(
+      {
+        x: node.x,
+        y: node.y,
+        z: node.z + distance + 1,
+      },
+      node,
+      duration,
+    );
+  } else {
+    const distRatio = 1 + distance / Math.hypot(node.x, node.y, node.z);
+    fgRef.current.cameraPosition(
+      {
+        x: node.x * distRatio,
+        y: node.y * distRatio,
+        z: node.z * distRatio,
+      },
+      node,
+      duration,
+    );
+  }
 }
 
 type GraphProps = {
@@ -101,7 +136,6 @@ export default function Graph({
     (async () => {
       const root = await fetchInitialNode();
       setData({ nodes: [{ ...root, x: 0.1, y: 0.1, z: 0.1 }], links: [] });
-      setSelectedNode(root);
     })();
   }, []);
 
@@ -129,35 +163,81 @@ export default function Graph({
   };
 
   useEffect(() => {
-    if (!selectedNode || !fgRef.current) return;
-
-    const distance = 100;
-    const hypot = Math.hypot(selectedNode.x, selectedNode.y, selectedNode.z);
-    if (hypot == 0) {
-      fgRef.current.cameraPosition(
-        {
-          x: selectedNode.x,
-          y: selectedNode.y,
-          z: selectedNode.z + distance + 1,
-        },
-        selectedNode,
-        3000,
-      );
-    } else {
-      const distRatio =
-        1 +
-        distance / Math.hypot(selectedNode.x, selectedNode.y, selectedNode.z);
-      fgRef.current.cameraPosition(
-        {
-          x: selectedNode.x * distRatio,
-          y: selectedNode.y * distRatio,
-          z: selectedNode.z * distRatio,
-        },
-        selectedNode,
-        3000,
-      );
-    }
+    focusCameraOnNode(fgRef, selectedNode);
+    HighlightNode(selectedNode);
   }, [selectedNode]);
+
+  const [highlightNodes, setHighlightNodes] = useState(new Set());
+  const [highlightLinks, setHighlightLinks] = useState(new Set());
+
+  const HighlightNode = (node) => {
+    const newHighlightNodes = new Set();
+    const newHighlightLinks = new Set();
+
+    if (node) {
+      newHighlightNodes.add(node);
+
+      // find all connected links and neighbors
+      data.links.forEach((link) => {
+        if (link.source === node) {
+          newHighlightNodes.add(link.target);
+          newHighlightLinks.add(link);
+        } else if (link.target === node) {
+          newHighlightNodes.add(link.source);
+          newHighlightLinks.add(link);
+        }
+      });
+    }
+    setHighlightNodes(newHighlightNodes);
+    setHighlightLinks(newHighlightLinks);
+  };
+
+  const nodeObjects = useRef(new Map<Node, THREE.Group>());
+
+  const createNodeObject = (node) => {
+    const sprite = createNodeSprite(node);
+    const label = createNodeLabel(node, sprite.scale.y); // TODO: Use CSS2D label instead
+
+    const isHighlighted = highlightNodes.has(node);
+
+    if (isHighlighted) {
+      (sprite.material as THREE.SpriteMaterial).color.setHex(0xffffff);
+      (sprite.material as THREE.SpriteMaterial).opacity = 1;
+      // label.color = node.color;
+    } else {
+      (sprite.material as THREE.SpriteMaterial).color.setHex(0x222222);
+      (sprite.material as THREE.SpriteMaterial).opacity = 0.2;
+      // label.color = 0x222222;
+    }
+
+    const group = new THREE.Group();
+    group.add(sprite);
+    // group.add(label);
+    return group;
+  };
+
+  const createNodeObjectCached = (node) => {
+    if (nodeObjects.current.has(node)) {
+      const group = nodeObjects.current.get(node);
+      const sprite = group.children[0] as THREE.Sprite;
+      // const label = group.children[1] as SpriteText;
+      const isHighlighted = highlightNodes.has(node);
+
+      if (isHighlighted) {
+        (sprite.material as THREE.SpriteMaterial).color.setHex(0xffffff);
+        (sprite.material as THREE.SpriteMaterial).opacity = 1;
+        // label.color = node.color;
+      } else {
+        (sprite.material as THREE.SpriteMaterial).color.setHex(0x222222);
+        (sprite.material as THREE.SpriteMaterial).opacity = 0.2;
+        // label.color = 0x222222;
+      }
+    } else {
+      const group = createNodeObject(node);
+      nodeObjects.current.set(node, group);
+      return group;
+    }
+  };
 
   return (
     <div className={`${className ?? ""}`}>
@@ -167,15 +247,24 @@ export default function Graph({
         onNodeClick={handleNodeClick}
         nodeAutoColorBy="id"
         linkAutoColorBy="target"
-        // linkWidth={1}
-        linkOpacity={1}
+        linkColor={(link) => {
+          if (highlightLinks.has(link)) {
+            return link.color || "white";
+          }
+          return "rgba(0,0,0,0.5)";
+        }}
+        linkWidth={(link) => {
+          highlightLinks.has(link) ? 2 : 0.05;
+        }}
+        linkOpacity={(link) => {
+          highlightLinks.has(link) ? 1 : 0.5;
+        }}
         linkDirectionalArrowLength={3.5}
         linkDirectionalArrowRelPos={1} // put arrow at the target end
-        // onNodeHover={(node) => setHoverNode(node as Node | null)}
         nodeThreeObject={createNodeObject}
         ref={fgRef}
-        d3AlphaDecay={0.02} // slower stabilization
-        d3VelocityDecay={0.2} // friction-like damping
+        // d3AlphaDecay={0.02} // slower stabilization
+        // d3VelocityDecay={0.2} // friction-like damping
         showNavInfo={false}
       />
     </div>

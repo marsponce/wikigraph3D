@@ -67,7 +67,8 @@ export default function Searchbar({
           <div className="relative">
             <ComboboxInput
               aria-label="Node"
-              displayValue={(node) => node?.name ?? "Select a node..."}
+              displayValue={(node) => node?.name ?? ""}
+              placeholder="Select a node..."
               onChange={(e) => setQuery(e.target.value)}
               className="group container rounded-lg border-none bg-black/100 py-2 px-2 text-2xl font-bold text-white hover:ring-3 hover:ring-white/25 focus:outline-none focus:ring-2 focus:ring-white/100"
             />
@@ -88,7 +89,11 @@ export default function Searchbar({
               <ComboboxOption
                 key={node.id}
                 value={node}
-                className="group flex cursor-default items-center gap-2 rounded-lg px-3 py-1.5 select-none data-focus:bg-grey/100"
+                className={clsx(
+                  "group flex cursor-default items-center gap-2 rounded px-3 py-1.5 select-none",
+                  "data-focus:ring-2 data-focus:right-white data-focus:ring-offset-1",
+                  "data-focus:bg-gray-800/50",
+                )}
               >
                 <CheckIcon className="invisible size-4 fill-white group-data-selected:visible" />
                 <div className="text-sm text-white">{node.name}</div>

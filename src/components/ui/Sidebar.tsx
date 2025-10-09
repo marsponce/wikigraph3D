@@ -6,6 +6,12 @@ import { Transition } from "@headlessui/react";
 import { Button, Searchbar } from "@/components/ui";
 import clsx from "clsx";
 import { GraphData } from "@/lib/types";
+import {
+  ArrowsPointingInIcon,
+  ArrowsPointingOutIcon,
+  ArrowLeftEndOnRectangleIcon,
+  ArrowRightStartOnRectangleIcon,
+} from "@heroicons/react/24/outline";
 
 type SidebarProps = {
   className?: string;
@@ -52,7 +58,11 @@ export default function Sidebar({
           className="pr-1 absolute top-2 right-2 z-51"
           title={isOpen ? "Close Sidebar" : "Open Sidebar"}
         >
-          {isOpen ? "󰞔" : "󰋽"}
+          {isOpen ? (
+            <ArrowRightStartOnRectangleIcon />
+          ) : (
+            <ArrowLeftEndOnRectangleIcon />
+          )}
         </Button>
         <Transition show={isOpen}>
           <div
@@ -74,10 +84,14 @@ export default function Sidebar({
               onClick={toggleFullscreen}
               toggled={isFullscreen}
               variant="sidebar"
-              className={clsx("absolute top-10 right-2 pr-1 z-51")}
+              className={clsx("absolute top-10 right-2 z-51")}
               title={isFullscreen ? "Minimize Sidebar" : "Maximize Sidebar"}
             >
-              {isFullscreen ? "󰘕" : "󰘖"}
+              {isFullscreen ? (
+                <ArrowsPointingInIcon />
+              ) : (
+                <ArrowsPointingOutIcon />
+              )}
             </Button>
             {/* searchbar */}
             <Searchbar

@@ -81,7 +81,7 @@ export function createNodeSprite(node: Node): THREE.Sprite {
 }
 
 // return a vector with the graph center
-export function getGraphCenter(data: graphData): THREE.Vector3 {
+export function getGraphCenter(data: GraphData): THREE.Vector3 {
   if (!data.nodes || data.nodes.length === 0) return new THREE.Vector3(0, 0, 0);
   let sumX = 0,
     sumY = 0,
@@ -96,7 +96,7 @@ export function getGraphCenter(data: graphData): THREE.Vector3 {
 }
 
 // return the radius of the graph
-export function getGraphRadius(data: graphData, center: THREE.Vector3): number {
+export function getGraphRadius(data: GraphData, center: THREE.Vector3): number {
   let maxDist = 0;
   data.nodes.forEach((node) => {
     const dx = node.x - center.x;

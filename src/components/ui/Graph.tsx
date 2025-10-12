@@ -14,11 +14,8 @@ import { Node, graphData } from "@/lib/types";
 import {
   fetchInitialNode,
   fetchLinkedNodes,
-  fetchNodeInfo,
   mergeGraphData,
   createNodeSprite,
-  getGraphCenter,
-  getGraphRadius,
   focusCameraOnNode,
   focusCameraOnGraph,
 } from "@/lib/graph";
@@ -81,32 +78,32 @@ const Graph = forwardRef<GraphHandle, GraphProps>(
     };
 
     useEffect(() => {
+      const HighlightNode = (node) => {
+        const newHighlightNodes = new Set();
+        const newHighlightLinks = new Set();
+
+        if (node) {
+          newHighlightNodes.add(node);
+          data.links.forEach((link) => {
+            if (link.source === node) {
+              newHighlightNodes.add(link.target);
+              newHighlightLinks.add(link);
+            } else if (link.target === node) {
+              newHighlightNodes.add(link.source);
+              newHighlightLinks.add(link);
+            }
+          });
+        }
+        setHighlightNodes(newHighlightNodes);
+        setHighlightLinks(newHighlightLinks);
+      };
+
       focusCameraOnNode(fgRef, selectedNode, data);
       HighlightNode(selectedNode);
-    }, [selectedNode, HighlightNode, data]);
+    }, [selectedNode, data]);
 
     const [highlightNodes, setHighlightNodes] = useState(new Set());
     const [highlightLinks, setHighlightLinks] = useState(new Set());
-
-    const HighlightNode = (node) => {
-      const newHighlightNodes = new Set();
-      const newHighlightLinks = new Set();
-
-      if (node) {
-        newHighlightNodes.add(node);
-        data.links.forEach((link) => {
-          if (link.source === node) {
-            newHighlightNodes.add(link.target);
-            newHighlightLinks.add(link);
-          } else if (link.target === node) {
-            newHighlightNodes.add(link.source);
-            newHighlightLinks.add(link);
-          }
-        });
-      }
-      setHighlightNodes(newHighlightNodes);
-      setHighlightLinks(newHighlightLinks);
-    };
 
     const nodeObjects = useRef<Map<Node, THREE.Sprite>>(new Map());
 

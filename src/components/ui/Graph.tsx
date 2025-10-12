@@ -11,69 +11,27 @@ import {
 } from "react";
 import * as THREE from "three";
 import SpriteText from "three-spritetext";
-import { WIKIPEDIA_ICON_URL } from "@/lib/constants";
 import { Node, Link, graphData } from "@/lib/types";
-import { fetchInitialNode, fetchLinkedNodes, fetchNodeInfo } from "@/lib/graph";
+import {
+  fetchInitialNode,
+  fetchLinkedNodes,
+  fetchNodeInfo,
+  mergeGraphData,
+  createNodeSprite,
+  getGraphCenter,
+  getGraphRadius,
+} from "@/lib/graph";
 
 const ForceGraph3D = dynamic(() => import("react-force-graph-3d"), {
   ssr: false,
 });
 
-function mergeGraphData(
-  node: Node,
-  newNodes: Node[],
-  oldData: graphData,
-): graphData {
-  const existingIds = new Set(oldData.nodes.map((n) => n.id));
-
-  const nodesToAdd: Node[] = newNodes.filter((n) => !existingIds.has(n.id));
-  const existingNodeIds = newNodes
-    .filter((n) => existingIds.has(n.id))
-    .map((n) => n.id);
-
-  const newLinks: Link[] = [
-    ...nodesToAdd.map((n) => ({ source: node.id, target: n.id })),
-    ...existingNodeIds.map((id) => ({ source: node.id, target: id })),
-  ];
-
-  return {
-    nodes: [...oldData.nodes, ...nodesToAdd],
-    links: [...oldData.links, ...newLinks],
-  } as graphData;
-}
-
-function createNodeSprite(node: Node): THREE.Group {
-  const texture = new THREE.TextureLoader().load(
-    node.thumbnail?.source || WIKIPEDIA_ICON_URL,
-  );
-  const material = new THREE.SpriteMaterial({
-    map: texture,
-    transparent: true,
-  });
-  const sprite = new THREE.Sprite(material);
-
-  let width = node.thumbnail?.width || 64;
-  let height = node.thumbnail?.height || 64;
-
-  const MAX_SIZE = 128;
-  const SCALE_FACTOR = 0.1;
-
-  const maxDim = Math.max(width, height);
-  if (maxDim > 0) {
-    const scale = (MAX_SIZE / maxDim) * SCALE_FACTOR;
-    width *= scale;
-    height *= scale;
-  }
-  sprite.scale.set(width, height, 1);
-
-  return sprite;
-}
-
+// Focus the camera on a node
 function focusCameraOnNode(fgRef, selectedNode: Node, data: graphData) {
   if (!selectedNode || !fgRef.current) return;
 
   const camera = fgRef.current.camera();
-  const distanceBase = 100;
+  const distanceBase = 10;
   const neighborFactor = 0.75;
 
   const connectedNodes = data.links.filter(
@@ -103,37 +61,15 @@ function focusCameraOnNode(fgRef, selectedNode: Node, data: graphData) {
   );
 }
 
-function getGraphCenter(data: graphData): THREE.Vector3 {
-  if (!data.nodes || data.nodes.length === 0) return new THREE.Vector3(0, 0, 0);
-  let sumX = 0,
-    sumY = 0,
-    sumZ = 0;
-  data.nodes.forEach((node) => {
-    sumX += node.x;
-    sumY += node.y;
-    sumZ += node.z;
-  });
-  const n = data.nodes.length;
-  return new THREE.Vector3(sumX / n, sumY / n, sumZ / n);
-}
-
-function getGraphRadius(data: graphData, center: THREE.Vector3): number {
-  let maxDist = 0;
-  data.nodes.forEach((node) => {
-    const dx = node.x - center.x;
-    const dy = node.y - center.y;
-    const dz = node.z - center.z;
-    const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
-    if (dist > maxDist) maxDist = dist;
-  });
-  return maxDist;
-}
-
+// Set the camera back to view the whole graph
 function resetGraphView(fgRef, data: graphData) {
   if (!fgRef.current || !data.nodes || data.nodes.length === 0) return;
 
   const center = getGraphCenter(data);
-  const radius = getGraphRadius(data, center);
+  let radius = getGraphRadius(data, center);
+  if (radius <= 10) {
+    radius = 10;
+  }
 
   const cameraOffset = new THREE.Vector3(0, 0, radius * 2);
   const newCameraPos = center.clone().add(cameraOffset);
@@ -167,7 +103,8 @@ const Graph = forwardRef<GraphHandle, GraphProps>(
     useEffect(() => {
       (async () => {
         const root = await fetchInitialNode();
-        setData({ nodes: [{ ...root, x: 0.1, y: 0.1, z: 0.1 }], links: [] });
+        setData({ nodes: [{ ...root }], links: [] });
+        // setSelectedNode(root); TODO: Fix camera not focusing on this bug.
       })();
     }, [setData]);
 

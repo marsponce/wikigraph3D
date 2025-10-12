@@ -10,8 +10,7 @@ import {
   useImperativeHandle,
 } from "react";
 import * as THREE from "three";
-import SpriteText from "three-spritetext";
-import { Node, Link, graphData } from "@/lib/types";
+import { Node, graphData } from "@/lib/types";
 import {
   fetchInitialNode,
   fetchLinkedNodes,
@@ -84,7 +83,7 @@ const Graph = forwardRef<GraphHandle, GraphProps>(
     useEffect(() => {
       focusCameraOnNode(fgRef, selectedNode, data);
       HighlightNode(selectedNode);
-    }, [selectedNode, data]);
+    }, [selectedNode, HighlightNode, data]);
 
     const [highlightNodes, setHighlightNodes] = useState(new Set());
     const [highlightLinks, setHighlightLinks] = useState(new Set());

@@ -35,7 +35,9 @@ export default function Sidebar({
 
   const toggleSidebar = () => setIsOpen(!isOpen);
   const toggleFullscreen = () => {
-    if (!isOpen) setIsOpen(true);
+    if (!isOpen) {
+      setIsOpen(true);
+    }
     setFullscreen(!isFullscreen);
   };
   const centerCamera = () => {

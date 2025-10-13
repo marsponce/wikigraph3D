@@ -32,8 +32,8 @@ export async function fetchNodeInfo(node: Node): Promise<string> {
 export function mergeGraphData(
   node: Node,
   newNodes: Node[],
-  oldData: graphData,
-): graphData {
+  oldData: GraphData,
+): GraphData {
   const existingIds = new Set(oldData.nodes.map((n) => n.id));
 
   const nodesToAdd: Node[] = newNodes.filter((n) => !existingIds.has(n.id));
@@ -49,7 +49,7 @@ export function mergeGraphData(
   return {
     nodes: [...oldData.nodes, ...nodesToAdd],
     links: [...oldData.links, ...newLinks],
-  } as graphData;
+  } as GraphData;
 }
 
 // create the THREE.Sprite object to represent an article node

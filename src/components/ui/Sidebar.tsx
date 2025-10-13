@@ -95,7 +95,7 @@ export default function Sidebar({
               onClick={toggleFullscreen}
               toggled={isFullscreen}
               variant="sidebar"
-              className={clsx("absolute top-10 right-2 z-51")}
+              className="absolute top-10 right-2 z-51"
               title={isFullscreen ? "Minimize Sidebar" : "Maximize Sidebar"}
             >
               {isFullscreen ? (
@@ -107,7 +107,7 @@ export default function Sidebar({
             <Button
               onClick={centerCamera}
               variant="sidebar"
-              className={clsx("absolute top-18 right-2 z-51")}
+              className="absolute top-18 right-2 z-51"
               title={"Center Camera"}
             >
               <ViewfinderCircleIcon />

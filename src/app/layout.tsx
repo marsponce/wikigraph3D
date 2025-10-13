@@ -29,13 +29,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <div className="root headlessui-portal-root">
-          <main>{children}</main>
-          <Header>
-            <Navbar />
-          </Header>
-          <Footer className="fixed bottom-0 left-0 w-full h-8" />
-        </div>
+        <main>{children}</main>
+        <Header>
+          <Navbar />
+        </Header>
+        <Footer />
       </body>
     </html>
   );

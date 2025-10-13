@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
+import "../styles/globals.css";
 
 import Navbar from "@/components/layout/Navbar";
 import Header from "@/components/layout/Header";
@@ -28,15 +28,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="antialiased min-h-screen min-w-screen">
+      <body>
         <div className="root headlessui-portal-root">
-          {/* Main content */}
-          <main className="w-full">{children}</main>
-          {/* Header fixed at the top */}
-          <Header className="fixed top-0 left-0 w-full">
+          <main>{children}</main>
+          <Header>
             <Navbar />
           </Header>
-          {/* Footer fixed at the bottom */}
           <Footer className="fixed bottom-0 left-0 w-full h-8" />
         </div>
       </body>

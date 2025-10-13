@@ -6,11 +6,9 @@ type HeaderProps = {
 
 export default function Header({ className, children }: HeaderProps) {
   return (
-    <div>
-      <header className={`bg-black/70 text-white shadow-md ${className ?? ""}`}>
-        Header
-        {children}
-      </header>
-    </div>
+    <header className="header">
+      Header
+      {children}
+    </header>
   );
 }

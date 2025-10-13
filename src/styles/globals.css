@@ -1,4 +1,24 @@
 @import "tailwindcss";
-.root {
-  isolation: isolate;
+
+@layer base {
+  .root {
+    isolation: isolate;
+  }
+
+  body {
+    @apply antialiased min-h-screen min-w-screen;
+  }
+
+  main {
+    @apply w-full;
+  }
+}
+
+@layer components {
+  .header {
+    @apply bg-black/70 text-white shadow-md fixed top-0 left-0 w-full;
+  }
+}
+
+@layer utilities {
 }

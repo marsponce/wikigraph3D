@@ -1,7 +1,7 @@
 // src/app/components/ui/Sidebar.tsx
 import parse from "html-react-parser";
 import he from "he";
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { Transition } from "@headlessui/react";
 import { Button, Searchbar } from "@/components/ui";
 import clsx from "clsx";

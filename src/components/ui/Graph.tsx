@@ -140,7 +140,7 @@ const Graph = forwardRef<GraphHandle, GraphProps>(
     };
 
     return (
-      <div className={`${className ?? ""}`}>
+      <div className={clsx(className ?? "")}>
         <ForceGraph3D
           ref={fgRef}
           graphData={data}

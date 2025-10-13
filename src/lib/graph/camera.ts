@@ -1,14 +1,41 @@
 // src/lib/graph/camera.ts
 import { Node, graphData } from "@/lib/types";
-import { getGraphCenter, getGraphRadius } from "./core";
 import * as THREE from "three";
+
+// return a vector with the graph center
+export function getGraphCenter(data: GraphData): THREE.Vector3 {
+  if (!data.nodes || data.nodes.length === 0) return new THREE.Vector3(0, 0, 0);
+  let sumX = 0,
+    sumY = 0,
+    sumZ = 0;
+  data.nodes.forEach((node) => {
+    sumX += node.x;
+    sumY += node.y;
+    sumZ += node.z;
+  });
+  const n = data.nodes.length;
+  return new THREE.Vector3(sumX / n, sumY / n, sumZ / n);
+}
+
+// return the radius of the graph
+export function getGraphRadius(data: GraphData, center: THREE.Vector3): number {
+  let maxDist = 0;
+  data.nodes.forEach((node) => {
+    const dx = node.x - center.x;
+    const dy = node.y - center.y;
+    const dz = node.z - center.z;
+    const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+    if (dist > maxDist) maxDist = dist;
+  });
+  return maxDist;
+}
 
 // Focus the camera on a node
 export function focusCameraOnNode(fgRef, selectedNode: Node, data: graphData) {
   if (!selectedNode || !fgRef.current) return;
 
   const camera = fgRef.current.camera();
-  const distanceBase = 10;
+  const distanceBase = 25;
   const neighborFactor = 0.75;
 
   const connectedNodes = data.links.filter(

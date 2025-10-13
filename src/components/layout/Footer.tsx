@@ -6,7 +6,7 @@ type FooterProps = {
 export default function Footer({ children }: FooterProps) {
   return (
     <footer>
-      <p className="text-center p-1">Wikigraph3D 2025</p>
+      <h6>Wikigraph3D 2025</h6>
       {children}
     </footer>
   );

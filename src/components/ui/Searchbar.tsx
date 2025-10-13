@@ -58,7 +58,7 @@ export default function Searchbar({
 
   return (
     <>
-      <div className="relative w-auto z-50 mx-auto pr-10">
+      <div className="relative w-auto z-50 mx-auto">
         <Combobox
           value={selectedNode}
           onChange={setSelectedNode}

@@ -16,19 +16,19 @@ export default function Main() {
 
   return (
     <div className="relative">
+      <Sidebar
+        graphRef={graphRef}
+        selectedNode={selectedNode}
+        setSelectedNode={setSelectedNode}
+        graphData={graphData}
+        className=""
+      />
       <Graph
         ref={graphRef}
         selectedNode={selectedNode}
         setSelectedNode={setSelectedNode}
         data={graphData}
         setData={setGraphData}
-        className=""
-      />
-      <Sidebar
-        graphRef={graphRef}
-        selectedNode={selectedNode}
-        setSelectedNode={setSelectedNode}
-        graphData={graphData}
         className=""
       />
     </div>

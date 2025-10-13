@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
 import "../styles/globals.css";
 
-import Navbar from "@/components/layout/Navbar";
-import Header from "@/components/layout/Header";
-import Footer from "@/components/layout/Footer";
+import { Navbar, Header, Footer } from "@/components/layout";
 
 export const metadata: Metadata = {
   title: "Wikigraph",
@@ -18,10 +16,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <main>{children}</main>
         <Header>
           <Navbar />
         </Header>
+        <main className="headless-ui-portal-root">{children}</main>
         <Footer />
       </body>
     </html>

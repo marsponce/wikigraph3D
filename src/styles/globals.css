@@ -6,23 +6,69 @@
   }
 
   body {
-    @apply antialiased min-h-screen min-w-screen text-white;
+    @apply antialiased min-h-screen min-w-screen text-white bg-black;
   }
 
   main {
-    @apply w-full root headlessui-portal-root;
+    @apply w-full;
   }
 
   header {
-    @apply bg-black/70 shadow-md fixed top-0 left-0 w-full;
+    @apply bg-black/70 shadow-md fixed top-0 left-0 w-auto z-1 p-2 m-2 rounded;
+  }
+
+  nav > ul {
+    @apply flex space-x-2 font-light;
   }
 
   footer {
     @apply fixed bottom-0 left-0 w-full h-8 bg-black/70 shadow-md;
   }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply text-center font-bold;
+  }
+
+  h6 {
+    @apply font-light text-sm/8;
+  }
+
+  a {
+    @apply hover:underline;
+  }
 }
 
 @layer components {
+  /* Button */
+  .btn {
+    @apply pointer-events-auto size-7 rounded transition-colors duration-300 bg-gray-900 hover:bg-sky-600 active:bg-sky-100;
+  }
+
+  .btn[data-toggled="true"] {
+    @apply bg-sky-600;
+  }
+
+  /* Sidebar */
+  .sidebar {
+    @apply bg-black/20 fixed right-0 z-3 h-full flex;
+  }
+
+  .button-container {
+    @apply flex flex-col space-y-2 w-auto m-2;
+  }
+
+  .sidebar-panel {
+    @apply p-3 bg-black/80 pointer-events-auto origin-top-right rounded h-auto min-h-32 m-2 ml-0;
+  }
+
+  .sidebar-content {
+    @apply overflow-y-scroll text-justify;
+  }
 }
 
 @layer utilities {

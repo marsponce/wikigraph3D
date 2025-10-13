@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import clsx from "clsx";
 
 const links = [
   { href: "/", label: "Home" },
@@ -13,7 +14,6 @@ export default function Navbar() {
 
   return (
     <nav>
-      Navbar
       <ul>
         {links.map(({ href, label }) => {
           const isActive = pathname === href;
@@ -23,7 +23,7 @@ export default function Navbar() {
               <Link
                 key={href}
                 href={href}
-                className={`hover:underline ${isActive ? "font-bold" : ""}`}
+                className={clsx(isActive && "font-bold")}
               >
                 {label}
               </Link>

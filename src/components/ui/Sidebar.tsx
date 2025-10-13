@@ -30,7 +30,7 @@ export default function Sidebar({
   setSelectedNode,
   graphData,
 }: SidebarProps) {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
   const [isFullscreen, setFullscreen] = useState(false);
 
   const toggleSidebar = () => setIsOpen(!isOpen);
@@ -48,89 +48,65 @@ export default function Sidebar({
 
   return (
     <>
-      <div
-        className={clsx(
-          "pointer-events-none",
-          "absolute top-0 right-0",
-          "bg-transparent shadow-lg z-50",
-          "overflow-x-hidden",
-          "overflow-y-hidden",
-          "origin-top-right",
-          className ?? "",
-          "h-full",
-          "w-full",
-        )}
-      >
+      <aside className={clsx("sidebar", className ?? "")}>
         {/* sidebar button */}
-        <Button
-          onClick={toggleSidebar}
-          toggled={isOpen}
-          variant="sidebar"
-          className="pr-1 absolute top-2 right-2 z-51"
-          title={isOpen ? "Close Sidebar" : "Open Sidebar"}
-        >
-          {isOpen ? (
-            <ArrowRightStartOnRectangleIcon />
-          ) : (
-            <ArrowLeftEndOnRectangleIcon />
-          )}
-        </Button>
+        <div className="button-container">
+          <Button
+            onClick={toggleSidebar}
+            toggled={isOpen}
+            title={isOpen ? "Close Sidebar" : "Open Sidebar"}
+          >
+            {isOpen ? (
+              <ArrowRightStartOnRectangleIcon />
+            ) : (
+              <ArrowLeftEndOnRectangleIcon />
+            )}
+          </Button>
+          <Button
+            onClick={toggleFullscreen}
+            toggled={isFullscreen}
+            title={isFullscreen ? "Minimize Sidebar" : "Maximize Sidebar"}
+          >
+            {isFullscreen ? (
+              <ArrowsPointingInIcon />
+            ) : (
+              <ArrowsPointingOutIcon />
+            )}
+          </Button>
+          {/* full screen button */}
+          <Button onClick={centerCamera} title={"Center Camera"}>
+            <ViewfinderCircleIcon />
+          </Button>
+        </div>
         <Transition show={isOpen}>
           <div
             className={clsx(
-              "p-3 bg-black/80 pointer-events-auto",
-              "absolute top-0 right-0",
-              "overflow-hidden origin-top-right",
-              "rounded h-auto min-h-28",
-              "transition duration-600",
+              "sidebar-panel",
+              /* TODO: Animate the sidebar
               "transition duration-600",
               "data-closed:translate-x-full",
-              "data-enter:data-closed:translate-x-full",
-              "data-leave:data-closed:transalte-x-0",
-              isFullscreen ? "w-screen h-screen" : "w-100",
+              "data-enter:data-closed:translate-x-full",*/
+              isFullscreen ? "w-full h-full" : "w-100",
             )}
           >
-            {/* full screen button */}
-            <Button
-              onClick={toggleFullscreen}
-              toggled={isFullscreen}
-              variant="sidebar"
-              className="absolute top-10 right-2 z-51"
-              title={isFullscreen ? "Minimize Sidebar" : "Maximize Sidebar"}
-            >
-              {isFullscreen ? (
-                <ArrowsPointingInIcon />
-              ) : (
-                <ArrowsPointingOutIcon />
-              )}
-            </Button>
-            <Button
-              onClick={centerCamera}
-              variant="sidebar"
-              className="absolute top-18 right-2 z-51"
-              title={"Center Camera"}
-            >
-              <ViewfinderCircleIcon />
-            </Button>
             {/* searchbar */}
             <Searchbar
               graphData={graphData}
               selectedNode={selectedNode}
               setSelectedNode={setSelectedNode}
             />
-            <div className="overflow-y-scroll">
+            <div className="sidebar-content prose">
               {selectedNode ? (
                 <>
-                  {/*<h1 className="font-bold pr-8">{selectedNode.name}</h1>*/}
                   {selectedNode.description && (
-                    <div className="prose text-justify">
-                      <h2 className="font-bold ">Description</h2>
+                    <div>
+                      <h2>Description</h2>
                       {parse(he.decode(selectedNode.description))}
                     </div>
                   )}
                   {selectedNode.extract && (
-                    <div className="prose text-justify">
-                      <h2 className="font-bold">Extract</h2>
+                    <div>
+                      <h2>Extract</h2>
                       {parse(he.decode(selectedNode.extract))}
                     </div>
                   )}
@@ -139,12 +115,9 @@ export default function Sidebar({
                 <p>No node selected</p>
               )}
             </div>
-            {/*
-								TODO: Finish fullscreen transition
-						*/}
           </div>
         </Transition>
-      </div>
+      </aside>
     </>
   );
 }

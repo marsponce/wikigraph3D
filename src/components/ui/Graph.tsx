@@ -101,7 +101,7 @@ const Graph = forwardRef<GraphHandle, GraphProps>(
 
       focusCameraOnNode(fgRef, selectedNode, data);
       HighlightNode(selectedNode);
-    }, [selectedNode]);
+    }, [selectedNode, data]);
 
     const [highlightNodes, setHighlightNodes] = useState(new Set());
     const [highlightLinks, setHighlightLinks] = useState(new Set());

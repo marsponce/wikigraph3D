@@ -86,7 +86,7 @@ export default function Sidebar({
               "transition duration-600",
               "data-closed:translate-x-full",
               "data-enter:data-closed:translate-x-full",*/
-              isFullscreen ? "w-full h-full" : "w-100",
+              isFullscreen ? "w-full h-full" : "",
             )}
           >
             {/* searchbar */}

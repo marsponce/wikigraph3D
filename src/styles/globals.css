@@ -1,12 +1,16 @@
 @import "tailwindcss";
 
+@theme {
+  --text-xs: 18px;
+}
+
 @layer base {
   .root {
     isolation: isolate;
   }
 
   body {
-    @apply antialiased min-h-screen min-w-screen text-white bg-black;
+    @apply antialiased min-h-screen min-w-screen text-white bg-black text-sm md:text-base lg:text-lg;
   }
 
   main {
@@ -22,7 +26,7 @@
   }
 
   footer {
-    @apply fixed bottom-0 left-0 w-full h-8 bg-black/70 shadow-md;
+    @apply fixed bottom-0 left-0 w-full h-8 bg-black/70 mx-auto;
   }
 
   h1,
@@ -31,19 +35,32 @@
   h4,
   h5,
   h6 {
-    @apply font-bold;
+    @apply font-bold text-lg md:text-xl lg:text-2xl;
+  }
+
+  h1 {
+    @apply text-2xl md:text-4xl lg:text-6xl;
   }
 
   h6 {
-    @apply text-center font-light text-sm/8;
+    @apply text-center font-light text-xs md:text-sm lg:text-base;
   }
 
   a {
     @apply hover:underline;
   }
+
+  noscript {
+    @apply flex justify-center h-screen text-center;
+  }
 }
 
 @layer components {
+  /* About */
+  .about {
+    @apply md:mx-auto max-w-3xl pt-16 p-4 md:p-12 lg:p-18 space-y-6;
+  }
+
   /* Button */
   .btn {
     @apply pointer-events-auto size-7 rounded transition-colors duration-300 bg-gray-900 hover:bg-sky-600 active:bg-sky-100;
@@ -63,7 +80,7 @@
   }
 
   .sidebar-panel {
-    @apply p-3 bg-black/80 pointer-events-auto origin-top-right rounded h-auto min-h-32 m-2 ml-0;
+    @apply p-3 bg-black/80 pointer-events-auto origin-top-right rounded h-auto min-h-32 m-2 ml-0 md:w-100;
   }
 
   .sidebar-content {
@@ -76,7 +93,7 @@
   }
 
   .searchbar-input {
-    @apply container rounded-lg border-none bg-black/100 py-2 px-2 text-nm md:text-2xl font-bold text-white hover:ring-3 hover:ring-white/25 focus:outline-none focus:ring-2 focus:ring-white/100;
+    @apply container rounded-lg border-none bg-black/100 py-2 px-2 text-xl md:text-2xl font-bold text-white hover:ring-3 hover:ring-white/25 focus:outline-none focus:ring-2 focus:ring-white/100;
   }
 
   .searchbar-button {
@@ -84,7 +101,7 @@
   }
 
   .searchbar-button-icon {
-    @apply size-8 fill-white/0 group-data-hover:fill-white;
+    @apply size-8 fill-white md:fill-white/0 group-data-hover:fill-white;
   }
 
   .searchbar-result {

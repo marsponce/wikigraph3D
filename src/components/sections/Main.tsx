@@ -31,6 +31,12 @@ export default function Main() {
         setData={setGraphData}
         className=""
       />
+      <noscript>
+        <div className="my-auto ring-3 rounded p-2">
+          <h1>JavaScript is disabled</h1>
+          <p>Please enable JavaScript</p>
+        </div>
+      </noscript>
     </div>
   );
 }

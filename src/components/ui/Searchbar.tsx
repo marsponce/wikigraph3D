@@ -12,14 +12,12 @@ import { GraphData } from "@/lib/types";
 import clsx from "clsx";
 
 type SearchbarProps = {
-  className?: string;
   graphData?: GraphData;
   selectedNode: Node;
   setSelectedNode: (node: Node) => void;
 };
 
 export default function Searchbar({
-  className,
   graphData,
   selectedNode,
   setSelectedNode,

@@ -16,10 +16,16 @@ async function fetchInfo(title: string) {
   }
 }
 
-export async function GET(req, {}) {
+export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
     const title = searchParams.get("title");
+    if (!title) {
+      return NextResponse.json(
+        { error: "Missing title Parameter" },
+        { status: 400 },
+      );
+    }
     const html = await fetchInfo(title);
 
     return NextResponse.json({ html });

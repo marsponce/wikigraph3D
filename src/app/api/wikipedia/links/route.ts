@@ -3,6 +3,7 @@
 import { NextResponse } from "next/server";
 import { normalizePageToNode } from "@/lib/utils";
 import { WIKI_API_BASE } from "@/lib/constants";
+import { Page } from "@/lib/types";
 
 async function getThumbnails(
   pages: Page[],
@@ -104,7 +105,7 @@ async function fetchPages(title: string, limit: number = 10) {
   return pagesWithThumbnails;
 }
 
-export async function GET(req, {}) {
+export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
     const title = searchParams.get("title");

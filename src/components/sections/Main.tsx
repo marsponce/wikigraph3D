@@ -1,6 +1,6 @@
 // src/app/components/sections/Main.tsx
 "use client";
-import { Sidebar, Searchbar } from "../ui";
+import { Sidebar } from "../ui";
 import Graph, { GraphHandle } from "../ui/Graph";
 import { useState, useRef } from "react";
 import { GraphData } from "@/lib/types";

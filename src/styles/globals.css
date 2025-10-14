@@ -31,11 +31,11 @@
   h4,
   h5,
   h6 {
-    @apply text-center font-bold;
+    @apply font-bold;
   }
 
   h6 {
-    @apply font-light text-sm/8;
+    @apply text-center font-light text-sm/8;
   }
 
   a {
@@ -68,6 +68,31 @@
 
   .sidebar-content {
     @apply overflow-y-scroll text-justify;
+  }
+
+  /* Searchbar */
+  .searchbar {
+    @apply relative w-auto z-50 mx-auto;
+  }
+
+  .searchbar-input {
+    @apply container rounded-lg border-none bg-black/100 py-2 px-2 text-nm md:text-2xl font-bold text-white hover:ring-3 hover:ring-white/25 focus:outline-none focus:ring-2 focus:ring-white/100;
+  }
+
+  .searchbar-button {
+    @apply absolute inset-y-0 right-0 p-2;
+  }
+
+  .searchbar-button-icon {
+    @apply size-8 fill-white/0 group-data-hover:fill-white;
+  }
+
+  .searchbar-result {
+    @apply flex cursor-default items-center gap-2 rounded px-3 py-1.5 select-none;
+  }
+
+  .searchbar-results-container {
+    @apply container absolute overflow-hidden h-auto max-h-screen w-(--input-width) mt-1 rounded-lg ring-3 ring-white/15 bg-black/90 p-1 z-3;
   }
 }
 

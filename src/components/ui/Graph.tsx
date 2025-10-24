@@ -18,6 +18,7 @@ import {
   mergeGraphData,
   createNodeSprite,
   focusCameraOnNode,
+  focusCameraOnGraph,
 } from "@/lib/graph";
 import type { ForceGraphMethods } from "react-force-graph-3d";
 
@@ -71,6 +72,8 @@ export default function Graph({
   useEffect(() => {
     if (isFocused) {
       focusCameraOnNode(graphRef, selectedNode, data);
+    } else {
+      focusCameraOnGraph(graphRef, data);
     }
   }, [selectedNode, graphRef, data, isFocused]);
 

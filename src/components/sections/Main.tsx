@@ -3,18 +3,20 @@
 import { Sidebar } from "../ui";
 import Graph from "../ui/Graph";
 import { useState, useRef } from "react";
-import { GraphData, GraphNode } from "@/types";
+import { GraphData, GraphNode, GraphLink } from "@/types";
 import type { ForceGraphMethods } from "react-force-graph-3d";
 
 export default function Main() {
   // State for the app
   const [selectedNode, setSelectedNode] = useState<GraphNode | null>(null);
+  const [isFocused, setIsFocused] = useState<boolean>(false);
   const [graphData, setGraphData] = useState<GraphData>({
     nodes: [],
     links: [],
   } as GraphData);
-  const graphRef = useRef<ForceGraphMethods | null>(null);
-
+  const graphRef = useRef<ForceGraphMethods<GraphNode, GraphLink> | undefined>(
+    undefined,
+  );
   return (
     <div className="relative">
       <Sidebar
@@ -23,6 +25,8 @@ export default function Main() {
         setSelectedNode={setSelectedNode}
         graphData={graphData}
         className=""
+        isFocused={isFocused}
+        setIsFocused={setIsFocused}
       />
       <Graph
         graphRef={graphRef}
@@ -31,6 +35,7 @@ export default function Main() {
         data={graphData}
         setDataAction={setGraphData}
         className=""
+        isFocused={isFocused}
       />
       <noscript>
         <div className="my-auto ring-3 rounded p-2">

@@ -1,11 +1,11 @@
 // src/app/components/ui/Sidebar.tsx
 import parse from "html-react-parser";
 import he from "he";
-import { useState, MutableRefObject } from "react";
+import { useState, RefObject } from "react";
 import { Transition } from "@headlessui/react";
 import { Button, Searchbar } from "@/components/ui";
 import clsx from "clsx";
-import { GraphData, GraphNode } from "@/types";
+import { GraphData, GraphNode, GraphLink } from "@/types";
 import { ForceGraphMethods } from "react-force-graph-3d";
 import {
   ArrowsPointingInIcon,
@@ -16,11 +16,13 @@ import {
 } from "@heroicons/react/24/outline";
 
 type SidebarProps = {
-  graphRef: MutableRefObject<ForceGraphMethods | null>;
+  graphRef: RefObject<ForceGraphMethods<GraphNode, GraphLink> | undefined>;
   className?: string;
   selectedNode: GraphNode | null;
   setSelectedNode: (node: GraphNode | null) => void;
   graphData: GraphData;
+  isFocused: boolean;
+  setIsFocused: (isFocused: boolean) => void;
 };
 
 export default function Sidebar({
@@ -29,10 +31,11 @@ export default function Sidebar({
   selectedNode,
   setSelectedNode,
   graphData,
+  isFocused,
+  setIsFocused,
 }: SidebarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isFullscreen, setFullscreen] = useState(false);
-  const [isFocused, setIsFocused] = useState(false);
 
   const toggleSidebar = () => setIsOpen(!isOpen);
   const toggleFullscreen = () => {

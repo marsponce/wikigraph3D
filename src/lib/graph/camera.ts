@@ -34,8 +34,8 @@ export function getGraphRadius(data: GraphData, center: THREE.Vector3): number {
 
 // Focus the camera on a node
 export function focusCameraOnNode(
-  fgRef: RefObject<ForceGraphMethods>,
-  selectedNode: GraphNode,
+  fgRef: RefObject<ForceGraphMethods<GraphNode, GraphLink> | undefined>,
+  selectedNode: GraphNode | null,
   data: GraphData,
 ) {
   if (!selectedNode || !fgRef.current) return;
@@ -74,7 +74,7 @@ export function focusCameraOnNode(
 
 // Set the camera back to view the whole graph
 export function focusCameraOnGraph(
-  fgRef: RefObject<ForceGraphMethods>,
+  fgRef: RefObject<ForceGraphMethods<GraphNode, GraphLink> | undefined>,
   data: GraphData,
 ) {
   if (!fgRef.current || !data.nodes || data.nodes.length === 0) return;

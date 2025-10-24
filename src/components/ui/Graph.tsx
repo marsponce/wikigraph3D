@@ -8,10 +8,10 @@ import {
   useRef,
   Dispatch,
   SetStateAction,
-  MutableRefObject,
+  RefObject,
 } from "react";
 import * as THREE from "three";
-import { GraphNode, GraphData } from "@/types";
+import { GraphNode, GraphLink, GraphData } from "@/types";
 import {
   fetchInitialNode,
   fetchLinkedNodes,
@@ -27,11 +27,12 @@ const ForceGraph3D = dynamic(() => import("react-force-graph-3d"), {
 
 type GraphProps = {
   className?: string;
-  graphRef: MutableRefObject<ForceGraphMethods | null>;
+  graphRef: RefObject<ForceGraphMethods<GraphNode, GraphLink> | undefined>;
   selectedNode: GraphNode | null;
   setSelectedNodeAction: (node: GraphNode) => void;
   data: GraphData;
   setDataAction: Dispatch<SetStateAction<GraphData>>;
+  isFocused: boolean;
 };
 
 export default function Graph({
@@ -41,6 +42,7 @@ export default function Graph({
   setSelectedNodeAction,
   data,
   setDataAction,
+  isFocused,
 }: GraphProps) {
   useEffect(() => {
     (async () => {
@@ -58,9 +60,19 @@ export default function Graph({
     [setDataAction],
   );
 
-  const handleNodeClick = async (node: GraphNode) => {
-    setSelectedNodeAction(node);
-  };
+  const handleNodeClick = useCallback(
+    (node: GraphNode, event?: MouseEvent) => {
+      event?.preventDefault?.();
+      setSelectedNodeAction(node);
+    },
+    [setSelectedNodeAction],
+  );
+
+  useEffect(() => {
+    if (isFocused) {
+      focusCameraOnNode(graphRef, selectedNode, data);
+    }
+  }, [selectedNode, graphRef, data, isFocused]);
 
   const nodeObjects = useRef<Map<GraphNode, THREE.Sprite>>(new Map());
 
@@ -81,7 +93,7 @@ export default function Graph({
   return (
     <div className={clsx(className ?? "")}>
       <ForceGraph3D
-        // ref={graphRef}
+        ref={graphRef}
         graphData={data}
         onNodeClick={handleNodeClick}
         // TODO: Replace with the article expansion method: onNodeRightClick={expandGraph}
@@ -93,6 +105,7 @@ export default function Graph({
         // linkOpacity={(link) => (highlightLinks.has(link) ? 1 : 0.5)}
         linkDirectionalArrowLength={3.5}
         linkDirectionalArrowRelPos={1}
+        nodeThreeObjectExtend={false}
         nodeThreeObject={createNodeObjectCached}
         showNavInfo={false}
       />

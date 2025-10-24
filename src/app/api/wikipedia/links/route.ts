@@ -3,7 +3,7 @@
 import { NextResponse } from "next/server";
 import { normalizePageToNode } from "@/lib/utils";
 import { WIKI_API_BASE } from "@/lib/constants";
-import { Page } from "@/lib/types";
+import { Page } from "@/types";
 
 async function getThumbnails(
   pages: Page[],
@@ -94,7 +94,7 @@ async function fetchPages(title: string, limit: number = 10) {
     const res = await fetch(url.toString(), {});
     const data = await res.json();
 
-    pages.push(...Object.values(data.query?.pages || {}));
+    pages.push(...(Object.values(data.query?.pages || {}) as Page[]));
     continueParams = data.continue || {};
     iterator += 1;
     if (pages.length >= limit) break;
@@ -109,7 +109,13 @@ export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
     const title = searchParams.get("title");
-    const limit = searchParams.get("limit") || 1;
+    if (!title) {
+      return NextResponse.json(
+        { error: "Missing title parameter" },
+        { status: 400 },
+      );
+    }
+    const limit = Number(searchParams.get("limit") ?? 1);
 
     const pages = await fetchPages(title, limit);
     const nodes = pages.map(normalizePageToNode);
@@ -117,11 +123,14 @@ export async function GET(req: Request) {
     return NextResponse.json({ nodes });
   } catch (err) {
     console.error(err);
-    return NextResponse.json(
-      {
-        error: `${err}`,
-      },
-      { status: 500 },
-    );
+    if (err instanceof Error) {
+      return NextResponse.json(
+        {
+          error: "Internal Server Error",
+          code: (err.cause as { code?: string })?.code ?? "UNKNOWN_ERROR_CODE",
+        },
+        { status: 500 },
+      );
+    }
   }
 }

@@ -1,11 +1,12 @@
 // src/app/components/ui/Sidebar.tsx
 import parse from "html-react-parser";
 import he from "he";
-import { useState } from "react";
+import { useState, MutableRefObject } from "react";
 import { Transition } from "@headlessui/react";
 import { Button, Searchbar } from "@/components/ui";
 import clsx from "clsx";
-import { GraphData } from "@/lib/types";
+import { GraphData, GraphNode } from "@/types";
+import { ForceGraphMethods } from "react-force-graph-3d";
 import {
   ArrowsPointingInIcon,
   ArrowsPointingOutIcon,
@@ -13,14 +14,13 @@ import {
   ArrowRightStartOnRectangleIcon,
   ViewfinderCircleIcon,
 } from "@heroicons/react/24/outline";
-import { GraphHandle } from "./Graph";
 
 type SidebarProps = {
-  graphRef: refObject<GraphHandle>;
+  graphRef: MutableRefObject<ForceGraphMethods | null>;
   className?: string;
-  selectedNode: Node;
-  setSelectedNode: (node: Node) => void;
-  data: GraphData;
+  selectedNode: GraphNode | null;
+  setSelectedNode: (node: GraphNode | null) => void;
+  graphData: GraphData;
 };
 
 export default function Sidebar({
@@ -32,6 +32,7 @@ export default function Sidebar({
 }: SidebarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isFullscreen, setFullscreen] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
 
   const toggleSidebar = () => setIsOpen(!isOpen);
   const toggleFullscreen = () => {
@@ -40,10 +41,13 @@ export default function Sidebar({
     }
     setFullscreen(!isFullscreen);
   };
-  const centerCamera = () => {
+
+  const focusCamera = () => {
     if (graphRef.current) {
-      graphRef.current.resetCamera();
+      console.log("focusCamera");
+      // graphRef.current.focusCamera();
     }
+    setIsFocused(!isFocused);
   };
 
   return (
@@ -54,7 +58,7 @@ export default function Sidebar({
           <Button
             onClick={toggleSidebar}
             toggled={isOpen}
-            title={isOpen ? "Close Sidebar" : "Open Sidebar"}
+            aria-label={isOpen ? "Close Sidebar" : "Open Sidebar"}
           >
             {isOpen ? (
               <ArrowRightStartOnRectangleIcon />
@@ -65,7 +69,7 @@ export default function Sidebar({
           <Button
             onClick={toggleFullscreen}
             toggled={isFullscreen}
-            title={isFullscreen ? "Minimize Sidebar" : "Maximize Sidebar"}
+            aria-label={isFullscreen ? "Minimize Sidebar" : "Maximize Sidebar"}
           >
             {isFullscreen ? (
               <ArrowsPointingInIcon />
@@ -74,7 +78,11 @@ export default function Sidebar({
             )}
           </Button>
           {/* full screen button */}
-          <Button onClick={centerCamera} title={"Center Camera"}>
+          <Button
+            onClick={focusCamera}
+            toggled={isFocused}
+            aria-label={"Center Camera"}
+          >
             <ViewfinderCircleIcon />
           </Button>
         </div>

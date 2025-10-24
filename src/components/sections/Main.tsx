@@ -1,18 +1,19 @@
 // src/app/components/sections/Main.tsx
 "use client";
 import { Sidebar } from "../ui";
-import Graph, { GraphHandle } from "../ui/Graph";
+import Graph from "../ui/Graph";
 import { useState, useRef } from "react";
-import { GraphData } from "@/lib/types";
+import { GraphData, GraphNode } from "@/types";
+import type { ForceGraphMethods } from "react-force-graph-3d";
 
 export default function Main() {
   // State for the app
-  const [selectedNode, setSelectedNode] = useState(null);
+  const [selectedNode, setSelectedNode] = useState<GraphNode | null>(null);
   const [graphData, setGraphData] = useState<GraphData>({
     nodes: [],
     links: [],
-  });
-  const graphRef = useRef<GraphHandle>(null);
+  } as GraphData);
+  const graphRef = useRef<ForceGraphMethods | null>(null);
 
   return (
     <div className="relative">
@@ -24,11 +25,11 @@ export default function Main() {
         className=""
       />
       <Graph
-        ref={graphRef}
+        graphRef={graphRef}
         selectedNode={selectedNode}
-        setSelectedNode={setSelectedNode}
+        setSelectedNodeAction={setSelectedNode}
         data={graphData}
-        setData={setGraphData}
+        setDataAction={setGraphData}
         className=""
       />
       <noscript>

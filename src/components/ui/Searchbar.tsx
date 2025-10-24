@@ -8,13 +8,13 @@ import {
   ComboboxButton,
 } from "@headlessui/react";
 import { CheckIcon, ChevronDownIcon } from "@heroicons/react/20/solid";
-import { GraphData } from "@/lib/types";
+import { GraphData, GraphNode } from "@/types";
 import clsx from "clsx";
 
 type SearchbarProps = {
-  graphData?: GraphData;
-  selectedNode: Node;
-  setSelectedNode: (node: Node) => void;
+  graphData: GraphData;
+  selectedNode: GraphNode | null;
+  setSelectedNode: (node: GraphNode | null) => void;
 };
 
 export default function Searchbar({
@@ -38,7 +38,7 @@ export default function Searchbar({
       : graphData.nodes
           .filter((node) => {
             return node.name
-              .toLowerCase()
+              ?.toLowerCase()
               .includes(debouncedQuery.toLowerCase());
           })
           .slice(0, MAX_RESULTS);
@@ -48,7 +48,7 @@ export default function Searchbar({
     return debouncedQuery === ""
       ? graphData.nodes.length
       : graphData.nodes.filter((node) =>
-          node.name.toLowerCase().includes(debouncedQuery.toLowerCase()),
+          node.name?.toLowerCase().includes(debouncedQuery.toLowerCase()),
         ).length;
   }, [graphData.nodes, debouncedQuery]);
 
@@ -65,7 +65,7 @@ export default function Searchbar({
           <div className="relative">
             <ComboboxInput
               aria-label="Node"
-              displayValue={(node) => node?.name ?? ""}
+              displayValue={(node: GraphNode) => node?.name ?? ""}
               placeholder="Select a node..."
               onChange={(e) => setQuery(e.target.value)}
               className="searchbar-input group"

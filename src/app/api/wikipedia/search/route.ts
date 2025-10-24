@@ -28,12 +28,14 @@ export async function GET(req: Request) {
     });
   } catch (err) {
     console.error(err);
-    return NextResponse.json(
-      {
-        error: "Internal Server Error",
-        code: err.cause.code,
-      },
-      { status: 500 },
-    );
+    if (err instanceof Error) {
+      return NextResponse.json(
+        {
+          error: "Internal Server Error",
+          code: (err.cause as { code?: string })?.code ?? "UNKNOWN_ERROR_CODE",
+        },
+        { status: 500 },
+      );
+    }
   }
 }

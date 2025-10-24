@@ -1,28 +1,28 @@
 // src/lib/graph.ts
 import { API } from "@/lib/constants";
-import { Node, Link, GraphData } from "@/lib/types";
+import { GraphNode, GraphLink, GraphData } from "@/types";
 import * as THREE from "three";
 import { WIKIPEDIA_ICON_URL } from "@/lib/constants";
 
 // Fetch "Today's Featured Article" (Initial) Node
-export async function fetchInitialNode(): Promise<Node> {
+export async function fetchInitialNode(): Promise<GraphNode> {
   const res = await fetch(`${API}/today`);
   const responseJson = await res.json();
-  return responseJson.node as Node;
+  return responseJson.node as GraphNode;
 }
 
 // Given a Node node, fetch up to limit related nodes (related <-> hyperlinked)
 export async function fetchLinkedNodes(
-  node: Node,
-  limit: number = 256,
-): Promise<Node[]> {
+  node: GraphNode,
+  limit: number = 64,
+): Promise<GraphNode[]> {
   const res = await fetch(`${API}/links?title=${node.name}&limit=${limit}`);
   const { nodes } = await res.json();
-  return nodes as Node[];
+  return nodes as GraphNode[];
 }
 
 // Given a Node node, fetch the html article of it from wikipedia
-export async function fetchNodeInfo(node: Node): Promise<string> {
+export async function fetchNodeInfo(node: GraphNode): Promise<string> {
   const res = await fetch(`${API}/info?title=${node.name}`);
   const { html } = await res.json();
   return html;
@@ -30,20 +30,24 @@ export async function fetchNodeInfo(node: Node): Promise<string> {
 
 // Given a node and it's newNodes, and the old state of the graph, merge the data
 export function mergeGraphData(
-  node: Node,
-  newNodes: Node[],
+  node: GraphNode,
+  newNodes: GraphNode[],
   oldData: GraphData,
 ): GraphData {
-  const existingIds = new Set(oldData.nodes.map((n) => n.id));
+  const existingIds = new Set(oldData.nodes.map((n: GraphNode) => n.id));
 
-  const nodesToAdd: Node[] = newNodes.filter((n) => !existingIds.has(n.id));
+  const nodesToAdd: GraphNode[] = newNodes.filter(
+    (n) => !existingIds.has(n.id),
+  );
   const existingNodeIds = newNodes
     .filter((n) => existingIds.has(n.id))
     .map((n) => n.id);
 
-  const newLinks: Link[] = [
-    ...nodesToAdd.map((n) => ({ source: node.id, target: n.id })),
-    ...existingNodeIds.map((id) => ({ source: node.id, target: id })),
+  const newLinks: GraphLink[] = [
+    ...nodesToAdd.map((n) => ({ source: node.id, target: n.id }) as GraphLink),
+    ...existingNodeIds.map(
+      (id) => ({ source: node.id, target: id }) as GraphLink,
+    ),
   ];
 
   return {
@@ -53,7 +57,7 @@ export function mergeGraphData(
 }
 
 // create the THREE.Sprite object to represent an article node
-export function createNodeSprite(node: Node): THREE.Sprite {
+export function createNodeSprite(node: GraphNode): THREE.Sprite {
   const texture = new THREE.TextureLoader().load(
     node.thumbnail?.source || WIKIPEDIA_ICON_URL,
   );

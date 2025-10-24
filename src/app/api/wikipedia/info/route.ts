@@ -31,11 +31,14 @@ export async function GET(req: Request) {
     return NextResponse.json({ html });
   } catch (err) {
     console.error(err);
-    return NextResponse.json(
-      {
-        error: `${err}`,
-      },
-      { status: 500 },
-    );
+    if (err instanceof Error) {
+      return NextResponse.json(
+        {
+          error: "Internal Server Error",
+          code: (err.cause as { code?: string })?.code ?? "UNKNOWN_ERROR_CODE",
+        },
+        { status: 500 },
+      );
+    }
   }
 }

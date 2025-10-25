@@ -32,7 +32,7 @@ type GraphProps = {
   className?: string;
   graphRef: RefObject<ForceGraphMethods<GraphNode, GraphLink> | undefined>;
   selectedNode: GraphNode | null;
-  setSelectedNodeAction: (node: GraphNode) => void;
+  setSelectedNodeAction: (node: GraphNode | null) => void;
   data: GraphData;
   setDataAction: Dispatch<SetStateAction<GraphData>>;
   isFocused: boolean;
@@ -69,6 +69,14 @@ export default function Graph({
     (node: GraphNode, event?: MouseEvent) => {
       event?.preventDefault?.();
       setSelectedNodeAction(node);
+    },
+    [setSelectedNodeAction],
+  );
+
+  const handleBackgroundClick = useCallback(
+    (event?: MouseEvent) => {
+      event?.preventDefault?.();
+      setSelectedNodeAction(null);
     },
     [setSelectedNodeAction],
   );
@@ -145,7 +153,9 @@ export default function Graph({
       <ForceGraph3D
         ref={graphRef}
         graphData={data}
+        enableNodeDrag={false}
         onNodeClick={handleNodeClick}
+        onBackgroundClick={handleBackgroundClick}
         // TODO: Replace with the article expansion method: onNodeRightClick={expandGraph}
         onNodeRightClick={expandGraph}
         nodeAutoColorBy="id"

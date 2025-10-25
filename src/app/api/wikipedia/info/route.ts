@@ -1,7 +1,6 @@
 // src/app/api/wikipedia/links/route.ts
 
 import { NextResponse } from "next/server";
-import { normalizePageToNode } from "@/lib/utils";
 import { WIKI_INFO_BASE } from "@/lib/constants";
 
 async function fetchInfo(title: string) {

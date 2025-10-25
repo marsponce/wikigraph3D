@@ -92,3 +92,11 @@ export function focusCameraOnGraph(
 
   fgRef.current.cameraPosition(newCameraPos, center, 1500);
 }
+
+// Zoom to fit the graph in the camera's view
+export function zoomToFit(
+  fgRef: RefObject<ForceGraphMethods<GraphNode, GraphLink> | undefined>,
+) {
+  if (!fgRef.current) return;
+  fgRef.current.zoomToFit(500);
+}

@@ -6,6 +6,7 @@ import {
   useEffect,
   useCallback,
   useRef,
+  useState,
   Dispatch,
   SetStateAction,
   RefObject,
@@ -18,7 +19,8 @@ import {
   mergeGraphData,
   createNodeSprite,
   focusCameraOnNode,
-  focusCameraOnGraph,
+  zoomToFit,
+  updateSpriteHighlight,
 } from "@/lib/graph";
 import type { ForceGraphMethods } from "react-force-graph-3d";
 
@@ -52,11 +54,13 @@ export default function Graph({
     })();
   }, [setDataAction]);
 
+  // TODO: Replace this with the sidebar graph expansion
   const expandGraph = useCallback(
     async (node: GraphNode, event?: MouseEvent) => {
       event?.preventDefault?.();
       const newNodes = await fetchLinkedNodes(node);
-      setDataAction((oldData) => mergeGraphData(node, newNodes, oldData));
+      if (newNodes)
+        setDataAction((oldData) => mergeGraphData(node, newNodes, oldData));
     },
     [setDataAction],
   );
@@ -69,18 +73,20 @@ export default function Graph({
     [setSelectedNodeAction],
   );
 
-  useEffect(() => {
+  // Auto focus camera
+  const handleEngineStop = () => {
     if (isFocused) {
       focusCameraOnNode(graphRef, selectedNode, data);
     } else {
-      focusCameraOnGraph(graphRef, data);
+      zoomToFit(graphRef);
     }
-  }, [selectedNode, graphRef, data, isFocused]);
+  };
 
   const nodeObjects = useRef<Map<GraphNode, THREE.Sprite>>(new Map());
 
   const createNodeObject = (node: GraphNode): THREE.Sprite => {
     const sprite = createNodeSprite(node);
+    updateSpriteHighlight(sprite, highlightedNodes.has(node));
     return sprite;
   };
 
@@ -90,8 +96,49 @@ export default function Graph({
       sprite = createNodeObject(node);
       nodeObjects.current.set(node, sprite);
     }
+    if (sprite) {
+      updateSpriteHighlight(sprite, highlightedNodes.has(node));
+    }
     return sprite;
   };
+
+  const [highlightedNodes, setHighlightedNodes] = useState<Set<GraphNode>>(
+    new Set(),
+  );
+  const [highlightedLinks, setHighlightedLinks] = useState<Set<GraphLink>>(
+    new Set(),
+  );
+  // highlight selected Node, or highlight everything
+  useEffect(() => {
+    const HighlightNode = (
+      node: GraphNode | null,
+      nodes: Set<GraphNode>,
+      links: Set<GraphLink>,
+    ) => {
+      if (!node) return;
+      nodes.add(node);
+      data.links.forEach((link) => {
+        if (link.source === node || link.source === node.id) {
+          links.add(link);
+          nodes.add(link.target as GraphNode);
+        } else if (link.target === node || link.target === node.id) {
+          links.add(link);
+          nodes.add(link.source as GraphNode);
+        }
+      });
+      setHighlightedNodes(nodes);
+      setHighlightedLinks(links);
+    };
+    const nodes = new Set<GraphNode>();
+    const links = new Set<GraphLink>();
+    if (selectedNode) {
+      HighlightNode(selectedNode, nodes, links);
+    } else {
+      data.nodes.forEach((node) => {
+        HighlightNode(node, nodes, links);
+      });
+    }
+  }, [selectedNode, data]);
 
   return (
     <div className={clsx(className ?? "")}>
@@ -103,14 +150,15 @@ export default function Graph({
         onNodeRightClick={expandGraph}
         nodeAutoColorBy="id"
         linkAutoColorBy="target"
-        // linkColor={(link) => highlightLinks.has(link) ? "white" : "rgba(0,0,0,0.5)"}
-        // TODO: FIX THIS linkWidth={(link) => (highlightLinks.has(link) ? 1 : 0.1) as number}
-        // linkOpacity={(link) => (highlightLinks.has(link) ? 1 : 0.5)}
+        linkVisibility={(link) => highlightedLinks.has(link)}
+        linkWidth={1.2}
         linkDirectionalArrowLength={3.5}
         linkDirectionalArrowRelPos={1}
         nodeThreeObjectExtend={false}
         nodeThreeObject={createNodeObjectCached}
         showNavInfo={false}
+        cooldownTicks={100}
+        onEngineStop={handleEngineStop}
       />
     </div>
   );

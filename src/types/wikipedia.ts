@@ -72,8 +72,8 @@ export interface GraphNode {
 
 // Link Object
 export interface GraphLink {
-  source: number | string | GraphNode;
-  target: number | string | GraphNode;
+  source?: number | string | GraphNode | undefined;
+  target?: number | string | GraphNode | undefined;
 }
 
 // Graph Data Object

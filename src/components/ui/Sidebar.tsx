@@ -39,9 +39,7 @@ export default function Sidebar({
 
   const toggleSidebar = () => setIsOpen(!isOpen);
   const toggleFullscreen = () => {
-    if (!isOpen) {
-      setIsOpen(true);
-    }
+    if (!isOpen) setIsOpen(true);
     setFullscreen(!isFullscreen);
   };
 
@@ -55,7 +53,13 @@ export default function Sidebar({
 
   return (
     <>
-      <aside className={clsx("sidebar", className ?? "")}>
+      <aside
+        className={clsx(
+          "sidebar",
+          className ?? "",
+          isFullscreen ? "w-screen" : "",
+        )}
+      >
         {/* sidebar button */}
         <div className="button-container">
           <Button
@@ -69,6 +73,7 @@ export default function Sidebar({
               <ArrowLeftEndOnRectangleIcon />
             )}
           </Button>
+          {/* full screen button */}
           <Button
             onClick={toggleFullscreen}
             toggled={isFullscreen}
@@ -80,7 +85,7 @@ export default function Sidebar({
               <ArrowsPointingOutIcon />
             )}
           </Button>
-          {/* full screen button */}
+          {/* focus button */}
           <Button
             onClick={focusCamera}
             toggled={isFocused}
@@ -93,14 +98,10 @@ export default function Sidebar({
           <div
             className={clsx(
               "sidebar-panel",
-              /* TODO: Animate the sidebar
-              "transition duration-600",
-              "data-closed:translate-x-full",
-              "data-enter:data-closed:translate-x-full",*/
-              isFullscreen ? "w-full h-full" : "",
+              /* TODO: Animate the sidebar */
+              isFullscreen ? "w-full" : "",
             )}
           >
-            {/* searchbar */}
             <Searchbar
               graphData={graphData}
               selectedNode={selectedNode}

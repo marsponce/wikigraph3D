@@ -83,3 +83,18 @@ export function createNodeSprite(node: GraphNode): THREE.Sprite {
 
   return sprite;
 }
+
+// update a THREE.Sprite object to be "highlighted" (opaque) or not
+export function updateSpriteHighlight(
+  sprite: THREE.Sprite,
+  isHighlighted: boolean,
+) {
+  const material = sprite.material as THREE.SpriteMaterial;
+  if (isHighlighted) {
+    material.color.setHex(0xffffff);
+    material.opacity = 1;
+  } else {
+    material.color.setHex(0x888888);
+    material.opacity = 0.2;
+  }
+}

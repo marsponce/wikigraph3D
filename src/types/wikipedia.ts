@@ -38,43 +38,52 @@ export interface MediaWikiResponse {
 }
 
 // Node object
-export interface Node {
-  id: number;
-  name: string;
-  description?: string;
-  extract?: string;
+export interface GraphNode {
+  id?: string | number | undefined;
+  name?: string;
+  x?: number;
+  y?: number;
+  z?: number;
+  description?: string | null;
+  extract?: string | null;
   thumbnail?: {
     source: string;
     width?: number;
     height?: number;
-  };
+  } | null;
   content?: {
     desktop?: {
-      page: string;
-      edit?: string;
-      revisions?: string;
-      talk?: string;
-      canonical?: string;
-    };
+      page: string | null;
+      edit?: string | null;
+      revisions?: string | null;
+      talk?: string | null;
+      canonical?: string | null;
+    } | null;
     mobile?: {
-      page: string;
-      edit?: string;
+      page: string | null;
+      edit?: string | null;
       revisions?: string;
       talk?: string;
-    };
+    } | null;
   };
   relevance?: number;
   html?: string;
 }
 
 // Link Object
-export interface Link {
-  source: string;
-  target: string;
+export interface GraphLink {
+  source?: number | string | GraphNode | undefined;
+  target?: number | string | GraphNode | undefined;
 }
 
 // Graph Data Object
 export interface GraphData {
-  nodes: Node[];
-  links: Link[];
+  nodes: GraphNode[];
+  links: GraphLink[];
 }
+
+// Graph Handle type
+export type GraphHandle = {
+  resetCamera: () => void;
+  focusOnCamera: () => void;
+};

@@ -1,4 +1,117 @@
 @import "tailwindcss";
-.root {
-  isolation: isolate;
+
+@theme {
+  --text-xs: 18px;
+}
+
+@layer base {
+  .root {
+    isolation: isolate;
+  }
+
+  body {
+    @apply antialiased min-h-screen min-w-screen text-white bg-black text-sm md:text-base lg:text-lg;
+  }
+
+  main {
+    @apply w-full;
+  }
+
+  header {
+    @apply bg-black/70 shadow-md fixed top-0 left-0 w-auto z-1 p-2 m-2 rounded;
+  }
+
+  nav > ul {
+    @apply flex space-x-2 font-light;
+  }
+
+  footer {
+    @apply fixed bottom-0 left-0 w-full h-8 bg-black/70 mx-auto;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-bold text-lg md:text-xl lg:text-2xl;
+  }
+
+  h1 {
+    @apply text-2xl md:text-4xl lg:text-6xl;
+  }
+
+  h6 {
+    @apply text-center font-light text-xs md:text-sm lg:text-base;
+  }
+
+  a {
+    @apply hover:underline;
+  }
+
+  noscript {
+    @apply flex justify-center h-screen text-center;
+  }
+}
+
+@layer components {
+  /* About */
+  .about {
+    @apply md:mx-auto max-w-3xl pt-16 p-4 md:p-12 lg:p-18 space-y-6;
+  }
+
+  /* Button */
+  .btn {
+    @apply pointer-events-auto size-7 rounded transition-colors duration-300 bg-gray-900 hover:bg-sky-600 active:bg-sky-100;
+  }
+
+  .btn[data-toggled="true"] {
+    @apply bg-sky-600;
+  }
+
+  /* Sidebar */
+  .sidebar {
+    @apply bg-black/20 fixed right-0 z-3 h-full flex;
+  }
+
+  .button-container {
+    @apply flex flex-col space-y-2 w-auto m-2;
+  }
+
+  .sidebar-panel {
+    @apply p-3 bg-black/80 pointer-events-auto origin-top-right rounded h-auto min-h-32 m-2 ml-0 md:w-100;
+  }
+
+  .sidebar-content {
+    @apply overflow-y-scroll text-justify;
+  }
+
+  /* Searchbar */
+  .searchbar {
+    @apply relative w-auto z-50 mx-auto;
+  }
+
+  .searchbar-input {
+    @apply container rounded-lg border-none bg-black/100 py-2 px-2 text-xl md:text-2xl font-bold text-white hover:ring-3 hover:ring-white/25 focus:outline-none focus:ring-2 focus:ring-white/100;
+  }
+
+  .searchbar-button {
+    @apply absolute inset-y-0 right-0 p-2;
+  }
+
+  .searchbar-button-icon {
+    @apply size-8 fill-white md:fill-white/0 group-data-hover:fill-white;
+  }
+
+  .searchbar-result {
+    @apply flex cursor-default items-center gap-2 rounded px-3 py-1.5 select-none;
+  }
+
+  .searchbar-results-container {
+    @apply container absolute overflow-hidden h-auto max-h-screen w-(--input-width) mt-1 rounded-lg ring-3 ring-white/15 bg-black/90 p-1 z-3;
+  }
+}
+
+@layer utilities {
 }

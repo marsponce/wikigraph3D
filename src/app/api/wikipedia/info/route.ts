@@ -1,7 +1,6 @@
 // src/app/api/wikipedia/links/route.ts
 
 import { NextResponse } from "next/server";
-import { normalizePageToNode } from "@/lib/utils";
 import { WIKI_INFO_BASE } from "@/lib/constants";
 
 async function fetchInfo(title: string) {
@@ -16,20 +15,29 @@ async function fetchInfo(title: string) {
   }
 }
 
-export async function GET(req, {}) {
+export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
     const title = searchParams.get("title");
+    if (!title) {
+      return NextResponse.json(
+        { error: "Missing title Parameter" },
+        { status: 400 },
+      );
+    }
     const html = await fetchInfo(title);
 
     return NextResponse.json({ html });
   } catch (err) {
     console.error(err);
-    return NextResponse.json(
-      {
-        error: `${err}`,
-      },
-      { status: 500 },
-    );
+    if (err instanceof Error) {
+      return NextResponse.json(
+        {
+          error: "Internal Server Error",
+          code: (err.cause as { code?: string })?.code ?? "UNKNOWN_ERROR_CODE",
+        },
+        { status: 500 },
+      );
+    }
   }
 }

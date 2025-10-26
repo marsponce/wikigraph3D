@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-export async function GET(req, {}) {
+export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
     const title = searchParams.get("title");
@@ -28,12 +28,14 @@ export async function GET(req, {}) {
     });
   } catch (err) {
     console.error(err);
-    return NextResponse.json(
-      {
-        error: "Internal Server Error",
-        code: err.cause.code,
-      },
-      { status: 500 },
-    );
+    if (err instanceof Error) {
+      return NextResponse.json(
+        {
+          error: "Internal Server Error",
+          code: (err.cause as { code?: string })?.code ?? "UNKNOWN_ERROR_CODE",
+        },
+        { status: 500 },
+      );
+    }
   }
 }

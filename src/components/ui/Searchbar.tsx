@@ -8,18 +8,16 @@ import {
   ComboboxButton,
 } from "@headlessui/react";
 import { CheckIcon, ChevronDownIcon } from "@heroicons/react/20/solid";
-import { GraphData } from "@/lib/types";
+import { GraphData, GraphNode } from "@/types";
 import clsx from "clsx";
 
 type SearchbarProps = {
-  className?: string;
-  graphData?: GraphData;
-  selectedNode: Node;
-  setSelectedNode: (node: Node) => void;
+  graphData: GraphData;
+  selectedNode: GraphNode | null;
+  setSelectedNode: (node: GraphNode | null) => void;
 };
 
 export default function Searchbar({
-  className,
   graphData,
   selectedNode,
   setSelectedNode,
@@ -32,7 +30,7 @@ export default function Searchbar({
     return () => clearTimeout(timer);
   }, [query]);
 
-  const MAX_RESULTS = 16;
+  const MAX_RESULTS = 15;
 
   const filteredNodes = useMemo(() => {
     return debouncedQuery === ""
@@ -40,7 +38,7 @@ export default function Searchbar({
       : graphData.nodes
           .filter((node) => {
             return node.name
-              .toLowerCase()
+              ?.toLowerCase()
               .includes(debouncedQuery.toLowerCase());
           })
           .slice(0, MAX_RESULTS);
@@ -50,7 +48,7 @@ export default function Searchbar({
     return debouncedQuery === ""
       ? graphData.nodes.length
       : graphData.nodes.filter((node) =>
-          node.name.toLowerCase().includes(debouncedQuery.toLowerCase()),
+          node.name?.toLowerCase().includes(debouncedQuery.toLowerCase()),
         ).length;
   }, [graphData.nodes, debouncedQuery]);
 
@@ -58,7 +56,7 @@ export default function Searchbar({
 
   return (
     <>
-      <div className="relative w-auto z-50 mx-auto pr-10">
+      <div className="searchbar">
         <Combobox
           value={selectedNode}
           onChange={setSelectedNode}
@@ -67,32 +65,28 @@ export default function Searchbar({
           <div className="relative">
             <ComboboxInput
               aria-label="Node"
-              displayValue={(node) => node?.name ?? ""}
+              displayValue={(node: GraphNode) => node?.name ?? ""}
               placeholder="Select a node..."
               onChange={(e) => setQuery(e.target.value)}
-              className="group container rounded-lg border-none bg-black/100 py-2 px-2 text-2xl font-bold text-white hover:ring-3 hover:ring-white/25 focus:outline-none focus:ring-2 focus:ring-white/100"
+              className="searchbar-input group"
             />
-            <ComboboxButton className="group absolute inset-y-0 right-0 px-2">
-              <ChevronDownIcon className="size-8 fill-white/0 group-data-hover:fill-white" />
+            <ComboboxButton className="searchbar-button group">
+              <ChevronDownIcon className="searchbar-button-icon" />
             </ComboboxButton>
           </div>
 
           <ComboboxOptions
             anchor="bottom start"
             portal
-            className={clsx(
-              "container absolute h-(calc(100vh-1rem)) w-(--input-width)",
-              "mt-1 rounded-lg ring-3 ring-white/15 bg-black/90 p-1 z-50",
-            )}
+            className="searchbar-results-container"
           >
             {filteredNodes.map((node) => (
               <ComboboxOption
                 key={node.id}
                 value={node}
                 className={clsx(
-                  "group flex cursor-default items-center gap-2 rounded px-3 py-1.5 select-none",
-                  "data-focus:ring-2 data-focus:right-white data-focus:ring-offset-1",
-                  "data-focus:bg-gray-800/50",
+                  "group searchbar-result",
+                  "data-focus:ring-2 data-focus:right-white data-focus:ring-offset-0",
                 )}
               >
                 <CheckIcon className="invisible size-4 fill-white group-data-selected:visible" />
@@ -104,7 +98,7 @@ export default function Searchbar({
                 key="hidden-count"
                 value={{ id: "hidden-count" }}
                 disabled
-                className="flex cursor-default items-center gap-2 rounded-lg px-3 py-1.5 select-none italic text-gray-400"
+                className="searchbar-result italic text-gray-400"
               >
                 ... ({hiddenCount} more{" "}
                 {hiddenCount === 1 ? "result" : "results"} hidden)

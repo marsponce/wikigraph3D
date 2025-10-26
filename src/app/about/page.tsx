@@ -1,7 +1,6 @@
+// src/app/components/sections/About.tsx
+import { About } from "@/components/sections";
+
 export default function Page() {
-	return (
-		<p>
-		about blah blah
-		</p>
-	)
+  return <About />;
 }

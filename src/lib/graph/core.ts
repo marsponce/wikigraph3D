@@ -22,8 +22,8 @@ export async function fetchLinkedNodes(
 }
 
 // Given a Node node, fetch the html article of it from wikipedia
-export async function fetchNodeInfo(node: GraphNode): Promise<string> {
-  const res = await fetch(`${API}/info?title=${node.name}`);
+export async function fetchNodeInfo(name: string): Promise<string> {
+  const res = await fetch(`${API}/info?title=${name}`);
   const { html } = await res.json();
   return html;
 }

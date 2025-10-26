@@ -3,7 +3,7 @@ import parse from "html-react-parser";
 import he from "he";
 import { useState, RefObject } from "react";
 import { Transition } from "@headlessui/react";
-import { Button, Searchbar } from "@/components/ui";
+import { Button, Searchbar, ArticleCard } from "@/components/ui";
 import clsx from "clsx";
 import { GraphData, GraphNode, GraphLink } from "@/types";
 import { ForceGraphMethods } from "react-force-graph-3d";
@@ -109,20 +109,19 @@ export default function Sidebar({
             />
             <div className="sidebar-content prose">
               {selectedNode ? (
-                <>
-                  {selectedNode.description && (
-                    <div>
-                      <h2>Description</h2>
-                      {parse(he.decode(selectedNode.description))}
-                    </div>
-                  )}
-                  {selectedNode.extract && (
-                    <div>
-                      <h2>Extract</h2>
-                      {parse(he.decode(selectedNode.extract))}
-                    </div>
-                  )}
-                </>
+                //                  {selectedNode.description && (
+                //                    <div>
+                //                      <h2>Description</h2>
+                //                      {parse(he.decode(selectedNode.description))}
+                //                    </div>
+                //                  )}
+                //                  {selectedNode.extract && (
+                //                    <div>
+                //                      <h2>Extract</h2>
+                //                      {parse(he.decode(selectedNode.extract))}
+                //                    </div>
+                //                  )}
+                <ArticleCard name={selectedNode.name} />
               ) : (
                 <p>No node selected</p>
               )}

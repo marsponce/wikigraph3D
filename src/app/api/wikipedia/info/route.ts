@@ -2,6 +2,12 @@
 
 import { NextResponse } from "next/server";
 import { WIKI_INFO_BASE } from "@/lib/constants";
+import QuickLRU from "quick-lru";
+
+const infoCache = new QuickLRU<string, string>({
+  maxSize: 1000,
+  maxAge: 3.6e6,
+});
 
 async function fetchInfo(title: string) {
   const url = new URL(`${WIKI_INFO_BASE}/page/html/${title}`);
@@ -25,7 +31,16 @@ export async function GET(req: Request) {
         { status: 400 },
       );
     }
-    const html = await fetchInfo(title);
+    // check infoCache first
+    let html;
+    if (infoCache.has(title)) {
+      html = infoCache.get(title);
+      console.log(title, "hit", "expiresIn:", infoCache.expiresIn(title));
+    } else {
+      html = await fetchInfo(title);
+      infoCache.set(title, html as string);
+      console.log(title, "miss");
+    }
 
     return NextResponse.json({ html });
   } catch (err) {

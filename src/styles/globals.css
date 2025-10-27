@@ -80,16 +80,16 @@
   }
 
   .sidebar-panel {
-    @apply p-3 bg-black/80 pointer-events-auto origin-top-right rounded h-auto min-h-32 m-2 ml-0 md:w-100;
+    @apply p-3 bg-black/80 origin-top-right rounded h-auto min-h-32 m-2 ml-0 w-full;
   }
 
   .sidebar-content {
-    @apply overflow-y-scroll text-justify;
+    @apply overflow-y-scroll;
   }
 
   /* Searchbar */
   .searchbar {
-    @apply relative w-auto z-50 mx-auto;
+    @apply relative w-full z-50 mx-auto sticky top-0;
   }
 
   .searchbar-input {
@@ -110,6 +110,19 @@
 
   .searchbar-results-container {
     @apply container absolute overflow-hidden h-auto max-h-screen w-(--input-width) mt-1 rounded-lg ring-3 ring-white/15 bg-black/90 p-1 z-3;
+  }
+
+  /* ArticleCard */
+  .articlecard {
+    @apply p-2 m-1 flex-1 overflow-y-scroll ring-2 rounded text-justify w-full;
+  }
+
+  .articlecard a {
+    @apply text-sky-400;
+  }
+
+  .articlecard p {
+    @apply py-2;
   }
 }
 

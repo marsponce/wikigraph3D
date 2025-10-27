@@ -37,7 +37,10 @@ export default function Sidebar({
   const [isOpen, setIsOpen] = useState(false);
   const [isFullscreen, setFullscreen] = useState(false);
 
-  const toggleSidebar = () => setIsOpen(!isOpen);
+  const toggleSidebar = () => {
+    if (isFullscreen) setFullscreen(false);
+    setIsOpen(!isOpen);
+  };
   const toggleFullscreen = () => {
     if (!isOpen) setIsOpen(true);
     setFullscreen(!isFullscreen);
@@ -78,6 +81,7 @@ export default function Sidebar({
             onClick={toggleFullscreen}
             toggled={isFullscreen}
             aria-label={isFullscreen ? "Minimize Sidebar" : "Maximize Sidebar"}
+            className="hidden md:block"
           >
             {isFullscreen ? (
               <ArrowsPointingInIcon />
@@ -98,8 +102,9 @@ export default function Sidebar({
           <div
             className={clsx(
               "sidebar-panel",
+              "flex w-full flex-col h-full",
               /* TODO: Animate the sidebar */
-              isFullscreen ? "w-full" : "",
+              isFullscreen ? "" : "md:max-w-100",
             )}
           >
             <Searchbar
@@ -107,25 +112,15 @@ export default function Sidebar({
               selectedNode={selectedNode}
               setSelectedNode={setSelectedNode}
             />
-            <div className="sidebar-content prose">
-              {selectedNode ? (
-                //                  {selectedNode.description && (
-                //                    <div>
-                //                      <h2>Description</h2>
-                //                      {parse(he.decode(selectedNode.description))}
-                //                    </div>
-                //                  )}
-                //                  {selectedNode.extract && (
-                //                    <div>
-                //                      <h2>Extract</h2>
-                //                      {parse(he.decode(selectedNode.extract))}
-                //                    </div>
-                //                  )}
-                <ArticleCard name={selectedNode.name} />
-              ) : (
-                <p>No node selected</p>
-              )}
-            </div>
+
+            {selectedNode ? (
+              <ArticleCard
+                name={selectedNode.name}
+                className={clsx(isFullscreen ? "" : "md:max-w-100")}
+              />
+            ) : (
+              <p>No node selected</p>
+            )}
           </div>
         </Transition>
       </aside>

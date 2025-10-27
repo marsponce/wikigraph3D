@@ -1,11 +1,13 @@
 import { fetchNodeInfo } from "@/lib/graph/core";
 import { useState, useEffect } from "react";
 import { slimWikiHTML } from "@/lib/utils";
+import clsx from "clsx";
 
 type ArticleCardProps = {
+  className?: string;
   name: string | undefined;
 };
-export default function ArticleCard({ name }: ArticleCardProps) {
+export default function ArticleCard({ className, name }: ArticleCardProps) {
   const [html, setHtml] = useState<string>("");
 
   useEffect(() => {
@@ -21,7 +23,7 @@ export default function ArticleCard({ name }: ArticleCardProps) {
   return (
     <>
       <div
-        className="prose dark:prose-invert max-w-none"
+        className={clsx("prose dark:prose-invert articlecard", className ?? "")}
         dangerouslySetInnerHTML={{ __html: html }}
       />
     </>

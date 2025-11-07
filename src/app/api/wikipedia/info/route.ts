@@ -2,12 +2,7 @@
 
 import { NextResponse } from "next/server";
 import { WIKI_INFO_BASE } from "@/lib/constants";
-import QuickLRU from "quick-lru";
-
-const infoCache = new QuickLRU<string, string>({
-  maxSize: 1000,
-  maxAge: 3.6e6,
-});
+import { responseCache as infoCache } from "@/lib/cache";
 
 async function fetchInfo(title: string) {
   const url = new URL(`${WIKI_INFO_BASE}/page/html/${title}`);
@@ -18,6 +13,7 @@ async function fetchInfo(title: string) {
     return html;
   } catch (err) {
     console.error("Error fetching info:", err);
+    return null;
   }
 }
 
@@ -38,8 +34,10 @@ export async function GET(req: Request) {
       console.log(title, "hit", "expiresIn:", infoCache.expiresIn(title));
     } else {
       html = await fetchInfo(title);
-      infoCache.set(title, html as string);
-      console.log(title, "miss");
+      if (html) {
+        infoCache.set(title, html as string);
+        console.log(title, "miss");
+      }
     }
 
     return NextResponse.json({ html });

@@ -11,9 +11,11 @@ export default function ArticleCard({ className, name }: ArticleCardProps) {
   const [html, setHtml] = useState<string>("");
 
   useEffect(() => {
-    if (!name) return;
+    if (!name) {
+      setHtml("<h6>No node selected...</h6>");
+      return;
+    }
     (async () => {
-      setHtml("");
       const html = await fetchNodeInfo(name);
       const slim = slimWikiHTML(html);
       setHtml(slim);
@@ -23,7 +25,7 @@ export default function ArticleCard({ className, name }: ArticleCardProps) {
   return (
     <>
       <div
-        className={clsx("prose dark:prose-invert articlecard", className ?? "")}
+        className={clsx("articlecard", className ?? "")}
         dangerouslySetInnerHTML={{ __html: html }}
       />
     </>

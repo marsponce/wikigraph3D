@@ -10,7 +10,8 @@
   }
 
   body {
-    @apply antialiased min-h-screen min-w-screen text-white bg-black text-sm md:text-base lg:text-lg;
+    @apply antialiased min-h-screen min-w-screen text-white bg-black;
+    @apply text-xs sm:text-sm md:text-base lg:text-lg;
   }
 
   main {
@@ -18,11 +19,22 @@
   }
 
   header {
-    @apply bg-black/70 shadow-md fixed top-0 left-0 w-auto z-1 p-2 m-2 rounded;
+    @apply bg-black/70 fixed z-1;
+    @apply bottom-8 right-0 left-0 p-2;
+    @apply sm:top-0 sm:bottom-auto sm:right-auto sm:p-2 sm:m-2 sm:rounded;
+  }
+
+  nav {
   }
 
   nav > ul {
-    @apply flex space-x-2 font-light;
+    @apply flex font-light;
+    @apply sm:space-x-2;
+  }
+
+  nav > ul > li {
+    @apply flex-auto;
+    @apply text-center;
   }
 
   footer {
@@ -39,7 +51,13 @@
   }
 
   h1 {
-    @apply text-2xl md:text-4xl lg:text-6xl;
+    @apply text-2xl sm:text-3xl md:text-4xl;
+  }
+  h2 {
+    @apply text-xl sm:text-2xl md:text-3xl;
+  }
+  h3 {
+    @apply text-lg sm:text-xl md:text-2xl;
   }
 
   h6 {
@@ -53,17 +71,21 @@
   noscript {
     @apply flex justify-center h-screen text-center;
   }
+
+  canvas {
+    @apply z-0;
+  }
 }
 
 @layer components {
   /* About */
   .about {
-    @apply md:mx-auto max-w-3xl pt-16 p-4 md:p-12 lg:p-18 space-y-6;
+    @apply md:mx-auto max-w-3xl p-4 md:p-12 lg:p-18 space-y-6;
   }
 
   /* Button */
   .btn {
-    @apply pointer-events-auto size-7 rounded transition-colors duration-300 bg-gray-900 hover:bg-sky-600 active:bg-sky-100;
+    @apply pointer-events-auto size-10 sm:size-7 rounded transition-colors duration-300 bg-gray-900 hover:bg-sky-600 active:bg-sky-100;
   }
 
   .btn[data-toggled="true"] {
@@ -72,36 +94,65 @@
 
   /* Sidebar */
   .sidebar {
-    @apply bg-black/20 fixed right-0 z-3 h-full flex;
+    @apply bg-white/10 backdrop-blur-sm sm:backdrop-blur-md md:backdrop-blur-lg lg:backdrop-blur-xl fixed right-0 z-3;
+    @apply flex flex-col sm:flex-row;
+    @apply rounded sm:rounded-none;
+    @apply w-screen sm:min-w-0 sm:w-1/3;
+    @apply h-screen;
+    @apply transition-all duration-500;
+  }
+
+  .sidebar[data-sidebar-state="closed"] {
+    @apply h-16 sm:h-full sm:w-13;
+  }
+  .sidebar[data-sidebar-state="fullscreen"] {
+    @apply rounded-none w-screen;
+    @apply bg-black/30;
+  }
+  .sidebar[data-sidebar-state="open"] {
+    @apply bg-black/30 sm:bg-white/10;
   }
 
   .button-container {
-    @apply flex flex-col space-y-2 w-auto m-2;
+    @apply flex flex-row sm:flex-col;
+    @apply place-content-center place-items-center;
+    @apply space-x-2 sm:space-y-2 sm:space-x-0;
+    @apply w-fit p-3;
   }
 
   .sidebar-panel {
-    @apply p-3 bg-black/80 origin-top-right rounded h-auto min-h-32 m-2 ml-0 w-full;
+    @apply overflow-y-auto p-3 sm:pl-0.5 sm:p-3;
+    @apply overflow-x-hidden;
+    @apply transition-all duration-500;
+    @apply sm:w-sm;
+    @apply h-full;
+    @apply will-change-auto;
   }
 
-  .sidebar-content {
-    @apply overflow-y-scroll;
+  .sidebar-panel[data-sidebar-state="closed"] {
+    @apply h-0 p-0;
+    @apply sm:translate-x-full;
+  }
+
+  .sidebar-panel[data-sidebar-state="fullscreen"] {
+    @apply w-full;
   }
 
   /* Searchbar */
   .searchbar {
-    @apply relative w-full z-50 mx-auto sticky top-0;
+    @apply relative z-50 sticky top-0;
   }
 
   .searchbar-input {
-    @apply container rounded-lg border-none bg-black/100 py-2 px-2 text-xl md:text-2xl font-bold text-white hover:ring-3 hover:ring-white/25 focus:outline-none focus:ring-2 focus:ring-white/100;
+    @apply w-full container rounded border-none bg-black/100 text-xl md:text-2xl font-bold text-white ring-2 ring-white/25 hover:ring-white focus:ring-2 focus:ring-white/100 p-2;
   }
 
   .searchbar-button {
-    @apply absolute inset-y-0 right-0 p-2;
+    @apply absolute inset-y-0 right-0;
   }
 
   .searchbar-button-icon {
-    @apply size-8 fill-white md:fill-white/0 group-data-hover:fill-white;
+    @apply size-8 fill-white sm:fill-white/0 sm:group-data-hover:fill-white;
   }
 
   .searchbar-result {
@@ -114,7 +165,9 @@
 
   /* ArticleCard */
   .articlecard {
-    @apply p-2 m-1 flex-1 overflow-y-scroll ring-2 rounded text-justify w-full;
+    @apply text-justify pt-2;
+    @apply flow-root;
+    @apply border-transparent;
   }
 
   .articlecard a {
@@ -122,7 +175,55 @@
   }
 
   .articlecard p {
-    @apply py-2;
+    @apply p-0;
+    @apply py-1.5;
+  }
+
+  .articlecard h2 {
+    @apply border-b;
+    @apply border-b-white;
+    @apply mb-1;
+  }
+
+  .articlecard img {
+    @apply p-2;
+    @apply mx-auto;
+  }
+
+  .articlecard figure {
+    @apply rounded;
+    @apply bg-white/30;
+    @apply mx-auto;
+    @apply sm:float-right sm:clear-right;
+    @apply m-3 sm:m-0 sm:ml-3 sm:mb-3 sm:mt-2;
+  }
+
+  .articlecard figure.mw-halign-left {
+    @apply sm:float-left sm:clear-left;
+    @apply m-3 sm:m-0 sm:mr-3 sm:mb-3 sm:mt-2;
+  }
+
+  .articlecard figcaption {
+    @apply italic m-2;
+    @apply text-start;
+    @apply table-caption;
+    @apply w-fit;
+  }
+
+  .articlecard table.wikitable {
+    @apply table-fixed lg:table-auto rounded;
+  }
+
+  .articlecard thead {
+    @apply text-black fill-white;
+  }
+
+  .articlecard tbody {
+    @apply border border-white;
+  }
+
+  .articlecard td {
+    @apply border border-white text-center;
   }
 }
 

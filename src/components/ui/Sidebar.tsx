@@ -7,8 +7,6 @@ import { ForceGraphMethods } from "react-force-graph-3d";
 import {
   ArrowsPointingInIcon,
   ArrowsPointingOutIcon,
-  ArrowLeftEndOnRectangleIcon,
-  ArrowRightStartOnRectangleIcon,
   ViewfinderCircleIcon,
   InformationCircleIcon,
 } from "@heroicons/react/24/outline";
@@ -74,11 +72,6 @@ export default function Sidebar({
               sidebarState === "closed" ? "Open Sidebar" : "Close Sidebar"
             }
           >
-            {/*sidebarState === "open" || sidebarState === "fullscreen" ? (
-              <ArrowRightStartOnRectangleIcon />
-            ) : (
-              <ArrowLeftEndOnRectangleIcon />
-            )*/}
             <InformationCircleIcon />
           </Button>
           {/* full screen button */}
@@ -114,7 +107,7 @@ export default function Sidebar({
             setSelectedNode={setSelectedNode}
             data-sidebar-state={sidebarState}
           />
-          <ArticleCard name={selectedNode ? selectedNode.name : ""} />
+          <ArticleCard name={selectedNode ? selectedNode.name : undefined} />
         </div>
       </aside>
     </>

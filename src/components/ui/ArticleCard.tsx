@@ -2,6 +2,7 @@ import { fetchNodeInfo } from "@/lib/graph/core";
 import { useState, useEffect } from "react";
 import { slimWikiHTML } from "@/lib/utils";
 import clsx from "clsx";
+import { articleCache } from "@/lib/cache";
 
 type ArticleCardProps = {
   className?: string;
@@ -14,17 +15,28 @@ export default function ArticleCard({ className, name }: ArticleCardProps) {
     if (!name) {
       setHtml("<h6>No node selected...</h6>");
       return;
+    } else {
+      setHtml("<h6>Loading...</h6>");
     }
-    (async () => {
-      const html = await fetchNodeInfo(name);
-      const slim = slimWikiHTML(html);
-      setHtml(slim);
-    })();
+    let slim;
+    if (articleCache.has(name)) {
+      slim = articleCache.get(name);
+      setHtml(slim as string);
+      console.log(name, "hit", "expiresIn:", articleCache.expiresIn(name));
+    } else {
+      (async () => {
+        const html = await fetchNodeInfo(name);
+        slim = slimWikiHTML(html);
+        setHtml(slim);
+        articleCache.set(name, slim);
+        console.log(name, "miss");
+      })();
+    }
   }, [name]);
 
   return (
     <>
-      <div
+      <article
         className={clsx("articlecard", className ?? "")}
         dangerouslySetInnerHTML={{ __html: html }}
       />

@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { slimWikiHTML } from "@/lib/utils";
 import clsx from "clsx";
 import { articleCache } from "@/lib/cache";
+import { fetchArticle } from "@/lib/article";
 
 type ArticleCardProps = {
   className?: string;
@@ -19,14 +20,15 @@ export default function ArticleCard({ className, name }: ArticleCardProps) {
       setHtml("<h6>Loading...</h6>");
     }
     let slim;
+    // TODO: Rewrite fetchNodeInfo to fetchArticle to run on SERVER
     if (articleCache.has(name)) {
       slim = articleCache.get(name);
       setHtml(slim as string);
       console.log(name, "hit", "expiresIn:", articleCache.expiresIn(name));
     } else {
       (async () => {
-        const html = await fetchNodeInfo(name);
-        slim = slimWikiHTML(html);
+        slim = await fetchArticle(name);
+        // slim = slimWikiHTML(html);
         setHtml(slim);
         articleCache.set(name, slim);
         console.log(name, "miss");

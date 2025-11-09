@@ -1,6 +1,5 @@
 import { fetchNodeInfo } from "@/lib/graph/core";
 import { useState, useEffect } from "react";
-import { slimWikiHTML } from "@/lib/utils";
 import clsx from "clsx";
 import { articleCache } from "@/lib/cache";
 import { fetchArticle } from "@/lib/article";

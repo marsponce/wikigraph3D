@@ -11,26 +11,29 @@ export async function fetchArticle(title: string): Promise<string> {
 
 // Server-side
 export function slimArticle(fullHtml: string | null): string {
+  console.log("Slimming article...");
   if (!fullHtml) return "<h6> No Article provided... </h6>";
   const $ = cheerio.load(fullHtml);
   // Parse the document
+  // Stuff to allow
+  const ALLOW = [];
   // Stuff to drop
   const DROP = [
     ".metadata",
-    ".infobox",
-    ".toc",
+    //    ".infobox",
+    //    ".toc",
     ".navbox",
-    ".vertical-navbox",
-    ".ambox",
-    ".hatnote",
-    ".reflist",
-    ".mw-empty-elt",
-    "aside",
-    "script",
-    "style",
-    "noscript",
-    "iframe",
-    "sup.reference",
+    //    ".vertical-navbox",
+    //    ".ambox",
+    //    ".hatnote",
+    //    ".reflist",
+    //    ".mw-empty-elt",
+    //    "aside",
+    //    "script",
+    //    "style",
+    //    "noscript",
+    //    "iframe",
+    //    "sup.reference",
   ];
   DROP.forEach((sel) => $(sel).remove());
 
@@ -38,5 +41,6 @@ export function slimArticle(fullHtml: string | null): string {
   $("span:empty. p:empty").remove();
   const slim = $("body").length ? $("body").html() : "";
   slim!.trim();
+  console.log("Slimming article complete!");
   return slim!;
 }

@@ -14,31 +14,54 @@ export function slimArticle(fullHtml: string | null): string {
   console.log("Slimming article...");
   if (!fullHtml) return "<h6> No Article provided... </h6>";
   const $ = cheerio.load(fullHtml);
-  // Parse the document
-  // Stuff to allow
-  const ALLOW = [];
+  // slim the article
+
   // Stuff to drop
   const DROP = [
     ".metadata",
     //    ".infobox",
     //    ".toc",
     ".navbox",
-    //    ".vertical-navbox",
+    ".vertical-navbox",
     //    ".ambox",
     //    ".hatnote",
     //    ".reflist",
     //    ".mw-empty-elt",
     //    "aside",
-    //    "script",
-    //    "style",
-    //    "noscript",
-    //    "iframe",
-    //    "sup.reference",
+    "script",
+    "style",
+    "noscript",
+    "iframe",
+    ".shortdescription",
   ];
   DROP.forEach((sel) => $(sel).remove());
 
+  const ALLOW_CLASSES = new Set([
+    "infobox",
+    "wikitable",
+    "portalbox",
+    "reference",
+    "reflist",
+    "references",
+    "refbegin",
+    "catlinks",
+  ]);
+  // Remove non-allowed classes
+  $("[class]").each((i, elt) => {
+    const $elt = $(elt);
+    const kept = ($elt.attr("class") || "")
+      .split(/\s+/)
+      .filter(Boolean)
+      .filter((cls) => ALLOW_CLASSES.has(cls));
+
+    if (kept.length) $elt.attr("class", kept.join(" "));
+    else $elt.removeAttr("class");
+  });
+
   // Cleanup
   $("span:empty. p:empty").remove();
+  // Remove all default styling
+  $("[style]").removeAttr("style");
   const slim = $("body").length ? $("body").html() : "";
   slim!.trim();
   console.log("Slimming article complete!");

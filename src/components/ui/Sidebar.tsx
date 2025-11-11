@@ -2,7 +2,7 @@
 import { useState, RefObject } from "react";
 import { Button, Searchbar, ArticleCard } from "@/components/ui";
 import clsx from "clsx";
-import { GraphData, GraphNode, GraphLink } from "@/types";
+import type { GraphData, GraphNode, GraphLink } from "@/types";
 import { ForceGraphMethods } from "react-force-graph-3d";
 import {
   ArrowsPointingInIcon,
@@ -107,7 +107,10 @@ export default function Sidebar({
             setSelectedNode={setSelectedNode}
             data-sidebar-state={sidebarState}
           />
-          <ArticleCard name={selectedNode ? selectedNode.name : undefined} />
+          <ArticleCard
+            name={selectedNode ? selectedNode.name : undefined}
+            setSelectedNode={setSelectedNode}
+          />
         </div>
       </aside>
     </>

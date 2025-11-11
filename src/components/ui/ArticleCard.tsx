@@ -1,16 +1,19 @@
-import { fetchNodeInfo } from "@/lib/graph/core";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import clsx from "clsx";
 import { articleCache } from "@/lib/cache";
 import { fetchArticle } from "@/lib/article";
+import type { GraphNode } from "@/types";
 
 type ArticleCardProps = {
   className?: string;
   name: string | undefined;
+  setSelectedNode: (node: GraphNode | null) => void;
 };
 export default function ArticleCard({ className, name }: ArticleCardProps) {
   const [html, setHtml] = useState<string>("");
+  const articleRef = useRef<HTMLElement>(null);
 
+  // Load the article
   useEffect(() => {
     if (!name) {
       setHtml("<h6>No node selected...</h6>");
@@ -19,7 +22,6 @@ export default function ArticleCard({ className, name }: ArticleCardProps) {
       setHtml("<h6>Loading...</h6>");
     }
     let slim;
-    // TODO: Rewrite fetchNodeInfo to fetchArticle to run on SERVER
     if (articleCache.has(name)) {
       slim = articleCache.get(name);
       setHtml(slim as string);
@@ -27,17 +29,39 @@ export default function ArticleCard({ className, name }: ArticleCardProps) {
     } else {
       (async () => {
         slim = await fetchArticle(name);
-        // slim = slimWikiHTML(html);
         setHtml(slim);
-        articleCache.set(name, slim);
+        articleCache.set(name, slim, { maxAge: 1 }); // TODO: Replace maxAge here when debug is finished
         console.log(name, "miss");
       })();
     }
   }, [name]);
 
+  // Intercept <a /> clicks
+  useEffect(() => {
+    const article = articleRef.current;
+    const handleClick = (e: MouseEvent) => {
+      const link = (e.target as HTMLElement).closest("a");
+      if (link) {
+        e.preventDefault();
+
+        const href = link.getAttribute("href");
+        console.log("Link clicked:", href);
+      }
+    };
+
+    if (article) article.addEventListener("click", handleClick);
+
+    return () => {
+      if (article) {
+        article.removeEventListener("click", handleClick);
+      }
+    };
+  }, [html]);
+
   return (
     <>
       <article
+        ref={articleRef}
         className={clsx("articlecard", className ?? "")}
         dangerouslySetInnerHTML={{ __html: html }}
       />

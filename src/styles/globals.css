@@ -170,6 +170,36 @@
     @apply border-transparent;
   }
 
+  .articlecard .infobox {
+    @apply sm:float-right sm:clear-right;
+    @apply m-2;
+    @apply w-min;
+  }
+
+  .articlecard .infobox ul {
+    @apply list-none;
+  }
+
+  .articlecard table {
+    @apply lg:table-auto rounded;
+  }
+
+  .articlecard thead {
+    @apply text-black fill-white;
+  }
+
+  .articlecard tbody {
+    @apply border border-white;
+  }
+
+  .articlecard td {
+    @apply border border-white text-center;
+  }
+
+  .articlecard section {
+    @apply my-2;
+  }
+
   .articlecard a {
     @apply text-sky-400;
   }
@@ -210,20 +240,55 @@
     @apply w-fit;
   }
 
-  .articlecard table.wikitable {
-    @apply table-fixed lg:table-auto rounded;
+  .articlecard li {
+    @apply break-inside-avoid ml-0 mb-2 [overflow-wrap:anywhere];
+    @apply text-start;
   }
 
-  .articlecard thead {
-    @apply text-black fill-white;
+  .articlecard ul {
+    @apply list-disc list-outside;
   }
 
-  .articlecard tbody {
-    @apply border border-white;
+  .articlecard ol {
+    @apply list-decimal list-outside;
   }
 
-  .articlecard td {
-    @apply border border-white text-center;
+  .articlecard .refbegin ul {
+    @apply list-none;
+    @apply ml-0;
+    @apply text-start;
+    @apply columns-[24rem];
+    @apply -indent-[3rem];
+  }
+
+  .articlecard .refbegin ul li {
+    @apply ml-[3rem];
+  }
+
+  .articlecard ol li {
+    @apply ml-[3rem];
+  }
+
+  .articlecard .references {
+    @apply text-start;
+    @apply columns-[18rem] gap-4;
+  }
+
+  .articlecard ul.portalbox {
+    @apply sm:float-right sm:clear-right sm:ml-3 sm:mb-2 sm:max-w-[16rem];
+    @apply bg-white/50 rounded;
+    @apply p-2;
+    @apply m-2;
+  }
+
+  /* each item: icon + label inline */
+  .articlecard .portalbox li {
+    @apply flex items-center gap-2 py-1 leading-tight;
+  }
+
+  /* the tiny icon (there are nested spans, so just target the img) */
+  .articlecard .portalbox li img {
+    @apply p-0;
   }
 }
 

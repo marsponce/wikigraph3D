@@ -48,7 +48,7 @@ async function getThumbnails(
 
       // Merge fetched thumbnails into original pages
       pages = pages.map((page) => {
-        const fetched = data.query.pages[page.pageid];
+        const fetched = data.query.pages[page.pageid!];
         if (fetched?.thumbnail && !page.thumbnail) {
           thumbnailsFound++;
           return { ...page, thumbnail: fetched.thumbnail };

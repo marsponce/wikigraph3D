@@ -2,7 +2,8 @@
 
 // Page object returned in the MediaWiki api response
 export interface Page {
-  pageid: number;
+  pageid?: number;
+  id?: number;
   ns: number;
   title: string;
   thumbnail?: {

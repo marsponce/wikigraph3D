@@ -25,7 +25,7 @@ export async function GET(req: Request) {
     }
     const node = normalizePageToNode(data.pages[0]);
     return NextResponse.json({
-      node: node,
+      node: node as GraphNode,
     });
   } catch (err) {
     console.error(err);

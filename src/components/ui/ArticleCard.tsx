@@ -1,15 +1,24 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, Dispatch, SetStateAction } from "react";
 import clsx from "clsx";
 import { articleCache } from "@/lib/cache";
 import { fetchArticle } from "@/lib/article";
-import type { GraphNode } from "@/types";
+import { fetchNode, mergeGraphData } from "@/lib/graph";
+import type { GraphNode, GraphData } from "@/types";
 
 type ArticleCardProps = {
   className?: string;
   name: string | undefined;
+  selectedNode: GraphNode | null;
   setSelectedNode: (node: GraphNode | null) => void;
+  setGraphData: Dispatch<SetStateAction<GraphData>>;
 };
-export default function ArticleCard({ className, name }: ArticleCardProps) {
+export default function ArticleCard({
+  className,
+  name,
+  selectedNode,
+  setSelectedNode,
+  setGraphData,
+}: ArticleCardProps) {
   const [html, setHtml] = useState<string>("");
   const articleRef = useRef<HTMLElement>(null);
 
@@ -44,10 +53,24 @@ export default function ArticleCard({ className, name }: ArticleCardProps) {
       if (link) {
         e.preventDefault();
 
-        const href = link.getAttribute("href");
+        const href = link.getAttribute("href")?.replace("./", "");
         console.log("Link clicked:", href);
 
         // TODO: Make an api call, add the new node to the graph, set selected node to that node
+        (async () => {
+          const newNode = await fetchNode(href);
+          if (!newNode || !selectedNode) return;
+          console.log(
+            "newNode:",
+            newNode.name,
+            "selectedNode:",
+            selectedNode.name,
+          );
+          setGraphData((oldData) =>
+            mergeGraphData(selectedNode, [newNode], oldData),
+          );
+          setSelectedNode(newNode);
+        })();
       }
     };
 
@@ -58,7 +81,7 @@ export default function ArticleCard({ className, name }: ArticleCardProps) {
         article.removeEventListener("click", handleClick);
       }
     };
-  }, [html]);
+  }, [html, selectedNode, setGraphData]);
 
   return (
     <>

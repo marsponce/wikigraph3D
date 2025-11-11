@@ -5,7 +5,7 @@ import type { MediaWikiResponse, Page, GraphNode } from "@/types/wikipedia";
 // NOTE: This function does not work with the today route completeley -> see src/app/api/wikipedia/today/route.ts
 export function normalizePageToNode(page: Page): GraphNode {
   return {
-    id: page.pageid,
+    id: page.pageid ?? page.id,
     name: page.title,
     thumbnail: page.thumbnail ?? null,
     content: {

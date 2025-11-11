@@ -1,5 +1,5 @@
 // src/app/components/ui/Sidebar.tsx
-import { useState, RefObject } from "react";
+import { useState, RefObject, Dispatch, SetStateAction } from "react";
 import { Button, Searchbar, ArticleCard } from "@/components/ui";
 import clsx from "clsx";
 import type { GraphData, GraphNode, GraphLink } from "@/types";
@@ -17,6 +17,7 @@ type SidebarProps = {
   selectedNode: GraphNode | null;
   setSelectedNode: (node: GraphNode | null) => void;
   graphData: GraphData;
+  setGraphData: Dispatch<SetStateAction<GraphData>>;
   isFocused: boolean;
   setIsFocused: (isFocused: boolean) => void;
 };
@@ -27,6 +28,7 @@ export default function Sidebar({
   selectedNode,
   setSelectedNode,
   graphData,
+  setGraphData,
   isFocused,
   setIsFocused,
 }: SidebarProps) {
@@ -109,7 +111,9 @@ export default function Sidebar({
           />
           <ArticleCard
             name={selectedNode ? selectedNode.name : undefined}
+            selectedNode={selectedNode}
             setSelectedNode={setSelectedNode}
+            setGraphData={setGraphData}
           />
         </div>
       </aside>

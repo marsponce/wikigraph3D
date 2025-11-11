@@ -11,6 +11,16 @@ export async function fetchInitialNode(): Promise<GraphNode> {
   return responseJson.node as GraphNode;
 }
 
+// Fetch a new node given it's title
+export async function fetchNode(
+  title: string | undefined,
+): Promise<GraphNode | undefined> {
+  if (!title) return;
+  const res = await fetch(`${API}/link?title=${title}`);
+  const responseJson = await res.json();
+  return responseJson.node as GraphNode;
+}
+
 // Given a Node node, fetch up to limit related nodes (related <-> hyperlinked)
 export async function fetchLinkedNodes(
   node: GraphNode,

@@ -46,6 +46,8 @@ export default function ArticleCard({ className, name }: ArticleCardProps) {
 
         const href = link.getAttribute("href");
         console.log("Link clicked:", href);
+
+        // TODO: Make an api call, add the new node to the graph, set selected node to that node
       }
     };
 

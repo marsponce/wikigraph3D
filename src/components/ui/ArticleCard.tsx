@@ -60,12 +60,7 @@ export default function ArticleCard({
         (async () => {
           const newNode = await fetchNode(href);
           if (!newNode || !selectedNode) return;
-          console.log(
-            "newNode:",
-            newNode.name,
-            "selectedNode:",
-            selectedNode.name,
-          );
+          console.log("newNode:", newNode, "selectedNode:", selectedNode.name);
           setGraphData((oldData) =>
             mergeGraphData(selectedNode, [newNode], oldData),
           );

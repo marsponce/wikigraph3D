@@ -69,7 +69,7 @@ export function mergeGraphData(
 // create the THREE.Sprite object to represent an article node
 export function createNodeSprite(node: GraphNode): THREE.Sprite {
   const texture = new THREE.TextureLoader().load(
-    node.thumbnail?.source || WIKIPEDIA_ICON_URL,
+    node.thumbnail?.source ?? WIKIPEDIA_ICON_URL,
   );
   const material = new THREE.SpriteMaterial({
     map: texture,

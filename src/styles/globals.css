@@ -220,6 +220,18 @@
     @apply mx-auto;
   }
 
+  /* Hide the MathML, show only the SVG image */
+  .articlecard span:has(> math) > math {
+    @apply hidden;
+  }
+
+  /* Style the math image */
+  .articlecard span:has(> math) > img,
+  img[src*="wikimedia.org/api/rest_v1/media/math/render/svg/"] {
+    @apply invert inline-block align-middle;
+    @appy mx-0;
+  }
+
   .articlecard figure {
     @apply rounded;
     @apply bg-white/30;

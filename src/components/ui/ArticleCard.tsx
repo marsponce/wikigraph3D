@@ -60,7 +60,12 @@ export default function ArticleCard({
         (async () => {
           const newNode = await fetchNode(href);
           if (!newNode || !selectedNode) return;
-          console.log("newNode:", newNode, "selectedNode:", selectedNode.name);
+          console.log(
+            "newNode:",
+            newNode.name,
+            "selectedNode:",
+            selectedNode.name,
+          );
           setGraphData((oldData) =>
             mergeGraphData(selectedNode, [newNode], oldData),
           );
@@ -76,7 +81,7 @@ export default function ArticleCard({
         article.removeEventListener("click", handleClick);
       }
     };
-  }, [html, selectedNode, setGraphData]);
+  }, [html, selectedNode, setSelectedNode, setGraphData]);
 
   return (
     <>

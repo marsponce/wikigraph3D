@@ -36,11 +36,11 @@ export async function GET() {
       const data = await res.json();
       data.tfa.title = data.tfa.titles.normalized;
       node = normalizePageToNode(data.tfa);
+      node.content = data.tfa?.content_urls; // Since normalizePageToNode doesn't work 100% with this type of response
       if (node) {
         todayCache.set(url, node);
         console.log(url, "miss");
       }
-      node.content = data.tfa?.content_urls; // Since normalizePageToNode doesn't work 100% with this type of response
       return NextResponse.json({ node });
     }
   } catch (err) {

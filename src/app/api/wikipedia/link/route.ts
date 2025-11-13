@@ -16,6 +16,14 @@ export async function GET(req: Request) {
       );
     }
 
+    // Check linkCache first
+    let node;
+    if (linkCache.has(req.url)) {
+      node = linkCache.get(req.url) as GraphNode;
+      console.log(req.url, "hit", "expiresIn:", linkCache.expiresIn(req.url));
+      return NextResponse.json({ node });
+    }
+
     const url = new URL(WIKI_API_BASE);
     url.searchParams.set("action", "query");
     url.searchParams.set("titles", title);
@@ -41,7 +49,11 @@ export async function GET(req: Request) {
     const data = await res.json();
     const pages: Page[] = [];
     pages.push(...(Object.values(data.query?.pages || {}) as Page[]));
-    const node = normalizePageToNode(pages[0]);
+    node = normalizePageToNode(pages[0]);
+    if (node) {
+      linkCache.set(req.url, node);
+      console.log(req.url, "miss");
+    }
     return NextResponse.json({
       node: node as GraphNode,
     });

@@ -1,6 +1,6 @@
 // src/app/components/ui/Sidebar.tsx
 import { useState, RefObject, Dispatch, SetStateAction } from "react";
-import { Button, Searchbar, ArticleCard, BreadCrumb } from "@/components/ui";
+import { Button, Searchbar, ArticleCard, BreadCrumbs } from "@/components/ui";
 import clsx from "clsx";
 import type { GraphData, GraphNode, GraphLink } from "@/types";
 import { ForceGraphMethods } from "react-force-graph-3d";
@@ -103,7 +103,7 @@ export default function Sidebar({
           </Button>
         </div>
         <div className="sidebar-panel" data-sidebar-state={sidebarState}>
-          <BreadCrumb
+          <BreadCrumbs
             graphData={graphData}
             selectedNode={selectedNode}
             setSelectedNode={setSelectedNode}

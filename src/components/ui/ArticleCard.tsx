@@ -60,13 +60,12 @@ export default function ArticleCard({
     const handleClick = (e: MouseEvent) => {
       const link = (e.target as HTMLElement).closest("a");
       if (link) {
-        e.preventDefault();
-
         const href = link.getAttribute("href");
         console.log("Link clicked:", href);
 
         // If the href is an internal link, it will start with /wiki.
         if (href && href.startsWith("/wiki/")) {
+          e.preventDefault();
           // TODO: Make an api call, add the new node to the graph, set selected node to that node
           (async () => {
             const title = href.replace("/wiki/", "");
@@ -102,7 +101,7 @@ export default function ArticleCard({
         data-sidebar-state={sidebarState}
         ref={articleRef}
         className={clsx("articlecard", className ?? "")}
-        dangerouslySetInnerHTML={{ __html: html }}
+        dangerouslySetInnerHTML={{ __html: html }} // TODO: Change how this works
       />
     </>
   );

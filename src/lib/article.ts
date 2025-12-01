@@ -59,6 +59,16 @@ export function slimArticle(fullHtml: string | null): string {
     else $elt.removeAttr("class");
   });
 
+  // Switch outside wikipedia <a> tags to open in new window
+  $("a").each((i, link) => {
+    const href = $(link).attr("href");
+
+    if (href && !href.startsWith("/wiki/") && !href.startsWith("#")) {
+      $(link).attr("target", "_blank");
+      $(link).attr("rel", "noopener noreferrer");
+    }
+  });
+
   // Cleanup
   $("span:empty. p:empty").remove();
   // Remove all default styling

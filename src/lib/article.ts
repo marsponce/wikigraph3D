@@ -33,6 +33,7 @@ export function slimArticle(fullHtml: string | null): string {
     "noscript",
     "iframe",
     ".shortdescription",
+    ".mw-editsection",
   ];
   DROP.forEach((sel) => $(sel).remove());
 

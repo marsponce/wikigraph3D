@@ -1,4 +1,11 @@
-import { useState, useEffect, useRef, Dispatch, SetStateAction } from "react";
+import {
+  useState,
+  useEffect,
+  useRef,
+  Dispatch,
+  SetStateAction,
+  memo,
+} from "react";
 import clsx from "clsx";
 import { articleCache } from "@/lib/cache";
 import { fetchArticle } from "@/lib/article";
@@ -11,6 +18,7 @@ type ArticleCardProps = {
   selectedNode: GraphNode | null;
   setSelectedNode: (node: GraphNode | null) => void;
   setGraphData: Dispatch<SetStateAction<GraphData>>;
+  sidebarState: string;
 };
 export default function ArticleCard({
   className,
@@ -18,6 +26,7 @@ export default function ArticleCard({
   selectedNode,
   setSelectedNode,
   setGraphData,
+  sidebarState,
 }: ArticleCardProps) {
   const [html, setHtml] = useState<string>("");
   const articleRef = useRef<HTMLElement>(null);
@@ -39,7 +48,7 @@ export default function ArticleCard({
       (async () => {
         slim = await fetchArticle(name);
         setHtml(slim);
-        articleCache.set(name, slim, { maxAge: 1 }); // TODO: Replace maxAge here when debug is finished
+        articleCache.set(name, slim);
         console.log(name, "miss");
       })();
     }
@@ -53,24 +62,28 @@ export default function ArticleCard({
       if (link) {
         e.preventDefault();
 
-        const href = link.getAttribute("href")?.replace("./", "");
+        const href = link.getAttribute("href");
         console.log("Link clicked:", href);
 
-        // TODO: Make an api call, add the new node to the graph, set selected node to that node
-        (async () => {
-          const newNode = await fetchNode(href);
-          if (!newNode || !selectedNode) return;
-          console.log(
-            "newNode:",
-            newNode.name,
-            "selectedNode:",
-            selectedNode.name,
-          );
-          setGraphData((oldData) =>
-            mergeGraphData(selectedNode, [newNode], oldData),
-          );
-          setSelectedNode(newNode);
-        })();
+        // If the href is an internal link, it will start with /wiki.
+        if (href && href.startsWith("/wiki/")) {
+          // TODO: Make an api call, add the new node to the graph, set selected node to that node
+          (async () => {
+            const title = href.replace("/wiki/", "");
+            const newNode = await fetchNode(title);
+            if (!newNode || !selectedNode) return;
+            console.log(
+              "newNode:",
+              newNode.name,
+              "selectedNode:",
+              selectedNode.name,
+            );
+            setGraphData((oldData) =>
+              mergeGraphData(selectedNode, [newNode], oldData),
+            );
+            setSelectedNode(newNode);
+          })();
+        }
       }
     };
 
@@ -86,6 +99,7 @@ export default function ArticleCard({
   return (
     <>
       <article
+        data-sidebar-state={sidebarState}
         ref={articleRef}
         className={clsx("articlecard", className ?? "")}
         dangerouslySetInnerHTML={{ __html: html }}

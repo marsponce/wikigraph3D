@@ -1,16 +1,27 @@
 // src/app/api/wikipedia/links/route.ts
 
 import { NextResponse } from "next/server";
-import { WIKI_INFO_BASE } from "@/lib/constants";
+import { WIKI_API_BASE } from "@/lib/constants";
 import { responseCache as articleCache } from "@/lib/cache";
 import { slimArticle } from "@/lib/article";
 
 async function fetchArticle(title: string) {
-  const url = new URL(`${WIKI_INFO_BASE}/page/html/${title}`);
+  const url = new URL(WIKI_API_BASE);
+  url.searchParams.set("action", "parse");
+  url.searchParams.set("page", title);
+  url.searchParams.set("format", "json");
+  url.searchParams.set("prop", "text");
+  url.searchParams.set("formatversion", "2");
 
   try {
-    const res = await fetch(url.toString());
-    const html = await res.text();
+    const res = await fetch(url.toString(), {
+      headers: {
+        Authorization: `Bearer ${process.env.WIKIMEDIA_ACCESS_TOKEN}`,
+        "User-Agent": `${process.env.APP_NAME} (${process.env.CONTACT})`,
+      },
+    });
+    const data = await res.json();
+    const html = data.parse.text;
     return html;
   } catch (err) {
     console.error("Error fetching article:", err);

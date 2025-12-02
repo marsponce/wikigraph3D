@@ -66,9 +66,33 @@ export default function ArticleCard({
         // If the href is an internal link, it will start with /wiki.
         if (href && href.startsWith("/wiki/")) {
           e.preventDefault();
-          // TODO: Make an api call, add the new node to the graph, set selected node to that node
+          const title = href.replace("/wiki/", "");
+          const externalNamespaces = [
+            "File:",
+            "Image:",
+            "Category:",
+            "Special:",
+            "User:",
+            "User_talk:",
+            "Wikipedia:",
+            "Wikipedia_talk:",
+            "Talk:",
+            "Template:",
+            "Help:",
+            "Portal:",
+          ];
+
+          // Check if title starts with any external namespace
+          const isExternal = externalNamespaces.some((ns) =>
+            title.startsWith(ns),
+          );
+
+          if (isExternal || title.includes("_talk:")) {
+            window.open(`https://en.wikipedia.org${href}`, "_blank");
+            return;
+          }
+          // Make an api call, add the new node to the graph, set selected node to that node
           (async () => {
-            const title = href.replace("/wiki/", "");
             const newNode = await fetchNode(title);
             if (!newNode || !selectedNode) return;
             console.log(

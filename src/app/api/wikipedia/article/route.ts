@@ -21,7 +21,13 @@ async function fetchArticle(title: string) {
       },
     });
     const data = await res.json();
-    const html = data.parse.text;
+    let html;
+    if (data.parse.text) {
+      html = data.parse.text;
+    } else {
+      console.log(data);
+      html = "<p>No data.parse.text found...</p>";
+    }
     return html;
   } catch (err) {
     console.error("Error fetching article:", err);

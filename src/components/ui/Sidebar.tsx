@@ -119,6 +119,7 @@ export default function Sidebar({
             selectedNode={selectedNode}
             setSelectedNode={setSelectedNode}
             setGraphData={setGraphData}
+            sidebarState={sidebarState}
           />
         </div>
       </aside>

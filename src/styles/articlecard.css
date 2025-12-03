@@ -6,6 +6,7 @@
     @apply text-justify pt-2;
     @apply flow-root;
     @apply border-transparent;
+    content-visibility: auto;
   }
 
   .articlecard section {
@@ -25,6 +26,8 @@
     @apply border-b;
     @apply border-b-white;
     @apply mb-1;
+    @apply flow-root;
+    @apply text-xl md:text-2xl lg:text-3xl;
   }
 
   .articlecard img {
@@ -42,6 +45,29 @@
   img[src*="wikimedia.org/api/rest_v1/media/math/render/svg/"] {
     @apply invert inline-block align-middle;
     @appy mx-0;
+  }
+
+  .articlecard table {
+    @apply rounded;
+    @apply bg-white/30;
+    @apply mx-auto;
+    @apply sm:float-right sm:clear-right;
+    @apply m-3 sm:m-0 sm:ml-3 sm:mb-3 sm:mt-2;
+  }
+
+  .articlecard table * {
+    @apply list-none;
+  }
+
+  .articlecard table td div ul {
+    @apply flex;
+    @apply text-center;
+  }
+
+  .articlecard table td div ul li {
+    @apply flex-auto;
+    @apply text-center uppercase;
+    @apply list-disc list-inside;
   }
 
   .articlecard figure {

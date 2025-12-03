@@ -63,6 +63,39 @@ export default function ArticleCard({
         const href = link.getAttribute("href");
         console.log("Link clicked:", href);
 
+        // Handle citation/reference links (internal anchors)
+        if (href && href.startsWith("#")) {
+          e.preventDefault();
+          const targetId = href.substring(1);
+          const targetElement = document.getElementById(targetId);
+
+          if (targetElement) {
+            targetElement.scrollIntoView({
+              behavior: "smooth",
+              block: "center",
+            });
+            // Bounce for visibility
+            targetElement.classList.add(
+              "ring-4",
+              "ring-white-400",
+              "ring-opacity-50",
+              "transition-all",
+              "duration-1000",
+              "rounded-xl",
+            );
+
+            setTimeout(() => {
+              targetElement.classList.remove(
+                "ring-4",
+                "ring-white-400",
+                "ring-opacity-50",
+                "rounded-xl",
+              );
+            }, 2000);
+          }
+          return;
+        }
+
         // If the href is an internal link, it will start with /wiki.
         if (href && href.startsWith("/wiki/")) {
           e.preventDefault();

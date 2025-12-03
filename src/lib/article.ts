@@ -63,7 +63,8 @@ export function slimArticle(fullHtml: string | null): string {
   $("a").each((i, link) => {
     const href = $(link).attr("href");
 
-    if (href && !href.startsWith("/wiki/") && !href.startsWith("#")) {
+    if (href && !href.startsWith("#")) {
+      // /wiki/<Article Title> links are handled locally
       $(link).attr("target", "_blank");
       $(link).attr("rel", "noopener noreferrer");
     }

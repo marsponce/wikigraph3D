@@ -2,6 +2,7 @@
 
 import { NextResponse } from "next/server";
 import { WIKI_INFO_BASE } from "@/lib/constants";
+import { responseCache as infoCache } from "@/lib/cache";
 
 async function fetchInfo(title: string) {
   const url = new URL(`${WIKI_INFO_BASE}/page/html/${title}`);
@@ -12,6 +13,7 @@ async function fetchInfo(title: string) {
     return html;
   } catch (err) {
     console.error("Error fetching info:", err);
+    return null;
   }
 }
 
@@ -25,7 +27,18 @@ export async function GET(req: Request) {
         { status: 400 },
       );
     }
-    const html = await fetchInfo(title);
+    // check infoCache first
+    let html;
+    if (infoCache.has(title)) {
+      html = infoCache.get(title);
+      console.log(title, "hit", "expiresIn:", infoCache.expiresIn(title));
+    } else {
+      html = await fetchInfo(title);
+      if (html) {
+        infoCache.set(title, html as string);
+        console.log(title, "miss");
+      }
+    }
 
     return NextResponse.json({ html });
   } catch (err) {

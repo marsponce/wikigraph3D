@@ -11,6 +11,16 @@ export async function fetchInitialNode(): Promise<GraphNode> {
   return responseJson.node as GraphNode;
 }
 
+// Fetch a new node given it's title
+export async function fetchNode(
+  title: string | undefined,
+): Promise<GraphNode | undefined> {
+  if (!title) return;
+  const res = await fetch(`${API}/link?title=${title}`);
+  const responseJson = await res.json();
+  return responseJson.node as GraphNode;
+}
+
 // Given a Node node, fetch up to limit related nodes (related <-> hyperlinked)
 export async function fetchLinkedNodes(
   node: GraphNode,
@@ -22,8 +32,8 @@ export async function fetchLinkedNodes(
 }
 
 // Given a Node node, fetch the html article of it from wikipedia
-export async function fetchNodeInfo(node: GraphNode): Promise<string> {
-  const res = await fetch(`${API}/info?title=${node.name}`);
+export async function fetchNodeInfo(name: string): Promise<string> {
+  const res = await fetch(`${API}/info?title=${name}`);
   const { html } = await res.json();
   return html;
 }
@@ -59,7 +69,7 @@ export function mergeGraphData(
 // create the THREE.Sprite object to represent an article node
 export function createNodeSprite(node: GraphNode): THREE.Sprite {
   const texture = new THREE.TextureLoader().load(
-    node.thumbnail?.source || WIKIPEDIA_ICON_URL,
+    node.thumbnail?.source ?? WIKIPEDIA_ICON_URL,
   );
   const material = new THREE.SpriteMaterial({
     map: texture,

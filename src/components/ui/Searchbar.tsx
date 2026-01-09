@@ -66,7 +66,7 @@ export default function Searchbar({
             <ComboboxInput
               aria-label="Node"
               displayValue={(node: GraphNode) => node?.name ?? ""}
-              placeholder="Select a node..."
+              placeholder="..."
               onChange={(e) => setQuery(e.target.value)}
               className="searchbar-input group"
             />

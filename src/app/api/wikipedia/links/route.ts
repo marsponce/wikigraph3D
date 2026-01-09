@@ -4,6 +4,8 @@ import { NextResponse } from "next/server";
 import { normalizePageToNode } from "@/lib/utils";
 import { WIKI_API_BASE } from "@/lib/constants";
 import { Page } from "@/types";
+import { responseCache as linksCache } from "@/lib/cache";
+import { GraphNode } from "@/types/wikipedia";
 
 async function getThumbnails(
   pages: Page[],
@@ -46,7 +48,7 @@ async function getThumbnails(
 
       // Merge fetched thumbnails into original pages
       pages = pages.map((page) => {
-        const fetched = data.query.pages[page.pageid];
+        const fetched = data.query.pages[page.pageid!];
         if (fetched?.thumbnail && !page.thumbnail) {
           thumbnailsFound++;
           return { ...page, thumbnail: fetched.thumbnail };
@@ -116,11 +118,24 @@ export async function GET(req: Request) {
       );
     }
     const limit = Number(searchParams.get("limit") ?? 1);
+    // check linksCache first
+    const key = `${title},${limit}`;
+    let nodes;
+    if (linksCache.has(key)) {
+      nodes = linksCache.get(key) as GraphNode[];
+      console.log(key, "hit", "expiresIn:", linksCache.expiresIn(key));
+      return NextResponse.json({ nodes });
+    } else {
+      const pages = await fetchPages(title, limit);
+      nodes = pages.map(normalizePageToNode);
 
-    const pages = await fetchPages(title, limit);
-    const nodes = pages.map(normalizePageToNode);
+      if (nodes) {
+        linksCache.set(key, nodes);
+        console.log(key, "miss");
+      }
 
-    return NextResponse.json({ nodes });
+      return NextResponse.json({ nodes });
+    }
   } catch (err) {
     console.error(err);
     if (err instanceof Error) {

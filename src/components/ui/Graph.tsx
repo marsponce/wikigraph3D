@@ -146,7 +146,7 @@ export default function Graph({
         HighlightNode(node, nodes, links);
       });
     }
-  }, [selectedNode, data]);
+  }, [selectedNode, data, setSelectedNodeAction]);
 
   return (
     <div className={clsx(className ?? "")}>
@@ -162,8 +162,6 @@ export default function Graph({
         linkAutoColorBy="target"
         linkVisibility={(link) => highlightedLinks.has(link)}
         linkWidth={1.2}
-        linkDirectionalArrowLength={3.5}
-        linkDirectionalArrowRelPos={1}
         nodeThreeObjectExtend={false}
         nodeThreeObject={createNodeObjectCached}
         showNavInfo={false}

@@ -1,18 +1,14 @@
 // src/app/components/ui/Sidebar.tsx
-import parse from "html-react-parser";
-import he from "he";
-import { useState, RefObject } from "react";
-import { Transition } from "@headlessui/react";
-import { Button, Searchbar } from "@/components/ui";
+import { useState, RefObject, Dispatch, SetStateAction } from "react";
+import { Button, Searchbar, ArticleCard, BreadCrumbs } from "@/components/ui";
 import clsx from "clsx";
-import { GraphData, GraphNode, GraphLink } from "@/types";
+import type { GraphData, GraphNode, GraphLink } from "@/types";
 import { ForceGraphMethods } from "react-force-graph-3d";
 import {
   ArrowsPointingInIcon,
   ArrowsPointingOutIcon,
-  ArrowLeftEndOnRectangleIcon,
-  ArrowRightStartOnRectangleIcon,
   ViewfinderCircleIcon,
+  InformationCircleIcon,
 } from "@heroicons/react/24/outline";
 
 type SidebarProps = {
@@ -21,6 +17,7 @@ type SidebarProps = {
   selectedNode: GraphNode | null;
   setSelectedNode: (node: GraphNode | null) => void;
   graphData: GraphData;
+  setGraphData: Dispatch<SetStateAction<GraphData>>;
   isFocused: boolean;
   setIsFocused: (isFocused: boolean) => void;
 };
@@ -31,55 +28,66 @@ export default function Sidebar({
   selectedNode,
   setSelectedNode,
   graphData,
+  setGraphData,
   isFocused,
   setIsFocused,
 }: SidebarProps) {
-  const [isOpen, setIsOpen] = useState(false);
-  const [isFullscreen, setFullscreen] = useState(false);
+  const [sidebarState, setSidebarState] = useState<string>("closed");
 
-  const toggleSidebar = () => setIsOpen(!isOpen);
+  const toggleSidebar = () => {
+    switch (sidebarState) {
+      case "closed":
+        setSidebarState("open");
+        break;
+      default:
+        setSidebarState("closed");
+        break;
+    }
+  };
   const toggleFullscreen = () => {
-    if (!isOpen) setIsOpen(true);
-    setFullscreen(!isFullscreen);
+    switch (sidebarState) {
+      case "fullscreen":
+        setSidebarState("open");
+        break;
+      default: // open or closed;
+        setSidebarState("fullscreen");
+        break;
+    }
   };
 
   const focusCamera = () => {
-    if (graphRef.current) {
-      console.log("focusCamera");
-      // graphRef.current.focusCamera();
-    }
     setIsFocused(!isFocused);
   };
 
   return (
     <>
       <aside
-        className={clsx(
-          "sidebar",
-          className ?? "",
-          isFullscreen ? "w-screen" : "",
-        )}
+        className={clsx("sidebar", className ?? "")}
+        data-sidebar-state={sidebarState}
       >
         {/* sidebar button */}
         <div className="button-container">
           <Button
             onClick={toggleSidebar}
-            toggled={isOpen}
-            aria-label={isOpen ? "Close Sidebar" : "Open Sidebar"}
+            toggled={sidebarState === "open" || sidebarState === "fullscreen"}
+            aria-label={
+              sidebarState === "closed" ? "Open Sidebar" : "Close Sidebar"
+            }
           >
-            {isOpen ? (
-              <ArrowRightStartOnRectangleIcon />
-            ) : (
-              <ArrowLeftEndOnRectangleIcon />
-            )}
+            <InformationCircleIcon />
           </Button>
           {/* full screen button */}
           <Button
             onClick={toggleFullscreen}
-            toggled={isFullscreen}
-            aria-label={isFullscreen ? "Minimize Sidebar" : "Maximize Sidebar"}
+            className="hidden sm:block" // show only on non-mobile screens
+            toggled={sidebarState === "fullscreen"}
+            aria-label={
+              sidebarState === "fullscreen"
+                ? "Minimize Sidebar"
+                : "Maximize Sidebar"
+            }
           >
-            {isFullscreen ? (
+            {sidebarState === "fullscreen" ? (
               <ArrowsPointingInIcon />
             ) : (
               <ArrowsPointingOutIcon />
@@ -94,41 +102,26 @@ export default function Sidebar({
             <ViewfinderCircleIcon />
           </Button>
         </div>
-        <Transition show={isOpen}>
-          <div
-            className={clsx(
-              "sidebar-panel",
-              /* TODO: Animate the sidebar */
-              isFullscreen ? "w-full" : "",
-            )}
-          >
-            <Searchbar
-              graphData={graphData}
-              selectedNode={selectedNode}
-              setSelectedNode={setSelectedNode}
-            />
-            <div className="sidebar-content prose">
-              {selectedNode ? (
-                <>
-                  {selectedNode.description && (
-                    <div>
-                      <h2>Description</h2>
-                      {parse(he.decode(selectedNode.description))}
-                    </div>
-                  )}
-                  {selectedNode.extract && (
-                    <div>
-                      <h2>Extract</h2>
-                      {parse(he.decode(selectedNode.extract))}
-                    </div>
-                  )}
-                </>
-              ) : (
-                <p>No node selected</p>
-              )}
-            </div>
-          </div>
-        </Transition>
+        <div className="sidebar-panel" data-sidebar-state={sidebarState}>
+          <BreadCrumbs
+            graphData={graphData}
+            selectedNode={selectedNode}
+            setSelectedNode={setSelectedNode}
+          />
+          <Searchbar
+            graphData={graphData}
+            selectedNode={selectedNode}
+            setSelectedNode={setSelectedNode}
+            data-sidebar-state={sidebarState}
+          />
+          <ArticleCard
+            name={selectedNode ? selectedNode.name : undefined}
+            selectedNode={selectedNode}
+            setSelectedNode={setSelectedNode}
+            setGraphData={setGraphData}
+            sidebarState={sidebarState}
+          />
+        </div>
       </aside>
     </>
   );

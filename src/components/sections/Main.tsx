@@ -24,6 +24,7 @@ export default function Main() {
         selectedNode={selectedNode}
         setSelectedNode={setSelectedNode}
         graphData={graphData}
+        setGraphData={setGraphData}
         className=""
         isFocused={isFocused}
         setIsFocused={setIsFocused}

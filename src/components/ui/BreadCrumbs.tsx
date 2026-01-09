@@ -35,9 +35,19 @@ export default function BreadCrumbs({
 
     const url = new URL(window.location.href);
     let newBreadcrumbs: string[];
-
     if (selectedNode) {
-      newBreadcrumbs = [...breadcrumbs, selectedNode.name!];
+      const existingIndex = breadcrumbs.findIndex(
+        (name) => name === selectedNode.name,
+      );
+
+      if (existingIndex !== -1) {
+        // Node already exists, truncate to that point
+        newBreadcrumbs = breadcrumbs.slice(0, existingIndex + 1);
+      } else {
+        // New node, append it
+        newBreadcrumbs = [...breadcrumbs, selectedNode.name!];
+      }
+
       setBreadcrumbs(newBreadcrumbs);
       url.searchParams.set("article", encodeURIComponent(selectedNode.name!));
     } else {
@@ -72,11 +82,7 @@ export default function BreadCrumbs({
         const node = graphData.nodes.find((n) => n.name === articleName);
         if (node) {
           setSelectedNode(node);
-        } else {
-          setSelectedNode(null);
         }
-      } else {
-        setSelectedNode(null);
       }
     };
 
@@ -91,23 +97,18 @@ export default function BreadCrumbs({
           {breadcrumbs.length > 0 ? (
             breadcrumbs.map((nodeName, index) => (
               <span key={index}>
-                {index > 0 && " → "}
+                {index != 0 && " → "}
                 <button
                   className="breadcrumb"
                   onClick={() => {
-                    const stepsBack = breadcrumbs.length - index - 1;
+                    // Don't allow clicking the current node
+                    if (index === breadcrumbs.length - 1) return;
 
-                    if (stepsBack > 0) {
-                      // Truncate breadcrumbs to this point
-                      const truncated = breadcrumbs.slice(0, index + 1);
-                      setBreadcrumbs(truncated);
-
-                      // Mark that this is a breadcrumb click
-                      isBreadcrumbClick.current = true;
-
-                      // Go back in history
-                      window.history.go(-stepsBack);
-                    }
+                    isBreadcrumbClick.current = true;
+                    const node = graphData.nodes.find(
+                      (node) => node.name === nodeName,
+                    );
+                    if (node) setSelectedNode(node);
                   }}
                 >
                   {nodeName}

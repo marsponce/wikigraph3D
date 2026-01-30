@@ -125,7 +125,7 @@ export default function Sidebar({
         <div
           // Sidebar container
           className={clsx(
-            // Base Styles
+            "w-full",
             "overflow-y-auto overflow-x-hidden",
             "p-3",
             "relative",
@@ -138,17 +138,17 @@ export default function Sidebar({
             setSelectedNode={setSelectedNode}
             data-sidebar-state={sidebarState}
           />
-          <BreadCrumbs
-            graphData={graphData}
-            selectedNode={selectedNode}
-            setSelectedNode={setSelectedNode}
-          />
           <ArticleCard
             name={selectedNode ? selectedNode.name : undefined}
             selectedNode={selectedNode}
             setSelectedNode={setSelectedNode}
             setGraphData={setGraphData}
             sidebarState={sidebarState}
+          />
+          <BreadCrumbs
+            graphData={graphData}
+            selectedNode={selectedNode}
+            setSelectedNode={setSelectedNode}
           />
         </div>
       </aside>

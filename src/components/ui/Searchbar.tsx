@@ -56,7 +56,7 @@ export default function Searchbar({
 
   return (
     <>
-      <div className="searchbar">
+      <div className="relative z-50 sticky top-0">
         <Combobox
           value={selectedNode}
           onChange={setSelectedNode}
@@ -68,24 +68,29 @@ export default function Searchbar({
               displayValue={(node: GraphNode) => node?.name ?? ""}
               placeholder="..."
               onChange={(e) => setQuery(e.target.value)}
-              className="searchbar-input group"
+              className={clsx(
+                "w-full container rounded border-none bg-black/100",
+                "text-2xl md:text-3xl font-bold text-white ring-2 ring-white/25",
+                "hover:ring-white focus:ring-2 focus:ring-white/100 p-2",
+                "group",
+              )}
             />
-            <ComboboxButton className="searchbar-button group">
-              <ChevronDownIcon className="searchbar-button-icon" />
+            <ComboboxButton className="absolute inset-y-0 right-0 group">
+              <ChevronDownIcon className="size-8 fill-white sm:fill-white/0 sm:group-data-hover:fill-white" />
             </ComboboxButton>
           </div>
 
           <ComboboxOptions
             anchor="bottom start"
             portal
-            className="searchbar-results-container"
+            className="container absolute overflow-hidden h-auto max-h-screen w-(--input-width) mt-1 rounded-lg ring-3 ring-white/15 bg-black/90 p-1 z-3"
           >
             {filteredNodes.map((node) => (
               <ComboboxOption
                 key={node.id}
                 value={node}
                 className={clsx(
-                  "group searchbar-result",
+                  "group flex cursor-default items-center gap-2 rounded px-3 py-1.5 select-none",
                   "data-focus:ring-2 data-focus:right-white data-focus:ring-offset-0",
                 )}
               >
@@ -98,7 +103,7 @@ export default function Searchbar({
                 key="hidden-count"
                 value={{ id: "hidden-count" }}
                 disabled
-                className="searchbar-result italic text-gray-400"
+                className="italic text-gray-400 flex cursor-default items-center gap-2 rounded px-3 py-1.5 select-none"
               >
                 ... ({hiddenCount} more{" "}
                 {hiddenCount === 1 ? "result" : "results"} hidden)

@@ -62,11 +62,31 @@ export default function Sidebar({
   return (
     <>
       <aside
-        className={clsx("sidebar", className ?? "")}
+        className={clsx(
+          // Base styles
+          "backdrop-blur-sm sm:backdrop-blur-md md:backdrop-blur-lg lg:backdrop-blur-xl",
+          "fixed right-0 z-3",
+          "flex flex-col sm:flex-row",
+          "w-screen sm:h-screen",
+          "transition-transform duration-500",
+          // State-specific styles
+          {
+            "bg-white/10 h-16 sm:h-full sm:w-13": sidebarState === "closed",
+            "rounded-none w-screen bg-black/30": sidebarState === "fullscreen",
+            "sm:bg-white/10 h-auto sm:w-1/3": sidebarState === "open",
+          },
+        )}
         data-sidebar-state={sidebarState}
       >
         {/* sidebar button */}
-        <div className="button-container">
+        <div
+          className={clsx(
+            "flex flex-row sm:flex-col",
+            "place-content-center place-items-center",
+            "space-x-2 sm:space-y-2 sm:space-x-0",
+            "w-fit p-3",
+          )}
+        >
           <Button
             onClick={toggleSidebar}
             toggled={sidebarState === "open" || sidebarState === "fullscreen"}
@@ -102,7 +122,20 @@ export default function Sidebar({
             <ViewfinderCircleIcon />
           </Button>
         </div>
-        <div className="sidebar-panel" data-sidebar-state={sidebarState}>
+        <div
+          className={clsx(
+            // Base Styles
+            "overflow-y-auto overflow-x-hidden",
+            "p-3",
+            // State Specific Styles
+            {
+              "translate-x-full": sidebarState === "closed",
+              "w-full translate-x-0":
+                sidebarState === "fullscreen" || sidebarState === "open",
+            },
+          )}
+          data-sidebar-state={sidebarState}
+        >
           <BreadCrumbs
             graphData={graphData}
             selectedNode={selectedNode}

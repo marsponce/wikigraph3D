@@ -92,41 +92,6 @@
   .btn[data-toggled="true"] {
     @apply bg-sky-600;
   }
-
-  /* Breadcrumbs */
-  .breadcrumb {
-    @apply inline-block;
-    @apply font-bold;
-    @apply bg-zinc-950 hover:bg-zinc-300 active:bg-zinc-100;
-    @apply transition-all;
-    @apply rounded-xl;
-    @apply p-1;
-    @apply text-xs;
-  }
-
-  .breadcrumbs-inner {
-    @apply inline-block;
-    @apply [direction:ltr];
-    @apply transition-all;
-  }
-
-  .breadcrumbs {
-    @apply fixed left-0 right-0 top-0 sm:top-auto sm:bottom-0;
-    @apply h-8 pr-2;
-    @apply overflow-hidden whitespace-nowrap;
-    @apply [direction:rtl];
-    @apply [mask-image:linear-gradient(to_right,transparent,black_2.5rem,black)];
-    @apply [mask-repeat:no-repeat] [mask-size:100%_100%];
-    @apply [-webkit-mask-image:linear-gradient(to_right,transparent,black_2.5rem,black)];
-    @apply [-webkit-mask-repeat:no-repeat] [-webkit-mask-size:100%_100%];
-    @apply z-50;
-  }
-
-  .breadcrumb::before {
-    content: "";
-    @apply pointer-events-none absolute;
-    @apply left-0 top-0 h-full w-10;
-  }
 }
 
 @layer utilities {

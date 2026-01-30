@@ -123,29 +123,25 @@ export default function Sidebar({
           </Button>
         </div>
         <div
+          // Sidebar container
           className={clsx(
             // Base Styles
             "overflow-y-auto overflow-x-hidden",
             "p-3",
-            // State Specific Styles
-            {
-              "translate-x-full": sidebarState === "closed",
-              "w-full translate-x-0":
-                sidebarState === "fullscreen" || sidebarState === "open",
-            },
+            "relative",
           )}
           data-sidebar-state={sidebarState}
         >
-          <BreadCrumbs
-            graphData={graphData}
-            selectedNode={selectedNode}
-            setSelectedNode={setSelectedNode}
-          />
           <Searchbar
             graphData={graphData}
             selectedNode={selectedNode}
             setSelectedNode={setSelectedNode}
             data-sidebar-state={sidebarState}
+          />
+          <BreadCrumbs
+            graphData={graphData}
+            selectedNode={selectedNode}
+            setSelectedNode={setSelectedNode}
           />
           <ArticleCard
             name={selectedNode ? selectedNode.name : undefined}

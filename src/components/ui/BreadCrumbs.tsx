@@ -92,14 +92,38 @@ export default function BreadCrumbs({
 
   return (
     <>
-      <nav className={clsx(className ?? "", "breadcrumbs")}>
-        <div className="breadcrumbs-inner">
+      <nav
+        className={clsx(
+          "fixed right-0 top-0 sm:top-auto sm:bottom-0",
+          "h-8 pr-2",
+          "w-full",
+          "overflow-hidden whitespace-nowrap",
+          "[direction:rtl]",
+          "[mask-image:linear-gradient(to_right,transparent,black_2.5rem,black)]",
+          "[mask-repeat:no-repeat] [mask-size:100%_100%]",
+          "[-webkit-mask-image:linear-gradient(to_right,transparent,black_2.5rem,black)]",
+          "[-webkit-mask-repeat:no-repeat] [-webkit-mask-size:100%_100%]",
+          "z-50",
+        )}
+      >
+        <div
+          className={clsx("inline-block", "[direction:ltr]", "transition-all")}
+        >
           {breadcrumbs.length > 0 ? (
             breadcrumbs.map((nodeName, index) => (
               <span key={index}>
                 {index != 0 && " → "}
                 <button
-                  className="breadcrumb"
+                  className={clsx(
+                    "inline-block",
+                    "font-bold",
+                    "bg-zinc-950 hover:bg-zinc-300 active:bg-zinc-100",
+                    "transition-all",
+                    "rounded-xl",
+                    "p-1",
+                    "text-xs",
+                    "before:content-[''], before:pointer-events-none, before:absolute, before:left-0, before:top-0, before:h-full, before:w-10",
+                  )}
                   onClick={() => {
                     // Don't allow clicking the current node
                     if (index === breadcrumbs.length - 1) return;

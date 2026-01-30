@@ -4,7 +4,9 @@ import {
   useRef,
   Dispatch,
   SetStateAction,
+  useMemo,
   memo,
+  useCallback,
 } from "react";
 import clsx from "clsx";
 import { articleCache } from "@/lib/cache";
@@ -18,19 +20,21 @@ type ArticleCardProps = {
   selectedNode: GraphNode | null;
   setSelectedNode: (node: GraphNode | null) => void;
   setGraphData: Dispatch<SetStateAction<GraphData>>;
-  sidebarState: string;
 };
-export default function ArticleCard({
+const ArticleCard = memo(function ArticleCard({
   className,
   name,
   selectedNode,
   setSelectedNode,
   setGraphData,
-  sidebarState,
 }: ArticleCardProps) {
   const [html, setHtml] = useState<string>("");
   const articleRef = useRef<HTMLElement>(null);
-
+  console.log("ArticleCard render", {
+    name,
+    selectedNodeName: selectedNode?.name,
+    className,
+  });
   // Load the article
   useEffect(() => {
     if (!name) {
@@ -54,10 +58,9 @@ export default function ArticleCard({
     }
   }, [name]);
 
-  // Intercept <a /> clicks
-  useEffect(() => {
-    const article = articleRef.current;
-    const handleClick = (e: MouseEvent) => {
+  // Click handler
+  const handleClick = useCallback(
+    (e: MouseEvent) => {
       const link = (e.target as HTMLElement).closest("a");
       if (link) {
         const href = link.getAttribute("href");
@@ -141,8 +144,13 @@ export default function ArticleCard({
           })();
         }
       }
-    };
+    },
+    [selectedNode, setSelectedNode, setGraphData],
+  );
 
+  // Intercept <a /> clicks
+  useEffect(() => {
+    const article = articleRef.current;
     if (article) article.addEventListener("click", handleClick);
 
     return () => {
@@ -150,16 +158,22 @@ export default function ArticleCard({
         article.removeEventListener("click", handleClick);
       }
     };
-  }, [html, selectedNode, setSelectedNode, setGraphData]);
+  }, [handleClick]);
 
+  const memoizedHtml = useMemo(() => ({ __html: html }), [html]);
   return (
     <>
       <article
-        data-sidebar-state={sidebarState}
         ref={articleRef}
-        className={clsx("articlecard", className ?? "")}
-        dangerouslySetInnerHTML={{ __html: html }} // TODO: Change how this works
+        className={clsx(
+          "articlecard",
+          "[content-visibility:auto] [contain-intrinsic-size:0_500px]",
+          className ?? "",
+        )}
+        dangerouslySetInnerHTML={memoizedHtml}
       />
     </>
   );
-}
+});
+
+export default ArticleCard;

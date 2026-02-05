@@ -90,7 +90,7 @@ export default function Sidebar({
         >
           <Button
             onClick={toggleSidebar}
-            toggled={sidebarState === "open" || sidebarState === "fullscreen"}
+            toggled={sidebarState === "open"}
             aria-label={
               sidebarState === "closed" ? "Open Sidebar" : "Close Sidebar"
             }

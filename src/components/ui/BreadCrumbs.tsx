@@ -8,12 +8,14 @@ type BreadCrumbsProps = {
   selectedNode: GraphNode | null;
   setSelectedNode: (node: GraphNode | null) => void;
   graphData: GraphData;
+  sidebarState: string;
 };
 export default function BreadCrumbs({
   className,
   selectedNode,
   setSelectedNode,
   graphData,
+  sidebarState,
 }: BreadCrumbsProps) {
   const [breadcrumbs, setBreadcrumbs] = useState<string[]>([]);
   const isPopState = useRef<boolean>(false);
@@ -94,16 +96,16 @@ export default function BreadCrumbs({
     <>
       <nav
         className={clsx(
-          "fixed right-0 top-0 sm:top-auto sm:bottom-0",
-          "h-8 pr-2",
+          "fixed bottom-0 right-0",
           "w-full",
-          "overflow-hidden whitespace-nowrap",
+          "backdrop-blur-lg",
+          "p-3",
+          "overflow-x-auto whitespace-nowrap",
           "[direction:rtl]",
-          "[mask-image:linear-gradient(to_right,transparent,black_2.5rem,black)]",
-          "[mask-repeat:no-repeat] [mask-size:100%_100%]",
-          "[-webkit-mask-image:linear-gradient(to_right,transparent,black_2.5rem,black)]",
-          "[-webkit-mask-repeat:no-repeat] [-webkit-mask-size:100%_100%]",
-          "z-50",
+          "transition-opacity duration-500",
+          {
+            "opacity-0": sidebarState == "closed",
+          },
         )}
       >
         <div

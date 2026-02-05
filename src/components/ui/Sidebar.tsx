@@ -84,8 +84,8 @@ export default function Sidebar({
           className={clsx(
             "flex flex-col",
             "place-content-center place-items-center",
-            "space-y-2 space-x-0",
-            "w-fit p-3",
+            "space-y-2",
+            "w-[4rem] p-3",
           )}
         >
           <Button
@@ -109,18 +109,12 @@ export default function Sidebar({
         <div
           // Sidebar container
           className={clsx(
-            "w-full",
-            "overflow-y-auto overflow-x-hidden",
-            "p-3",
-            "relative",
-            "[transform:translateZ(0)]",
-            "[will-change:auto]",
-            "transition-all",
+            "flex flex-col p-[1em]",
+            "h-full w-full",
+            "overflow-hidden",
             {
               "": sidebarState === "closed",
-              // "block translate-x-0": sidebarState === "fullscreen",
               "": sidebarState === "open",
-              //"max-w-screen": sidebarState === "open",
             },
           )}
           data-sidebar-state={sidebarState}
@@ -141,6 +135,7 @@ export default function Sidebar({
             graphData={graphData}
             selectedNode={selectedNode}
             setSelectedNode={setSelectedNode}
+            sidebarState={sidebarState}
           />
         </div>
       </aside>

@@ -167,6 +167,8 @@ const ArticleCard = memo(function ArticleCard({
         ref={articleRef}
         className={clsx(
           "articlecard",
+          "p-[1em]",
+          "overflow-y-auto",
           "[content-visibility:auto] [contain-intrinsic-size:0_500px]",
           className ?? "",
         )}

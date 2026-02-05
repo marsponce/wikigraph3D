@@ -104,7 +104,7 @@ export default function BreadCrumbs({
           "[direction:rtl]",
           "transition-opacity duration-500",
           {
-            "opacity-0": sidebarState == "closed",
+            "opacity-0": sidebarState === "closed",
           },
         )}
       >

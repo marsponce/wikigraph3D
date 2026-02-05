@@ -8,12 +8,14 @@ type BreadCrumbsProps = {
   selectedNode: GraphNode | null;
   setSelectedNode: (node: GraphNode | null) => void;
   graphData: GraphData;
+  sidebarState: string;
 };
 export default function BreadCrumbs({
   className,
   selectedNode,
   setSelectedNode,
   graphData,
+  sidebarState,
 }: BreadCrumbsProps) {
   const [breadcrumbs, setBreadcrumbs] = useState<string[]>([]);
   const isPopState = useRef<boolean>(false);
@@ -92,14 +94,38 @@ export default function BreadCrumbs({
 
   return (
     <>
-      <nav className={clsx(className ?? "", "breadcrumbs")}>
-        <div className="breadcrumbs-inner">
+      <nav
+        className={clsx(
+          "fixed bottom-0 right-0",
+          "w-full",
+          "backdrop-blur-lg",
+          "p-3",
+          "overflow-x-auto whitespace-nowrap",
+          "[direction:rtl]",
+          "transition-opacity duration-500",
+          {
+            "opacity-0": sidebarState === "closed",
+          },
+        )}
+      >
+        <div
+          className={clsx("inline-block", "[direction:ltr]", "transition-all")}
+        >
           {breadcrumbs.length > 0 ? (
             breadcrumbs.map((nodeName, index) => (
               <span key={index}>
-                {index != 0 && " → "}
+                {index !== 0 && " → "}
                 <button
-                  className="breadcrumb"
+                  className={clsx(
+                    "inline-block",
+                    "font-bold",
+                    "bg-zinc-950 hover:bg-zinc-300 active:bg-zinc-100",
+                    "transition-all",
+                    "rounded-xl",
+                    "p-1",
+                    "text-xs",
+                    "before:content-[''] before:pointer-events-none before:absolute before:left-0 before:top-0 before:h-full before:w-10",
+                  )}
                   onClick={() => {
                     // Don't allow clicking the current node
                     if (index === breadcrumbs.length - 1) return;

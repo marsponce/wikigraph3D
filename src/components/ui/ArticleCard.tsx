@@ -5,6 +5,7 @@ import {
   Dispatch,
   SetStateAction,
   memo,
+  useCallback,
 } from "react";
 import clsx from "clsx";
 import { articleCache } from "@/lib/cache";
@@ -18,19 +19,16 @@ type ArticleCardProps = {
   selectedNode: GraphNode | null;
   setSelectedNode: (node: GraphNode | null) => void;
   setGraphData: Dispatch<SetStateAction<GraphData>>;
-  sidebarState: string;
 };
-export default function ArticleCard({
+const ArticleCard = memo(function ArticleCard({
   className,
   name,
   selectedNode,
   setSelectedNode,
   setGraphData,
-  sidebarState,
 }: ArticleCardProps) {
   const [html, setHtml] = useState<string>("");
   const articleRef = useRef<HTMLElement>(null);
-
   // Load the article
   useEffect(() => {
     if (!name) {
@@ -54,10 +52,9 @@ export default function ArticleCard({
     }
   }, [name]);
 
-  // Intercept <a /> clicks
-  useEffect(() => {
-    const article = articleRef.current;
-    const handleClick = (e: MouseEvent) => {
+  // Click handler
+  const handleClick = useCallback(
+    (e: MouseEvent) => {
       const link = (e.target as HTMLElement).closest("a");
       if (link) {
         const href = link.getAttribute("href");
@@ -141,8 +138,13 @@ export default function ArticleCard({
           })();
         }
       }
-    };
+    },
+    [selectedNode, setSelectedNode, setGraphData],
+  );
 
+  // Intercept <a /> clicks
+  useEffect(() => {
+    const article = articleRef.current;
     if (article) article.addEventListener("click", handleClick);
 
     return () => {
@@ -150,16 +152,23 @@ export default function ArticleCard({
         article.removeEventListener("click", handleClick);
       }
     };
-  }, [html, selectedNode, setSelectedNode, setGraphData]);
+  }, [handleClick]);
 
   return (
     <>
       <article
-        data-sidebar-state={sidebarState}
         ref={articleRef}
-        className={clsx("articlecard", className ?? "")}
-        dangerouslySetInnerHTML={{ __html: html }} // TODO: Change how this works
+        className={clsx(
+          "articlecard",
+          "p-[1em]",
+          "overflow-y-auto",
+          "[content-visibility:auto] [contain-intrinsic-size:0_500px]",
+          className ?? "",
+        )}
+        dangerouslySetInnerHTML={{ __html: html }}
       />
     </>
   );
-}
+});
+
+export default ArticleCard;

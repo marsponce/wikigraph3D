@@ -62,36 +62,40 @@ export default function Sidebar({
   return (
     <>
       <aside
-        className={clsx("sidebar", className ?? "")}
+        className={clsx(
+          // Base styles
+          "backdrop-blur-lg",
+          "fixed right-0 top-0 z-3",
+          "flex flex-row",
+          "h-screen",
+          "transition-all duration-500",
+          "w-screen",
+          // State-specific styles
+          {
+            "bg-white/10 [transform:translateX(calc(100%-4rem))]":
+              sidebarState === "closed",
+            "sm:bg-black/60": sidebarState === "open",
+          },
+        )}
         data-sidebar-state={sidebarState}
       >
-        {/* sidebar button */}
-        <div className="button-container">
+        {/* sidebar buttons */}
+        <div
+          className={clsx(
+            "flex flex-col",
+            "place-content-center place-items-center",
+            "space-y-2",
+            "w-[4rem] p-3",
+          )}
+        >
           <Button
             onClick={toggleSidebar}
-            toggled={sidebarState === "open" || sidebarState === "fullscreen"}
+            toggled={sidebarState === "open"}
             aria-label={
               sidebarState === "closed" ? "Open Sidebar" : "Close Sidebar"
             }
           >
             <InformationCircleIcon />
-          </Button>
-          {/* full screen button */}
-          <Button
-            onClick={toggleFullscreen}
-            className="hidden sm:block" // show only on non-mobile screens
-            toggled={sidebarState === "fullscreen"}
-            aria-label={
-              sidebarState === "fullscreen"
-                ? "Minimize Sidebar"
-                : "Maximize Sidebar"
-            }
-          >
-            {sidebarState === "fullscreen" ? (
-              <ArrowsPointingInIcon />
-            ) : (
-              <ArrowsPointingOutIcon />
-            )}
           </Button>
           {/* focus button */}
           <Button
@@ -102,12 +106,15 @@ export default function Sidebar({
             <ViewfinderCircleIcon />
           </Button>
         </div>
-        <div className="sidebar-panel" data-sidebar-state={sidebarState}>
-          <BreadCrumbs
-            graphData={graphData}
-            selectedNode={selectedNode}
-            setSelectedNode={setSelectedNode}
-          />
+        <div
+          // Sidebar container
+          className={clsx(
+            "flex flex-col p-[1em]",
+            "h-full w-full",
+            "overflow-hidden",
+          )}
+          data-sidebar-state={sidebarState}
+        >
           <Searchbar
             graphData={graphData}
             selectedNode={selectedNode}
@@ -119,6 +126,11 @@ export default function Sidebar({
             selectedNode={selectedNode}
             setSelectedNode={setSelectedNode}
             setGraphData={setGraphData}
+          />
+          <BreadCrumbs
+            graphData={graphData}
+            selectedNode={selectedNode}
+            setSelectedNode={setSelectedNode}
             sidebarState={sidebarState}
           />
         </div>

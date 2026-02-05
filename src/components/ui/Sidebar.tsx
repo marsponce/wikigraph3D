@@ -112,10 +112,6 @@ export default function Sidebar({
             "flex flex-col p-[1em]",
             "h-full w-full",
             "overflow-hidden",
-            {
-              "": sidebarState === "closed",
-              "": sidebarState === "open",
-            },
           )}
           data-sidebar-state={sidebarState}
         >

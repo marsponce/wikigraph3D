@@ -114,7 +114,7 @@ export default function BreadCrumbs({
           {breadcrumbs.length > 0 ? (
             breadcrumbs.map((nodeName, index) => (
               <span key={index}>
-                {index != 0 && " → "}
+                {index !== 0 && " → "}
                 <button
                   className={clsx(
                     "inline-block",

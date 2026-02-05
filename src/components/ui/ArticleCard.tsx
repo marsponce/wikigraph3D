@@ -30,11 +30,6 @@ const ArticleCard = memo(function ArticleCard({
 }: ArticleCardProps) {
   const [html, setHtml] = useState<string>("");
   const articleRef = useRef<HTMLElement>(null);
-  console.log("ArticleCard render", {
-    name,
-    selectedNodeName: selectedNode?.name,
-    className,
-  });
   // Load the article
   useEffect(() => {
     if (!name) {

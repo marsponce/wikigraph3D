@@ -124,7 +124,7 @@ export default function BreadCrumbs({
                     "rounded-xl",
                     "p-1",
                     "text-xs",
-                    "before:content-[''], before:pointer-events-none, before:absolute, before:left-0, before:top-0, before:h-full, before:w-10",
+                    "before:content-[''] before:pointer-events-none before:absolute before:left-0 before:top-0 before:h-full before:w-10",
                   )}
                   onClick={() => {
                     // Don't allow clicking the current node

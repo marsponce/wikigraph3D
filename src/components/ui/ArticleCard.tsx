@@ -4,7 +4,6 @@ import {
   useRef,
   Dispatch,
   SetStateAction,
-  useMemo,
   memo,
   useCallback,
 } from "react";
@@ -155,7 +154,6 @@ const ArticleCard = memo(function ArticleCard({
     };
   }, [handleClick]);
 
-  const memoizedHtml = useMemo(() => ({ __html: html }), [html]);
   return (
     <>
       <article
@@ -167,7 +165,7 @@ const ArticleCard = memo(function ArticleCard({
           "[content-visibility:auto] [contain-intrinsic-size:0_500px]",
           className ?? "",
         )}
-        dangerouslySetInnerHTML={memoizedHtml}
+        dangerouslySetInnerHTML={{ __html: html }}
       />
     </>
   );

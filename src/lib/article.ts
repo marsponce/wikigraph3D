@@ -1,12 +1,12 @@
 // src/lib/article.ts
 import * as cheerio from "cheerio";
-import { API } from "@/lib/constants";
+import { apiFetch, ENDPOINTS, buildUrl } from "@/lib/api";
 
 // Given an article title fetch the html for the relevant article
 export async function fetchArticle(title: string): Promise<string> {
-  const res = await fetch(`${API}/article?title=${title}`);
-  const { html } = await res.json();
-  return html;
+  const url = buildUrl(ENDPOINTS.ARTICLE, { title });
+  const response = await apiFetch<{ html: string }>(url);
+  return response.html;
 }
 
 // Server-side

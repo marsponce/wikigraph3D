@@ -1,14 +1,13 @@
 // src/lib/graph.ts
-import { API } from "@/lib/constants";
 import { GraphNode, GraphLink, GraphData } from "@/types";
 import * as THREE from "three";
 import { WIKIPEDIA_ICON_URL } from "@/lib/constants";
+import { apiFetch, ENDPOINTS, buildUrl, TodayNodeResponse } from "@/lib/api";
 
 // Fetch "Today's Featured Article" (Initial) Node
 export async function fetchInitialNode(): Promise<GraphNode> {
-  const res = await fetch(`${API}/today`);
-  const responseJson = await res.json();
-  return responseJson.node as GraphNode;
+  const response = await apiFetch<TodayNodeResponse>(ENDPOINTS.TODAY);
+  return response.node;
 }
 
 // Fetch a new node given it's title
@@ -16,9 +15,9 @@ export async function fetchNode(
   title: string | undefined,
 ): Promise<GraphNode | undefined> {
   if (!title) return;
-  const res = await fetch(`${API}/link?title=${title}`);
-  const responseJson = await res.json();
-  return responseJson.node as GraphNode;
+  const url = buildUrl(ENDPOINTS.LINK, { title });
+  const response = await apiFetch<TodayNodeResponse>(url);
+  return response.node;
 }
 
 // Given a Node node, fetch up to limit related nodes (related <-> hyperlinked)
@@ -26,16 +25,19 @@ export async function fetchLinkedNodes(
   node: GraphNode,
   limit: number = 64,
 ): Promise<GraphNode[]> {
-  const res = await fetch(`${API}/links?title=${node.name}&limit=${limit}`);
-  const { nodes } = await res.json();
-  return nodes as GraphNode[];
+  const url = buildUrl(ENDPOINTS.LINKS, {
+    title: node.name!,
+    limit,
+  });
+  const response = await apiFetch<{ nodes: GraphNode[] }>(url);
+  return response.nodes;
 }
 
 // Given a Node node, fetch the html article of it from wikipedia
 export async function fetchNodeInfo(name: string): Promise<string> {
-  const res = await fetch(`${API}/info?title=${name}`);
-  const { html } = await res.json();
-  return html;
+  const url = buildUrl(ENDPOINTS.INFO, { title: name });
+  const response = await apiFetch<{ html: string }>(url);
+  return response.html;
 }
 
 // Given a node and it's newNodes, and the old state of the graph, merge the data

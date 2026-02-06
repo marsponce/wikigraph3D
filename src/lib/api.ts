@@ -1,32 +1,36 @@
 // src/lib/api.ts
 import { API, API_ROUTES } from "./constants";
 
-export async function apiFetch<T>(
-  route: string,
-  params?: Record<string, string>,
-  options?: RequestInit,
+type apiFetchArgs<T> = {
+  route: string;
+  params?: Record<string, string>;
+  options?: RequestInit;
+  retries?: number;
+};
+
+export async function apiFetch<T>({
+  route,
+  params,
+  options,
   retries = 3,
-): Promise<T> {
+}: apiFetchArgs<T>): Promise<T> {
   // Check route validity
   if (!Object.values(API_ROUTES).includes(route))
     throw new Error(`route: ${route} is not a valid api route!`);
 
   // Create URL
-  const url = new URL(API + route);
-  if (params)
-    for (const [key, value] of Object.entries(params)) {
-      url.searchParams.set(key, value);
-    }
+  let url = API + route;
+  if (params) url += "?" + new URLSearchParams(params).toString();
 
   // Make a maximum of `retries` many requests.
-  let lastError = new Error(`${url.toString()} failed attempt 0 / ${retries}`);
+  let lastError = new Error(`${url} failed attempt 0 / ${retries}`);
   for (let i = 0; i < retries; i++) {
     try {
-      const res = await fetch(url);
+      const res = await fetch(url, options);
       if (!res.ok) throw new Error(`http: ${res.status}: ${res.statusText}`);
       return await res.json();
     } catch (error) {
-      console.error(`${url.toString()} failed attempt ${i} / ${retries}`);
+      console.error(`${url} failed attempt ${i} / ${retries}`);
       lastError = error as Error;
       // exponential backoff
       if (i < retries - 1)

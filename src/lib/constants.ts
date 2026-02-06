@@ -15,3 +15,12 @@ export const WIKIPEDIA_ICON_URL =
 
 // Backend API Base
 export const API = "/api/wikipedia";
+
+// Backend API Routes
+export const API_ROUTES = {
+  TODAY: "/today",
+  ARTICLE: "/article",
+  LINK: "/link",
+  LINKS: "/links",
+  INFO: "/info",
+};

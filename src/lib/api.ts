@@ -24,7 +24,7 @@ export async function apiFetch<T>({
 
   // Make a maximum of `retries` many requests.
   let lastError = new Error(`${url} failed attempt 0 / ${retries}`);
-  for (let i = 0; i < retries; i++) {
+  for (let i = 1; i <= retries; i++) {
     try {
       const res = await fetch(url, options);
       if (!res.ok) throw new Error(`http: ${res.status}: ${res.statusText}`);
@@ -33,7 +33,7 @@ export async function apiFetch<T>({
       console.error(`${url} failed attempt ${i} / ${retries}`);
       lastError = error as Error;
       // exponential backoff
-      if (i < retries - 1)
+      if (i <= retries - 1)
         await new Promise((resolve) => setTimeout(resolve, 2 ** i * 1000));
     }
   }

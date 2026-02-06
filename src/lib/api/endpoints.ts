@@ -25,7 +25,12 @@ export function buildUrl(
     return endpoint;
   }
 
-  const url = new URL(endpoint, window.location.origin);
+  const url = new URL(
+    endpoint,
+    typeof window !== "undefined"
+      ? window.location.origin
+      : "http://localhost:3000",
+  );
   Object.entries(params).forEach(([key, value]) => {
     url.searchParams.append(key, String(value));
   });

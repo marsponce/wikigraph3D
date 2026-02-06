@@ -25,8 +25,11 @@ export async function fetchLinkedNodes(
   node: GraphNode,
   limit: number = 64,
 ): Promise<GraphNode[]> {
+  if (!node.name) {
+    throw new Error("Node name is required to fetch linked nodes");
+  }
   const url = buildUrl(ENDPOINTS.LINKS, {
-    title: node.name!,
+    title: node.name,
     limit,
   });
   const response = await apiFetch<{ nodes: GraphNode[] }>(url);

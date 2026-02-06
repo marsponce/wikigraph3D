@@ -30,13 +30,20 @@ const ArticleCard = memo(function ArticleCard({
   const [html, setHtml] = useState<string>("");
   const articleRef = useRef<HTMLElement>(null);
   const [error, setError] = useState<Error | null>(null);
+  const [retries, setRetries] = useState<number>(0);
+  const [visible, setVisible] = useState<boolean>(false);
   // Load the article
   useEffect(() => {
+    setRetries(0);
+    setError(null);
+    const centeredWrapper = (content: string) =>
+      `<div class="flex flex-col justify-center items-center h-full w-full">${content}</div>`;
+
     if (!name) {
-      setHtml("<h6>No node selected...</h6>");
+      setHtml(centeredWrapper("<h6>No node selected...</h6>"));
       return;
     } else {
-      setHtml("<h6>Loading...</h6>");
+      setHtml(centeredWrapper("<h6>Loading...</h6>"));
     }
     let slim;
     try {
@@ -45,18 +52,13 @@ const ArticleCard = memo(function ArticleCard({
         setHtml(slim as string);
         console.log(name, "hit", "expiresIn:", articleCache.expiresIn(name));
       } else {
-        //        (async () => {
-        //          slim = await fetchArticle(name);
-        //          setHtml(slim);
-        //          articleCache.set(name, slim, { maxAge: 1 });
-        //          console.log(name, "miss");
-        //        })();
         fetchArticle(name)
           .then((html) => {
             setHtml(html);
             articleCache.set(name, html, { maxAge: 1 });
             console.log(name, "miss");
             setError(null);
+            setRetries(0);
           })
           .catch((e) => {
             console.error("Failed to load article:", e);
@@ -69,7 +71,7 @@ const ArticleCard = memo(function ArticleCard({
       setError(e as Error);
       setHtml("");
     }
-  }, [name]);
+  }, [name, retries]);
 
   // Click handler
   const handleClick = useCallback(
@@ -173,25 +175,52 @@ const ArticleCard = memo(function ArticleCard({
     };
   }, [handleClick]);
 
+  // Handle retry fetching article
+  const handleRetry = () => {
+    setError(null);
+    setRetries((prev) => prev + 1);
+  };
+
+  // fade opacity when changing article contents
+  //  useEffect(() => {
+  //    setVisible(false);
+  //  }, [name, retries]);
+  //
+  //  useEffect(() => {
+  //    if (html) {
+  //      const timer = setTimeout(() => setVisible(true), 300);
+  //      return () => clearTimeout(timer);
+  //    }
+  //  }, [html]);
+
   return (
     <>
-      {error && (
-        <div>
-          <p>{error.message}</p>
-          <button>Retry</button>
-        </div>
-      )}
       <article
         ref={articleRef}
         className={clsx(
+          "w-full h-full",
           "articlecard",
           "p-[1em]",
           "overflow-y-auto",
           "[content-visibility:auto] [contain-intrinsic-size:0_500px]",
+          "transition-opacity duration-300",
+          visible ? "opacity-0" : "opacity-100",
           className ?? "",
         )}
         dangerouslySetInnerHTML={{ __html: html }}
       />
+      {error && (
+        <div className="fixed flex flex-col justify-center items-center h-full w-full">
+          <p>{error.message}</p>
+          <br />
+          <button
+            className="p-3 text-lg pointer-events-auto rounded transition-colors duration-300 bg-gray-900 hover:bg-sky-600 active:bg-sky-100"
+            onClick={handleRetry}
+          >
+            Retry
+          </button>
+        </div>
+      )}
     </>
   );
 });

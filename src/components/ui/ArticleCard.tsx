@@ -29,6 +29,7 @@ const ArticleCard = memo(function ArticleCard({
 }: ArticleCardProps) {
   const [html, setHtml] = useState<string>("");
   const articleRef = useRef<HTMLElement>(null);
+  const [error, setError] = useState<Error | null>(null);
   // Load the article
   useEffect(() => {
     if (!name) {
@@ -38,17 +39,35 @@ const ArticleCard = memo(function ArticleCard({
       setHtml("<h6>Loading...</h6>");
     }
     let slim;
-    if (articleCache.has(name)) {
-      slim = articleCache.get(name);
-      setHtml(slim as string);
-      console.log(name, "hit", "expiresIn:", articleCache.expiresIn(name));
-    } else {
-      (async () => {
-        slim = await fetchArticle(name);
-        setHtml(slim);
-        articleCache.set(name, slim);
-        console.log(name, "miss");
-      })();
+    try {
+      if (articleCache.has(name)) {
+        slim = articleCache.get(name);
+        setHtml(slim as string);
+        console.log(name, "hit", "expiresIn:", articleCache.expiresIn(name));
+      } else {
+        //        (async () => {
+        //          slim = await fetchArticle(name);
+        //          setHtml(slim);
+        //          articleCache.set(name, slim, { maxAge: 1 });
+        //          console.log(name, "miss");
+        //        })();
+        fetchArticle(name)
+          .then((html) => {
+            setHtml(html);
+            articleCache.set(name, html, { maxAge: 1 });
+            console.log(name, "miss");
+            setError(null);
+          })
+          .catch((e) => {
+            console.error("Failed to load article:", e);
+            setError(e as Error);
+            setHtml("");
+          });
+      }
+    } catch (e) {
+      console.error("Failed to get article from cache:", e);
+      setError(e as Error);
+      setHtml("");
     }
   }, [name]);
 
@@ -156,6 +175,12 @@ const ArticleCard = memo(function ArticleCard({
 
   return (
     <>
+      {error && (
+        <div>
+          <p>{error.message}</p>
+          <button>Retry</button>
+        </div>
+      )}
       <article
         ref={articleRef}
         className={clsx(

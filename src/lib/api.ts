@@ -1,6 +1,5 @@
 // src/lib/api.ts
-import { API, API_ROUTES } from "./constants";
-import { ApiRoute } from "./constants";
+import { API, API_ROUTES, ApiRoute } from "@/lib/constants";
 
 type apiFetchArgs<T> = {
   route: ApiRoute;

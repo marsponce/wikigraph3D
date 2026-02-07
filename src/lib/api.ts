@@ -37,6 +37,13 @@ export async function apiFetch<T>({
     } catch (error: unknown) {
       console.error(`${url} failed attempt ${i} / ${retries}:`, error);
       lastError = error instanceof Error ? error : new Error(String(error));
+      if (error instanceof Error) {
+        const status = parseInt(error.message.match(/\d{3}/)?.[0] || "0");
+        if (status >= 400 && status < 500 && status !== 429) {
+          console.error(`${url} failed with non-retriable error:`, error);
+          throw error; // Don't retry
+        }
+      }
       // exponential backoff
       if (i <= retries - 1)
         await new Promise((resolve) => setTimeout(resolve, 2 ** i * 1000));

@@ -52,7 +52,7 @@ const ArticleCard = memo(function ArticleCard({
         fetchArticle(name)
           .then((html) => {
             setHtml(html);
-            articleCache.set(name, html, { maxAge: 1 });
+            articleCache.set(name, html);
             console.log(name, "miss");
             setError(null);
             setRetries(0);

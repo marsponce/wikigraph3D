@@ -57,7 +57,7 @@ const ArticleCard = memo(function ArticleCard({
         fetchArticle(name)
           .then((html) => {
             setHtml(html);
-            articleCache.set(name, html, { maxAge: 1 });
+            articleCache.set(name, html);
             console.log(name, "miss");
             setError(null);
             setRetries(0);
@@ -211,7 +211,7 @@ const ArticleCard = memo(function ArticleCard({
       />
       {error && (
         <div className="fixed inset-0 z-50 flex flex-col justify-center items-center h-full w-full">
-          <p>{error.message}</p>
+          <p>Something went wrong while loading this article. Please try again.</p>
           <br />
           <button
             type="button"

@@ -1,5 +1,5 @@
 // src/lib/graph.ts
-import { API, API_ROUTES } from "@/lib/constants";
+import { API_ROUTES } from "@/lib/constants";
 import { GraphNode, GraphLink, GraphData } from "@/types";
 import * as THREE from "three";
 import { WIKIPEDIA_ICON_URL } from "@/lib/constants";

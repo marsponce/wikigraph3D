@@ -33,9 +33,9 @@ export async function apiFetch<T>({
       const res = await fetch(url, options);
       if (!res.ok) throw new Error(`http: ${res.status}: ${res.statusText}`);
       return await res.json();
-    } catch (error) {
+    } catch (error: unknown) {
       console.error(`${url} failed attempt ${i} / ${retries}`);
-      lastError = error as Error;
+      lastError = error instanceof Error ? error : new Error(String(error));
       // exponential backoff
       if (i <= retries - 1)
         await new Promise((resolve) => setTimeout(resolve, 2 ** i * 1000));

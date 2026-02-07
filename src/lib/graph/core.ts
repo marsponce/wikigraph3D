@@ -7,9 +7,6 @@ import { apiFetch } from "@/lib/api";
 
 // Fetch "Today's Featured Article" (Initial) Node
 export async function fetchInitialNode(): Promise<GraphNode> {
-  //  const res = await fetch(`${API}/today`);
-  //  const responseJson = await res.json();
-  //  return responseJson.node as GraphNode;
   const response = await apiFetch<{ node: GraphNode }>({
     route: API_ROUTES.TODAY,
   });
@@ -21,9 +18,6 @@ export async function fetchNode(
   title: string | undefined,
 ): Promise<GraphNode | undefined> {
   if (!title) return;
-  //  const res = await fetch(`${API}/link?title=${title}`);
-  //  const responseJson = await res.json();
-  //  return responseJson.node as GraphNode;
   const response = await apiFetch<{ node: GraphNode }>({
     route: API_ROUTES.LINK,
     params: { title },
@@ -36,9 +30,6 @@ export async function fetchLinkedNodes(
   node: GraphNode,
   limit: number = 64,
 ): Promise<GraphNode[]> {
-  //  const res = await fetch(`${API}/links?title=${node.name}&limit=${limit}`);
-  //  const { nodes } = await res.json();
-  //  return nodes as GraphNode[];
   const response = await apiFetch<{ nodes: GraphNode[] }>({
     route: API_ROUTES.LINK,
     params: { title: node.name!, limit: String(limit) },
@@ -48,9 +39,6 @@ export async function fetchLinkedNodes(
 
 // Given a Node node, fetch the html article of it from wikipedia
 export async function fetchNodeInfo(name: string): Promise<string> {
-  //  const res = await fetch(`${API}/info?title=${name}`);
-  //  const { html } = await res.json();
-  //  return html;
   const response = await apiFetch<{ html: string }>({
     route: API_ROUTES.INFO,
     params: { title: name },

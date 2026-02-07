@@ -31,7 +31,7 @@ export async function fetchLinkedNodes(
   limit: number = 64,
 ): Promise<GraphNode[]> {
   const response = await apiFetch<{ nodes: GraphNode[] }>({
-    route: API_ROUTES.LINK,
+    route: API_ROUTES.LINKS,
     params: { title: node.name!, limit: String(limit) },
   });
   return response.nodes;

@@ -12,6 +12,7 @@ import { articleCache } from "@/lib/cache";
 import { fetchArticle } from "@/lib/article";
 import { fetchNode, mergeGraphData } from "@/lib/graph";
 import type { GraphNode, GraphData } from "@/types";
+import { toast } from "sonner";
 
 type ArticleCardProps = {
   className?: string;
@@ -36,14 +37,11 @@ const ArticleCard = memo(function ArticleCard({
   useEffect(() => {
     setRetries(0);
     setError(null);
-    const centeredWrapper = (content: string) =>
-      `<div class="flex flex-col justify-center items-center h-full w-full">${content}</div>`;
-
     if (!name) {
-      setHtml(centeredWrapper("<h6>No node selected...</h6>"));
+      setHtml("<h6>No node selected...</h6>");
       return;
     } else {
-      setHtml(centeredWrapper("<h6>Loading...</h6>"));
+      setHtml("<h6>Loading...</h6>");
     }
     let slim;
     try {
@@ -76,6 +74,29 @@ const ArticleCard = memo(function ArticleCard({
   // Click handler
   const handleClick = useCallback(
     (e: MouseEvent) => {
+      // Make an api call, add the new node to the graph, set selected node to that node
+      const loadNewNode = (title: string) => {
+        fetchNode(title)
+          .then((newNode) => {
+            // throw new Error("Test error"); // for testing
+            if (newNode && selectedNode) {
+              setGraphData((oldData) =>
+                mergeGraphData(selectedNode, [newNode], oldData),
+              );
+              setSelectedNode(newNode);
+            }
+          })
+          .catch((e) => {
+            console.error("Failed to fetch new node:", e);
+            toast.error("Failed to fetch new node", {
+              action: {
+                label: "Retry",
+                onClick: () => loadNewNode(title),
+              },
+            });
+          });
+      };
+
       const link = (e.target as HTMLElement).closest("a");
       if (link) {
         const href = link.getAttribute("href");
@@ -142,21 +163,7 @@ const ArticleCard = memo(function ArticleCard({
             window.open(`https://en.wikipedia.org${href}`, "_blank");
             return;
           }
-          // Make an api call, add the new node to the graph, set selected node to that node
-          (async () => {
-            const newNode = await fetchNode(title);
-            if (!newNode || !selectedNode) return;
-            console.log(
-              "newNode:",
-              newNode.name,
-              "selectedNode:",
-              selectedNode.name,
-            );
-            setGraphData((oldData) =>
-              mergeGraphData(selectedNode, [newNode], oldData),
-            );
-            setSelectedNode(newNode);
-          })();
+          loadNewNode(title);
         }
       }
     },
@@ -198,12 +205,13 @@ const ArticleCard = memo(function ArticleCard({
       <article
         ref={articleRef}
         className={clsx(
-          "w-full h-full",
+          "w-full",
           "articlecard",
           "p-[1em]",
           "overflow-y-auto",
           "[content-visibility:auto] [contain-intrinsic-size:0_500px]",
           "transition-opacity duration-300",
+          "pb-12",
           visible ? "opacity-0" : "opacity-100",
           className ?? "",
         )}

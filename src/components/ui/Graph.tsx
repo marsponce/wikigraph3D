@@ -15,14 +15,13 @@ import * as THREE from "three";
 import { GraphNode, GraphLink, GraphData } from "@/types";
 import {
   fetchInitialNode,
-  fetchLinkedNodes,
-  mergeGraphData,
   createNodeSprite,
   focusCameraOnNode,
   zoomToFit,
   updateSpriteHighlight,
 } from "@/lib/graph";
 import type { ForceGraphMethods } from "react-force-graph-3d";
+import { toast } from "sonner";
 
 const ForceGraph3D = dynamic(() => import("react-force-graph-3d"), {
   ssr: false,
@@ -47,23 +46,26 @@ export default function Graph({
   setDataAction,
   isFocused,
 }: GraphProps) {
+  // Get the first node or try again
   useEffect(() => {
-    (async () => {
-      const root = await fetchInitialNode();
-      setDataAction({ nodes: [{ ...root }], links: [] });
-    })();
+    const loadInitialNode = () => {
+      fetchInitialNode()
+        .then((root) => {
+          // throw new Error("Test error"); // for testing
+          setDataAction({ nodes: [{ ...root }], links: [] });
+        })
+        .catch((e) => {
+          console.error("Failed to fetch initial node:", e);
+          toast.error("Failed to fetch initial node", {
+            action: {
+              label: "Retry",
+              onClick: () => loadInitialNode(),
+            },
+          });
+        });
+    };
+    loadInitialNode();
   }, [setDataAction]);
-
-  // TODO: Replace this with the sidebar graph expansion
-  const expandGraph = useCallback(
-    async (node: GraphNode, event?: MouseEvent) => {
-      event?.preventDefault?.();
-      const newNodes = await fetchLinkedNodes(node);
-      if (newNodes)
-        setDataAction((oldData) => mergeGraphData(node, newNodes, oldData));
-    },
-    [setDataAction],
-  );
 
   const handleNodeClick = useCallback(
     (node: GraphNode, event?: MouseEvent) => {
@@ -157,7 +159,7 @@ export default function Graph({
         onNodeClick={handleNodeClick}
         onBackgroundClick={handleBackgroundClick}
         // TODO: Replace with the article expansion method: onNodeRightClick={expandGraph}
-        onNodeRightClick={expandGraph}
+        // onNodeRightClick={expandGraph}
         nodeAutoColorBy="id"
         linkAutoColorBy="target"
         linkVisibility={(link) => highlightedLinks.has(link)}

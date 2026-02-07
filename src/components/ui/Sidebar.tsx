@@ -77,9 +77,6 @@ export default function Sidebar({
             "w-[4rem] p-3",
           )}
         >
-          <Button className="hidden" aria-label={"Graph Info"} disabled>
-            <InformationCircleIcon />
-          </Button>
           <Button
             onClick={toggleSidebar}
             toggled={sidebarState === "open"}

@@ -34,7 +34,6 @@ const ArticleCard = memo(function ArticleCard({
   const [retries, setRetries] = useState<number>(0);
   // Load the article
   useEffect(() => {
-  useEffect(() => {
     setRetries(0);
     setError(null);
     if (!name) {

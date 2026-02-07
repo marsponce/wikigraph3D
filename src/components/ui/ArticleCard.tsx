@@ -206,7 +206,7 @@ const ArticleCard = memo(function ArticleCard({
       />
       {error && (
         <div className="fixed inset-0 z-50 flex flex-col justify-center items-center h-full w-full">
-          <p>{error.message}</p>
+          <p>Something went wrong while loading this article. Please try again.</p>
           <br />
           <button
             type="button"

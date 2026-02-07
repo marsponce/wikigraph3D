@@ -24,6 +24,7 @@
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-force-graph-3d": "^1.28.0",
+    "sonner": "^2.0.7",
     "three": "^0.179.1",
     "three-spritetext": "^1.10.0",
     "tween": "^0.9.0",

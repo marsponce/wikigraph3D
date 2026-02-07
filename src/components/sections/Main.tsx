@@ -5,6 +5,7 @@ import Graph from "../ui/Graph";
 import { useState, useRef } from "react";
 import { GraphData, GraphNode, GraphLink } from "@/types";
 import type { ForceGraphMethods } from "react-force-graph-3d";
+import { Toaster } from "sonner";
 
 export default function Main() {
   // State for the app
@@ -44,6 +45,7 @@ export default function Main() {
           <p>Please enable JavaScript</p>
         </div>
       </noscript>
+      <Toaster />
     </div>
   );
 }

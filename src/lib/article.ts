@@ -1,12 +1,15 @@
 // src/lib/article.ts
 import * as cheerio from "cheerio";
-import { API } from "@/lib/constants";
+import { API_ROUTES } from "@/lib/constants";
+import { apiFetch } from "@/lib/api";
 
 // Given an article title fetch the html for the relevant article
 export async function fetchArticle(title: string): Promise<string> {
-  const res = await fetch(`${API}/article?title=${title}`);
-  const { html } = await res.json();
-  return html;
+  const response = await apiFetch<{ html: string }>({
+    route: API_ROUTES.ARTICLE,
+    params: { title },
+  });
+  return response.html;
 }
 
 // Server-side
@@ -16,7 +19,7 @@ export function slimArticle(fullHtml: string | null): string {
   const $ = cheerio.load(fullHtml);
   // slim the article
 
-  // Stuff to drop
+  // Stuff to drop TODO: Finalize this in a later ticket
   const DROP = [
     ".metadata",
     //    ".infobox",

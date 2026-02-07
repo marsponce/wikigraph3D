@@ -5,10 +5,8 @@ import clsx from "clsx";
 import type { GraphData, GraphNode, GraphLink } from "@/types";
 import { ForceGraphMethods } from "react-force-graph-3d";
 import {
-  ArrowsPointingInIcon,
-  ArrowsPointingOutIcon,
   ViewfinderCircleIcon,
-  InformationCircleIcon,
+  DocumentTextIcon,
 } from "@heroicons/react/24/outline";
 
 type SidebarProps = {
@@ -41,16 +39,6 @@ export default function Sidebar({
         break;
       default:
         setSidebarState("closed");
-        break;
-    }
-  };
-  const toggleFullscreen = () => {
-    switch (sidebarState) {
-      case "fullscreen":
-        setSidebarState("open");
-        break;
-      default: // open or closed;
-        setSidebarState("fullscreen");
         break;
     }
   };
@@ -95,7 +83,7 @@ export default function Sidebar({
               sidebarState === "closed" ? "Open Sidebar" : "Close Sidebar"
             }
           >
-            <InformationCircleIcon />
+            <DocumentTextIcon />
           </Button>
           {/* focus button */}
           <Button

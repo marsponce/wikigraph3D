@@ -6,7 +6,6 @@ import type { GraphData, GraphNode, GraphLink } from "@/types";
 import { ForceGraphMethods } from "react-force-graph-3d";
 import {
   ViewfinderCircleIcon,
-  InformationCircleIcon,
   DocumentTextIcon,
 } from "@heroicons/react/24/outline";
 

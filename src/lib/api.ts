@@ -15,8 +15,12 @@ export async function apiFetch<T>({
   retries = 3,
 }: apiFetchArgs<T>): Promise<T> {
   // Check route validity
-  if (!Object.values(API_ROUTES).includes(route))
-    throw new Error(`route: ${route} is not a valid api route!`);
+  if (!Object.values(API_ROUTES).includes(route)) {
+    const allowedRoutes = Object.values(API_ROUTES).join(", ");
+    throw new Error(
+      `Invalid API route "${route}". Allowed routes are: ${allowedRoutes}`
+    );
+  }
 
   // Create URL
   let url = API + route;

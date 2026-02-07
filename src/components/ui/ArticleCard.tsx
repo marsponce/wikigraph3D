@@ -206,10 +206,11 @@ const ArticleCard = memo(function ArticleCard({
         dangerouslySetInnerHTML={{ __html: html }}
       />
       {error && (
-        <div className="fixed flex flex-col justify-center items-center h-full w-full">
+        <div className="fixed inset-0 z-50 flex flex-col justify-center items-center h-full w-full">
           <p>{error.message}</p>
           <br />
           <button
+            type="button"
             className="p-3 text-lg pointer-events-auto rounded transition-colors duration-300 bg-gray-900 hover:bg-sky-600 active:bg-sky-100"
             onClick={handleRetry}
           >

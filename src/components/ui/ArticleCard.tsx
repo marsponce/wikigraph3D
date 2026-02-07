@@ -32,9 +32,14 @@ const ArticleCard = memo(function ArticleCard({
   const articleRef = useRef<HTMLElement>(null);
   const [error, setError] = useState<Error | null>(null);
   const [retries, setRetries] = useState<number>(0);
-  // Load the article
+
+  // Reset Retries
   useEffect(() => {
     setRetries(0);
+  }, [name]);
+
+  // Load the article
+  useEffect(() => {
     setError(null);
     if (!name) {
       setHtml("<h6>No node selected...</h6>");

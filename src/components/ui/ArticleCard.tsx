@@ -188,18 +188,6 @@ const ArticleCard = memo(function ArticleCard({
     setRetries((prev) => prev + 1);
   };
 
-  // fade opacity when changing article contents
-  //  useEffect(() => {
-  //    setVisible(false);
-  //  }, [name, retries]);
-  //
-  //  useEffect(() => {
-  //    if (html) {
-  //      const timer = setTimeout(() => setVisible(true), 300);
-  //      return () => clearTimeout(timer);
-  //    }
-  //  }, [html]);
-
   return (
     <>
       <article

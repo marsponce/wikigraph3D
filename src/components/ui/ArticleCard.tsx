@@ -200,7 +200,7 @@ const ArticleCard = memo(function ArticleCard({
           "[content-visibility:auto] [contain-intrinsic-size:0_500px]",
           "transition-opacity duration-300",
           "pb-12",
-          visible ? "opacity-0" : "opacity-100",
+          "opacity-100",
           className ?? "",
         )}
         dangerouslySetInnerHTML={{ __html: html }}

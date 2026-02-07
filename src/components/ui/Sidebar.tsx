@@ -77,7 +77,7 @@ export default function Sidebar({
             "w-[4rem] p-3",
           )}
         >
-          <Button aria-label={"Graph Info"}>
+          <Button aria-label={"Graph Info"} disabled>
             <InformationCircleIcon />
           </Button>
           <Button

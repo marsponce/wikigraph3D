@@ -32,8 +32,8 @@ const ArticleCard = memo(function ArticleCard({
   const articleRef = useRef<HTMLElement>(null);
   const [error, setError] = useState<Error | null>(null);
   const [retries, setRetries] = useState<number>(0);
-  const [visible, setVisible] = useState<boolean>(false);
   // Load the article
+  useEffect(() => {
   useEffect(() => {
     setRetries(0);
     setError(null);

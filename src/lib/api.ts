@@ -1,8 +1,9 @@
 // src/lib/api.ts
 import { API, API_ROUTES } from "./constants";
+import { ApiRoute } from "./constants";
 
 type apiFetchArgs<T> = {
-  route: string;
+  route: ApiRoute;
   params?: Record<string, string>;
   options?: RequestInit;
   retries?: number;
@@ -18,7 +19,7 @@ export async function apiFetch<T>({
   if (!Object.values(API_ROUTES).includes(route)) {
     const allowedRoutes = Object.values(API_ROUTES).join(", ");
     throw new Error(
-      `Invalid API route "${route}". Allowed routes are: ${allowedRoutes}`
+      `Invalid API route "${route}". Allowed routes are: ${allowedRoutes}`,
     );
   }
 

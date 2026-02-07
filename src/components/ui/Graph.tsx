@@ -158,8 +158,6 @@ export default function Graph({
         enableNodeDrag={false}
         onNodeClick={handleNodeClick}
         onBackgroundClick={handleBackgroundClick}
-        // TODO: Replace with the article expansion method: onNodeRightClick={expandGraph}
-        // onNodeRightClick={expandGraph}
         nodeAutoColorBy="id"
         linkAutoColorBy="target"
         linkVisibility={(link) => highlightedLinks.has(link)}

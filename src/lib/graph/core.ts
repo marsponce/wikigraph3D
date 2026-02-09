@@ -6,11 +6,19 @@ import { WIKIPEDIA_ICON_URL } from "@/lib/constants";
 import { apiFetch } from "@/lib/api";
 
 // Fetch the graph json from supabase
-export async function fetchGraph(): Promise<GraphData> {
-  const response = await apiFetch<{ graph: GraphData }>({
+export async function fetchGraph(): Promise<{
+  graph: GraphData;
+  nodesCount: number;
+  linksCount: number;
+}> {
+  const response = await apiFetch<{
+    graph: GraphData;
+    nodesCount: number;
+    linksCount: number;
+  }>({
     route: API_ROUTES.GRAPH,
   });
-  return response.graph;
+  return response;
 }
 
 // Fetch "Today's Featured Article" (Initial) Node

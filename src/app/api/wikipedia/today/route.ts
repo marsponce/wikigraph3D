@@ -60,11 +60,7 @@ export async function GET() {
     node.content = data.tfa?.content_urls; // Since normalizePageToNode doesn't work 100% with this type of response
 
     // 4. Store in supabase
-    const { data: insertedNode, error: insertError } = await supabase
-      .from("nodes")
-      .insert(node)
-      .select()
-      .single();
+    const { error: insertError } = await supabase.from("nodes").insert(node);
 
     if (insertError) {
       console.error("Failed to insert root:", insertError);

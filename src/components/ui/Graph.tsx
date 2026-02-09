@@ -15,6 +15,7 @@ import * as THREE from "three";
 import { GraphNode, GraphLink, GraphData } from "@/types";
 import {
   fetchInitialNode,
+  fetchGraph,
   createNodeSprite,
   focusCameraOnNode,
   zoomToFit,
@@ -46,25 +47,48 @@ export default function Graph({
   setDataAction,
   isFocused,
 }: GraphProps) {
-  // Get the first node or try again
+  const loadInitialNode = () => {
+    fetchInitialNode()
+      .then((root) => {
+        // throw new Error("Test error"); // for testing
+        console.log(root);
+        setDataAction({ nodes: [{ ...root }], links: [] });
+      })
+      .catch((e) => {
+        console.error("Failed to fetch initial node:", e);
+        toast.error("Failed to fetch initial node", {
+          action: {
+            label: "Retry",
+            onClick: () => loadInitialNode(),
+          },
+        });
+      });
+  };
+
+  // Get the graph from supabase if it exists
   useEffect(() => {
-    const loadInitialNode = () => {
-      fetchInitialNode()
-        .then((root) => {
-          // throw new Error("Test error"); // for testing
-          setDataAction({ nodes: [{ ...root }], links: [] });
+    const loadGraph = () => {
+      fetchGraph()
+        .then(({ graph, nodesCount, linksCount }) => {
+          if (nodesCount === 0) {
+            console.log("Empty graph, fetching initial node");
+            loadInitialNode();
+          } else {
+            console.log("Nodes: ", nodesCount, "Links: ", linksCount);
+            setDataAction({ nodes: graph.nodes, links: graph.links });
+          }
         })
         .catch((e) => {
-          console.error("Failed to fetch initial node:", e);
-          toast.error("Failed to fetch initial node", {
+          console.error("Failed to fetch graph:", e);
+          toast.error("Failed to fetch graph", {
             action: {
               label: "Retry",
-              onClick: () => loadInitialNode(),
+              onClick: () => loadGraph(),
             },
           });
         });
     };
-    loadInitialNode();
+    loadGraph();
   }, [setDataAction]);
 
   const handleNodeClick = useCallback(

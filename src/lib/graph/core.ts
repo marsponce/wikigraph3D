@@ -5,6 +5,14 @@ import * as THREE from "three";
 import { WIKIPEDIA_ICON_URL } from "@/lib/constants";
 import { apiFetch } from "@/lib/api";
 
+// Fetch the graph json from supabase
+export async function fetchGraph(): Promise<GraphData> {
+  const response = await apiFetch<{ graph: GraphData }>({
+    route: API_ROUTES.GRAPH,
+  });
+  return response.graph;
+}
+
 // Fetch "Today's Featured Article" (Initial) Node
 export async function fetchInitialNode(): Promise<GraphNode> {
   const response = await apiFetch<{ node: GraphNode }>({

@@ -23,6 +23,7 @@ export const API_ROUTES = {
   LINK: "/link",
   LINKS: "/links",
   INFO: "/info",
+  GRAPH: "/graph",
 } as const;
 
 export type ApiRoute = (typeof API_ROUTES)[keyof typeof API_ROUTES];

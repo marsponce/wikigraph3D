@@ -31,7 +31,7 @@ export async function GET() {
 
     return NextResponse.json({
       graph,
-      nodeCount: nodes?.length || 0,
+      nodesCount: nodes?.length || 0,
       linksCount: links?.length || 0,
     });
   } catch (error) {

@@ -6,12 +6,21 @@ import { createServerClient } from "@/lib/supabase";
 export async function GET() {
   try {
     const supabase = await createServerClient();
+
+    // Get today at midnight in ISO format
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const todayStart = today.toISOString();
+
     const { data: nodes, error: nodesError } = await supabase
       .from("nodes")
-      .select("*");
+      .select("*")
+      .gte("created_at", todayStart);
+
     const { data: links, error: linksError } = await supabase
       .from("links")
-      .select("*");
+      .select("*")
+      .gte("created_at", todayStart);
 
     if (nodesError || linksError) {
       console.error(

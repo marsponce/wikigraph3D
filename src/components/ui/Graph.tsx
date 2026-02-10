@@ -57,6 +57,7 @@ export default function Graph({
       .catch((e) => {
         console.error("Failed to fetch initial node:", e);
         toast.error("Failed to fetch initial node", {
+          duration: Infinity,
           action: {
             label: "Retry",
             onClick: () => loadInitialNode(),
@@ -68,8 +69,9 @@ export default function Graph({
   // Get the graph from supabase if it exists
   useEffect(() => {
     const loadGraph = () => {
-      fetchGraph()
-        .then(({ graph, nodesCount, linksCount }) => {
+      const graphPromise = fetchGraph().then(
+        ({ graph, nodesCount, linksCount }) => {
+          // throw new Error("test error"); // for testing
           if (nodesCount === 0) {
             console.log("Empty graph, fetching initial node");
             loadInitialNode();
@@ -77,17 +79,25 @@ export default function Graph({
             console.log("Nodes: ", nodesCount, "Links: ", linksCount);
             setDataAction({ nodes: graph.nodes, links: graph.links });
           }
-        })
-        .catch((e) => {
-          console.error("Failed to fetch graph:", e);
-          toast.error("Failed to fetch graph", {
-            action: {
-              label: "Retry",
-              onClick: () => loadGraph(),
-            },
-          });
-        });
+          return { nodesCount, linksCount };
+        },
+      );
+
+      toast.promise(graphPromise, {
+        loading: "Loading Graph...",
+        success: ({ nodesCount, linksCount }) =>
+          `Graph Loaded with ${nodesCount} nodes and ${linksCount} links`,
+        error: () => ({
+          message: "Failed to fetch graph",
+          duration: Infinity,
+          action: {
+            label: "Retry",
+            onClick: () => loadGraph(),
+          },
+        }),
+      });
     };
+
     loadGraph();
   }, [setDataAction]);
 
@@ -95,6 +105,7 @@ export default function Graph({
     (node: GraphNode, event?: MouseEvent) => {
       event?.preventDefault?.();
       setSelectedNodeAction(node);
+      console.log(node);
     },
     [setSelectedNodeAction],
   );

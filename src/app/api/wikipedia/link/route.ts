@@ -45,7 +45,7 @@ export async function GET(req: Request) {
       node = nodes[0];
       // 2.1 link this node to the other one!
       const { error: linkInsertError } = await supabase.from("links").insert({
-        source: parseInt(sourceID),
+        source: parseInt(sourceID, 10),
         target: node.id,
       });
 

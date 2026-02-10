@@ -28,6 +28,29 @@ _This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next
 1. `npm install` the required packages
 2. `npm run dev` to run the development server
 
+**\*Note**: A supabase database with the following tables is required:
+
+### `nodes` Table
+
+| Column       | Type                       | Constraints                   | Default                    |
+| ------------ | -------------------------- | ----------------------------- | -------------------------- |
+| `id`         | `bigint`                   | PRIMARY KEY, UNIQUE, NOT NULL | -                          |
+| `name`       | `text`                     | NOT NULL                      | -                          |
+| `created_at` | `timestamp with time zone` | NOT NULL                      | `now() AT TIME ZONE 'utc'` |
+| `thumbnail`  | `json`                     | NULL                          | -                          |
+| `content`    | `json`                     | NULL                          | -                          |
+
+### `links` Table
+
+| Column       | Type                       | Constraints                                                         | Default                    |
+| ------------ | -------------------------- | ------------------------------------------------------------------- | -------------------------- |
+| `id`         | `bigint`                   | PRIMARY KEY, NOT NULL, IDENTITY                                     | Generated                  |
+| `source`     | `bigint`                   | NULL, FOREIGN KEY → `nodes(id)` ON UPDATE CASCADE ON DELETE CASCADE | -                          |
+| `target`     | `bigint`                   | NULL, FOREIGN KEY → `nodes(id)` ON UPDATE CASCADE ON DELETE CASCADE | -                          |
+| `created_at` | `timestamp with time zone` | NOT NULL                                                            | `now() AT TIME ZONE 'utc'` |
+
+(see `.env.example` for where to put relevant environmental variables)
+
 - Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 _See the current status of the project [HERE](https://github.com/users/marceloponceardon/projects/12) for development tickets._

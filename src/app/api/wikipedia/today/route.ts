@@ -1,3 +1,4 @@
+// src/app/api/wikipedia/today/route.ts
 import { NextResponse } from "next/server";
 import { TFA_API_BASE } from "@/lib/constants";
 import { normalizePageToNode } from "@/lib/utils";
@@ -5,13 +6,25 @@ import { responseCache as todayCache } from "@/lib/cache";
 import { GraphNode } from "@/types/wikipedia";
 import { createServerClient } from "@/lib/supabase";
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
+    const { searchParams } = new URL(req.url);
+    const timeZone = searchParams.get("timezone") || "UTC";
     const supabase = await createServerClient();
+
     const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, "0");
-    const day = String(today.getDate()).padStart(2, "0");
+    const formatter = new Intl.DateTimeFormat("en-US", {
+      timeZone,
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour12: false,
+    });
+
+    const parts = formatter.formatToParts(today);
+    const year = parts.find((p) => p.type === "year")!.value;
+    const month = parts.find((p) => p.type === "month")!.value;
+    const day = parts.find((p) => p.type === "day")!.value;
 
     const url = `${TFA_API_BASE}/en/featured/${year}/${month}/${day}`;
 
@@ -24,7 +37,7 @@ export async function GET() {
     }
 
     // 2. check supabase second
-    const todayStart = `${year}-${month}-${day}T00:00:00`;
+    const todayStart = `${year}-${month}-${day}T00:00:00Z`;
     const { data: nodes } = await supabase
       .from("nodes")
       .select("*")

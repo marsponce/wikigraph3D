@@ -57,6 +57,7 @@ export async function GET(req: Request) {
 
       linkCache.set(req.url, node);
       console.log(req.url, "database hit, inserted new link");
+      return NextResponse.json({ node });
     }
 
     // 3. Fetch from wikipedia
@@ -87,8 +88,6 @@ export async function GET(req: Request) {
     const pages: Page[] = [];
     pages.push(...(Object.values(data.query?.pages || {}) as Page[]));
     node = normalizePageToNode(pages[0]);
-
-    console.log(node);
 
     // 4. Insert into supabase
     const { error: insertError } = await supabase.from("nodes").insert(node);

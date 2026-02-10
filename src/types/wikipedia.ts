@@ -69,10 +69,13 @@ export interface GraphNode {
   };
   relevance?: number;
   html?: string;
+  created_at?: string;
 }
 
 // Link Object
 export interface GraphLink {
+  id?: number;
+  created_at?: string;
   source?: number | string | GraphNode | undefined;
   target?: number | string | GraphNode | undefined;
 }

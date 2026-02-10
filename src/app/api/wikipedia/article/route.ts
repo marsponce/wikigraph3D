@@ -17,7 +17,7 @@ async function fetchArticle(title: string) {
     const res = await fetch(url.toString(), {
       headers: {
         Authorization: `Bearer ${process.env.WIKIMEDIA_ACCESS_TOKEN}`,
-        "User-Agent": `${process.env.APP_NAME} (${process.env.CONTACT})`,
+        "User-Agent": `${process.env.NEXT_PUBLIC_APP_NAME} (${process.env.NEXT_PUBLIC_CONTACT})`,
       },
     });
     const data = await res.json();

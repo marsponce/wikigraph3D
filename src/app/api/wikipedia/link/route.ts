@@ -74,7 +74,7 @@ export async function GET(req: Request) {
     const res = await fetch(url, {
       headers: {
         Authorization: `Bearer ${process.env.WIKIMEDIA_ACCESS_TOKEN}`,
-        "User-Agent": `${process.env.APP_NAME} (${process.env.CONTACT})`,
+        "User-Agent": `${process.env.NEXT_PUBLIC_APP_NAME} (${process.env.NEXT_PUBLIC_CONTACT})`,
       },
     });
     if (!res.ok) {

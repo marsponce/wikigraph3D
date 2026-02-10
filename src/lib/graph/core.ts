@@ -4,6 +4,7 @@ import { GraphNode, GraphLink, GraphData } from "@/types";
 import * as THREE from "three";
 import { WIKIPEDIA_ICON_URL } from "@/lib/constants";
 import { apiFetch } from "@/lib/api";
+import { todaysDate } from "@/lib/utils";
 
 // Fetch the graph json from supabase
 export async function fetchGraph(): Promise<{
@@ -17,7 +18,9 @@ export async function fetchGraph(): Promise<{
     linksCount: number;
   }>({
     route: API_ROUTES.GRAPH,
+    params: { date: todaysDate() },
   });
+  console.log("Fetching today's graph:", todaysDate());
   return response;
 }
 
@@ -25,7 +28,9 @@ export async function fetchGraph(): Promise<{
 export async function fetchInitialNode(): Promise<GraphNode> {
   const response = await apiFetch<{ node: GraphNode }>({
     route: API_ROUTES.TODAY,
+    params: { date: todaysDate() },
   });
+  console.log("Fetching todays AOTD:", todaysDate());
   return response.node;
 }
 
@@ -37,7 +42,7 @@ export async function fetchNode(
   if (!title || !sourceID) return;
   const response = await apiFetch<{ node: GraphNode }>({
     route: API_ROUTES.LINK,
-    params: { title, sourceID: sourceID.toString() },
+    params: { title, sourceID: sourceID.toString(), date: todaysDate() },
   });
   return response.node;
 }

@@ -10,6 +10,7 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
     const title = searchParams.get("title");
     const sourceID = searchParams.get("sourceID");
+    const date = searchParams.get("date");
 
     if (!title) {
       return NextResponse.json(
@@ -20,6 +21,12 @@ export async function GET(req: Request) {
     if (!sourceID) {
       return NextResponse.json(
         { error: "Missing sourceID parameter" },
+        { status: 400 },
+      );
+    }
+    if (!date) {
+      return NextResponse.json(
+        { error: "Missing date parameter" },
         { status: 400 },
       );
     }
@@ -47,6 +54,7 @@ export async function GET(req: Request) {
       const { error: linkInsertError } = await supabase.from("links").insert({
         source: parseInt(sourceID, 10),
         target: node.id,
+        graph_date: date,
       });
 
       if (linkInsertError) {
@@ -60,7 +68,7 @@ export async function GET(req: Request) {
       return NextResponse.json({ node });
     }
 
-    // 3. Fetch from wikipedia
+    // 3. Fetch from wikipedia this new node
     const url = new URL(WIKI_API_BASE);
     url.searchParams.set("action", "query");
     url.searchParams.set("titles", title);
@@ -90,7 +98,7 @@ export async function GET(req: Request) {
     node = normalizePageToNode(pages[0]);
 
     // 4. Insert into supabase
-    const { error: insertError } = await supabase.from("nodes").insert(node);
+    const { error: insertError } = await supabase.from("nodes").upsert(node);
 
     if (insertError) {
       console.error("Failed to insert node:", insertError);
@@ -102,6 +110,7 @@ export async function GET(req: Request) {
     const { error: insertLinkError } = await supabase.from("links").insert({
       source: parseInt(sourceID),
       target: node.id,
+      graph_date: date,
     });
 
     if (insertLinkError) {

@@ -9,23 +9,13 @@ import { createServerClient } from "@/lib/supabase";
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
-    const timeZone = searchParams.get("timezone") || "UTC";
+    const date = searchParams.get("date");
     const supabase = await createServerClient();
-
-    const today = new Date();
-    const formatter = new Intl.DateTimeFormat("en-US", {
-      timeZone,
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour12: false,
-    });
-
-    const parts = formatter.formatToParts(today);
-    const year = parts.find((p) => p.type === "year")!.value;
-    const month = parts.find((p) => p.type === "month")!.value;
-    const day = parts.find((p) => p.type === "day")!.value;
-
+    if (!date) {
+      console.error("Failed to provide date parameter");
+      return NextResponse.json({ error: "No date provided", code: 400 });
+    }
+    const [year, month, day] = date.split("-");
     const url = `${TFA_API_BASE}/en/featured/${year}/${month}/${day}`;
 
     // 1. check todayCache first
@@ -37,12 +27,10 @@ export async function GET(req: Request) {
     }
 
     // 2. check supabase second
-    const todayStart = `${year}-${month}-${day}T00:00:00Z`;
     const { data: nodes } = await supabase
       .from("nodes")
       .select("*")
-      .gte("created_at", todayStart)
-      .order("created_at", { ascending: true })
+      .eq("featured_date", date)
       .limit(1);
 
     if (nodes && nodes.length > 0) {
@@ -73,7 +61,9 @@ export async function GET(req: Request) {
     node.content = data.tfa?.content_urls; // Since normalizePageToNode doesn't work 100% with this type of response
 
     // 4. Store in supabase
-    const { error: insertError } = await supabase.from("nodes").insert(node);
+    const { error: insertError } = await supabase
+      .from("nodes")
+      .insert({ ...node, featured_date: date });
 
     if (insertError) {
       console.error("Failed to insert root:", insertError);

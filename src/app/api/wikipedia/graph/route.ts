@@ -6,37 +6,33 @@ import { createServerClient } from "@/lib/supabase";
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
-    const timeZone = searchParams.get("timezone") || "UTC";
+    const date = searchParams.get("date");
+
+    if (!date) {
+      console.error("Failed to provide date parameter");
+      return NextResponse.json({ error: "No date provided", code: 400 });
+    }
+
     const supabase = await createServerClient();
-
-    const today = new Date();
-    const formatter = new Intl.DateTimeFormat("en-US", {
-      timeZone,
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour12: false,
-    });
-
-    const parts = formatter.formatToParts(today);
-    const year = parts.find((p) => p.type === "year")!.value;
-    const month = parts.find((p) => p.type === "month")!.value;
-    const day = parts.find((p) => p.type === "day")!.value;
-
-    const todayStart = `${year}-${month}-${day}T00:00:00Z`;
-    console.log("todayStart:", todayStart);
-
-    const { data: nodes, error: nodesError } = await supabase
-      .from("nodes")
-      .select("*")
-      .gte("created_at", todayStart)
-      .order("created_at", { ascending: true });
 
     const { data: links, error: linksError } = await supabase
       .from("links")
       .select("*")
-      .gte("created_at", todayStart)
+      .eq("graph_date", date)
       .order("created_at", { ascending: true });
+
+    // Get all unique node IDs from links
+    const nodeIDs = new Set<string>();
+    links?.forEach((link) => {
+      nodeIDs.add(link.source);
+      nodeIDs.add(link.target);
+    });
+
+    // Fetch all the nodes from this set of ids
+    const { data: nodes, error: nodesError } = await supabase
+      .from("nodes")
+      .select("*")
+      .in("id", Array.from(nodeIDs));
 
     if (nodesError || linksError) {
       console.error(

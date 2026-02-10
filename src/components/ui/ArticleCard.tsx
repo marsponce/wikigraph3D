@@ -87,7 +87,6 @@ const ArticleCard = memo(function ArticleCard({
         fetchNode(title, sourceID)
           .then((newNode) => {
             // throw new Error("Test error"); // for testing
-            console.log(newNode);
             if (newNode && selectedNode) {
               setGraphData((oldData) =>
                 mergeGraphData(selectedNode, [newNode], oldData),
@@ -173,7 +172,7 @@ const ArticleCard = memo(function ArticleCard({
             window.open(`https://en.wikipedia.org${href}`, "_blank");
             return;
           }
-          loadNewNode(title, selectedNode!.id as number);
+          loadNewNode(decodeURIComponent(title), selectedNode!.id as number);
         }
       }
     },

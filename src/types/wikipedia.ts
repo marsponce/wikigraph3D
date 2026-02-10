@@ -41,12 +41,11 @@ export interface MediaWikiResponse {
 // Node object
 export interface GraphNode {
   id?: string | number | undefined;
+  created_at?: string;
   name?: string;
   x?: number;
   y?: number;
   z?: number;
-  description?: string | null;
-  extract?: string | null;
   thumbnail?: {
     source: string;
     width?: number;
@@ -67,9 +66,6 @@ export interface GraphNode {
       talk?: string;
     } | null;
   };
-  relevance?: number;
-  html?: string;
-  created_at?: string;
 }
 
 // Link Object

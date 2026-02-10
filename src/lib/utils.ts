@@ -23,8 +23,6 @@ export function normalizePageToNode(page: Page): GraphNode {
           null,
       },
     },
-    description: page.description ?? null,
-    extract: page.extract ?? null,
   };
 }
 

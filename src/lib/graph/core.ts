@@ -32,13 +32,12 @@ export async function fetchInitialNode(): Promise<GraphNode> {
 // Fetch a new node given it's title
 export async function fetchNode(
   title: string | undefined,
-  sourceID: number,
+  sourceID: number | string,
 ): Promise<GraphNode | undefined> {
   if (!title || !sourceID) return;
-  const IDString = sourceID.toString();
   const response = await apiFetch<{ node: GraphNode }>({
     route: API_ROUTES.LINK,
-    params: { title, sourceID: IDString },
+    params: { title, sourceID: sourceID.toString() },
   });
   return response.node;
 }

@@ -1,17 +1,25 @@
 // src/app/components/ui/Sidebar.tsx
 import { useState, RefObject, Dispatch, SetStateAction } from "react";
-import { Button, Searchbar, ArticleCard, BreadCrumbs } from "@/components/ui";
+import {
+  Button,
+  Searchbar,
+  ArticleCard,
+  BreadCrumbs,
+  DownloadCard,
+} from "@/components/ui";
 import clsx from "clsx";
 import type { GraphData, GraphNode, GraphLink } from "@/types";
-import { ForceGraphMethods } from "react-force-graph-3d";
+import type { ForceGraphMethods } from "react-force-graph-3d";
 import {
   ViewfinderCircleIcon,
   DocumentTextIcon,
   CubeIcon,
   HomeIcon,
+  ArrowDownTrayIcon,
   DocumentArrowDownIcon,
+  XMarkIcon,
 } from "@heroicons/react/24/outline";
-import { downloadGraphJSON } from "@/lib/graph";
+import { downloadGraphJSON, downloadGraphModel } from "@/lib/graph";
 
 type SidebarProps = {
   graphRef: RefObject<ForceGraphMethods<GraphNode, GraphLink> | undefined>;
@@ -39,7 +47,10 @@ export default function Sidebar({
   const toggleSidebar = () => {
     switch (sidebarState) {
       case "closed":
-        setSidebarState("open");
+        setSidebarState("article");
+        break;
+      case "downloads":
+        setSidebarState("article");
         break;
       default:
         setSidebarState("closed");
@@ -66,7 +77,7 @@ export default function Sidebar({
           {
             "bg-white/10 [transform:translateX(calc(100%-4rem))]":
               sidebarState === "closed",
-            "sm:bg-black/60": sidebarState === "open",
+            "sm:bg-black/60": sidebarState !== "closed",
           },
         )}
         data-sidebar-state={sidebarState}
@@ -80,29 +91,31 @@ export default function Sidebar({
             "w-[4rem] p-3",
           )}
         >
+          {/* Buttons that change the content rendered in the sidebar */}
           <Button
             onClick={toggleSidebar}
-            toggled={sidebarState === "open"}
+            toggled={sidebarState !== "closed"}
             aria-label={
               sidebarState === "closed" ? "Open Sidebar" : "Close Sidebar"
             }
           >
-            <DocumentTextIcon />
+            {sidebarState === "closed" ? <DocumentTextIcon /> : <XMarkIcon />}
           </Button>
-          {/* focus button */}
+          {/* download button */}
+          <Button
+            onClick={() => setSidebarState("downloads")}
+            toggled={sidebarState === "downloads"}
+            aria-label={"Download today's graph"}
+          >
+            <ArrowDownTrayIcon />
+          </Button>
+          {/* camera/control buttons */}
           <Button
             onClick={focusCamera}
             toggled={isFocused}
             aria-label={"Center Camera"}
           >
             <ViewfinderCircleIcon />
-          </Button>
-          {/* download button */}
-          <Button
-            onClick={() => downloadGraphJSON(graphData)}
-            aria-label={"Download today's graph"}
-          >
-            <DocumentArrowDownIcon />
           </Button>
         </div>
         <div
@@ -114,24 +127,34 @@ export default function Sidebar({
           )}
           data-sidebar-state={sidebarState}
         >
-          <Searchbar
-            graphData={graphData}
-            selectedNode={selectedNode}
-            setSelectedNode={setSelectedNode}
-            data-sidebar-state={sidebarState}
-          />
-          <ArticleCard
-            name={selectedNode ? selectedNode.name : undefined}
-            selectedNode={selectedNode}
-            setSelectedNode={setSelectedNode}
-            setGraphData={setGraphData}
-          />
-          <BreadCrumbs
-            graphData={graphData}
-            selectedNode={selectedNode}
-            setSelectedNode={setSelectedNode}
-            sidebarState={sidebarState}
-          />
+          {sidebarState === "article" && (
+            <>
+              <Searchbar
+                graphData={graphData}
+                selectedNode={selectedNode}
+                setSelectedNode={setSelectedNode}
+                data-sidebar-state={sidebarState}
+              />
+              <ArticleCard
+                name={selectedNode ? selectedNode.name : undefined}
+                selectedNode={selectedNode}
+                setSelectedNode={setSelectedNode}
+                setGraphData={setGraphData}
+              />
+              <BreadCrumbs
+                graphData={graphData}
+                selectedNode={selectedNode}
+                setSelectedNode={setSelectedNode}
+                sidebarState={sidebarState}
+              />
+            </>
+          )}
+          {sidebarState === "downloads" && (
+            <>
+              <DownloadCard graphRef={graphRef} graphData={graphData} />
+            </>
+          )}
+          {sidebarState === "settings" && <></>}
         </div>
       </aside>
     </>

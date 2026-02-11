@@ -224,8 +224,9 @@ export default function Graph({
         nodeAutoColorBy="id"
         linkAutoColorBy="target"
         linkVisibility={(link) => highlightedLinks.has(link)}
-        linkWidth={1.2}
-        nodeThreeObjectExtend={false}
+        linkWidth={1}
+        nodeThreeObjectExtend={true}
+        nodeRelSize={1}
         nodeThreeObject={createNodeObjectCached}
         showNavInfo={false}
         cooldownTicks={100}

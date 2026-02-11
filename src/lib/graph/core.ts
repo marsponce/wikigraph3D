@@ -1,4 +1,4 @@
-// src/lib/graph.ts
+// src/lib/graph/core.ts
 import { API_ROUTES } from "@/lib/constants";
 import { GraphNode, GraphLink, GraphData } from "@/types";
 import * as THREE from "three";

@@ -7,8 +7,11 @@ import { ForceGraphMethods } from "react-force-graph-3d";
 import {
   ViewfinderCircleIcon,
   DocumentTextIcon,
+  CubeIcon,
   HomeIcon,
+  DocumentArrowDownIcon,
 } from "@heroicons/react/24/outline";
+import { downloadGraphJSON } from "@/lib/graph";
 
 type SidebarProps = {
   graphRef: RefObject<ForceGraphMethods<GraphNode, GraphLink> | undefined>;
@@ -94,9 +97,12 @@ export default function Sidebar({
           >
             <ViewfinderCircleIcon />
           </Button>
-          {/* aotd button */}
-          <Button onClick={console.log("Find aotd")} aria-label={"Find AOTD"}>
-            <HomeIcon />
+          {/* download button */}
+          <Button
+            onClick={() => downloadGraphJSON(graphData)}
+            aria-label={"Download today's graph"}
+          >
+            <DocumentArrowDownIcon />
           </Button>
         </div>
         <div

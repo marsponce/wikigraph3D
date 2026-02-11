@@ -42,6 +42,7 @@ export interface MediaWikiResponse {
 export interface GraphNode {
   id?: string | number | undefined;
   created_at?: string;
+  featured_date?: string;
   name?: string;
   x?: number;
   y?: number;
@@ -72,6 +73,7 @@ export interface GraphNode {
 export interface GraphLink {
   id?: number;
   created_at?: string;
+  graph_date?: string;
   source?: number | string | GraphNode | undefined;
   target?: number | string | GraphNode | undefined;
 }
@@ -86,4 +88,5 @@ export interface GraphData {
 export type GraphHandle = {
   resetCamera: () => void;
   focusOnCamera: () => void;
+  scene: () => void;
 };

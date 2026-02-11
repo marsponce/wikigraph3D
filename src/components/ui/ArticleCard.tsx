@@ -78,9 +78,13 @@ const ArticleCard = memo(function ArticleCard({
   // Click handler
   const handleClick = useCallback(
     (e: MouseEvent) => {
+      if (!selectedNode) {
+        console.warn("No node selected");
+        return;
+      }
       // Make an api call, add the new node to the graph, set selected node to that node
-      const loadNewNode = (title: string) => {
-        fetchNode(title)
+      const loadNewNode = (title: string, sourceID: number) => {
+        fetchNode(title, sourceID)
           .then((newNode) => {
             // throw new Error("Test error"); // for testing
             if (newNode && selectedNode) {
@@ -95,7 +99,7 @@ const ArticleCard = memo(function ArticleCard({
             toast.error("Failed to fetch new node", {
               action: {
                 label: "Retry",
-                onClick: () => loadNewNode(title),
+                onClick: () => loadNewNode(title, sourceID),
               },
             });
           });
@@ -105,6 +109,7 @@ const ArticleCard = memo(function ArticleCard({
       if (link) {
         const href = link.getAttribute("href");
         console.log("Link clicked:", href);
+        console.log("INFO:", selectedNode.id);
 
         // Handle citation/reference links (internal anchors)
         if (href && href.startsWith("#")) {
@@ -167,7 +172,7 @@ const ArticleCard = memo(function ArticleCard({
             window.open(`https://en.wikipedia.org${href}`, "_blank");
             return;
           }
-          loadNewNode(title);
+          loadNewNode(decodeURIComponent(title), selectedNode!.id as number);
         }
       }
     },
@@ -211,7 +216,9 @@ const ArticleCard = memo(function ArticleCard({
       />
       {error && (
         <div className="fixed inset-0 z-50 flex flex-col justify-center items-center h-full w-full">
-          <p>Something went wrong while loading this article. Please try again.</p>
+          <p>
+            Something went wrong while loading this article. Please try again.
+          </p>
           <br />
           <button
             type="button"

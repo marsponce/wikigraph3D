@@ -4,23 +4,45 @@ import { GraphNode, GraphLink, GraphData } from "@/types";
 import * as THREE from "three";
 import { WIKIPEDIA_ICON_URL } from "@/lib/constants";
 import { apiFetch } from "@/lib/api";
+import { todaysDate } from "@/lib/utils";
+
+// Fetch the graph json from supabase
+export async function fetchGraph(): Promise<{
+  graph: GraphData;
+  nodesCount: number;
+  linksCount: number;
+}> {
+  const response = await apiFetch<{
+    graph: GraphData;
+    nodesCount: number;
+    linksCount: number;
+  }>({
+    route: API_ROUTES.GRAPH,
+    params: { date: todaysDate() },
+  });
+  console.log("Fetching today's graph:", todaysDate());
+  return response;
+}
 
 // Fetch "Today's Featured Article" (Initial) Node
 export async function fetchInitialNode(): Promise<GraphNode> {
   const response = await apiFetch<{ node: GraphNode }>({
     route: API_ROUTES.TODAY,
+    params: { date: todaysDate() },
   });
+  console.log("Fetching todays AOTD:", todaysDate());
   return response.node;
 }
 
 // Fetch a new node given it's title
 export async function fetchNode(
   title: string | undefined,
+  sourceID: number | string,
 ): Promise<GraphNode | undefined> {
-  if (!title) return;
+  if (!title || !sourceID) return;
   const response = await apiFetch<{ node: GraphNode }>({
     route: API_ROUTES.LINK,
-    params: { title },
+    params: { title, sourceID: sourceID.toString(), date: todaysDate() },
   });
   return response.node;
 }

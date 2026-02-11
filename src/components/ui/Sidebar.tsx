@@ -7,6 +7,7 @@ import { ForceGraphMethods } from "react-force-graph-3d";
 import {
   ViewfinderCircleIcon,
   DocumentTextIcon,
+  HomeIcon,
 } from "@heroicons/react/24/outline";
 
 type SidebarProps = {
@@ -92,6 +93,10 @@ export default function Sidebar({
             aria-label={"Center Camera"}
           >
             <ViewfinderCircleIcon />
+          </Button>
+          {/* aotd button */}
+          <Button onClick={console.log("Find aotd")} aria-label={"Find AOTD"}>
+            <HomeIcon />
           </Button>
         </div>
         <div

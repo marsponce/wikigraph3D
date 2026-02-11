@@ -15,6 +15,7 @@ import * as THREE from "three";
 import { GraphNode, GraphLink, GraphData } from "@/types";
 import {
   fetchInitialNode,
+  fetchGraph,
   createNodeSprite,
   focusCameraOnNode,
   zoomToFit,
@@ -46,31 +47,65 @@ export default function Graph({
   setDataAction,
   isFocused,
 }: GraphProps) {
-  // Get the first node or try again
-  useEffect(() => {
-    const loadInitialNode = () => {
-      fetchInitialNode()
-        .then((root) => {
-          // throw new Error("Test error"); // for testing
-          setDataAction({ nodes: [{ ...root }], links: [] });
-        })
-        .catch((e) => {
-          console.error("Failed to fetch initial node:", e);
-          toast.error("Failed to fetch initial node", {
-            action: {
-              label: "Retry",
-              onClick: () => loadInitialNode(),
-            },
-          });
+  const loadInitialNode = () => {
+    fetchInitialNode()
+      .then((root) => {
+        // throw new Error("Test error"); // for testing
+        console.log(root);
+        setDataAction({ nodes: [{ ...root }], links: [] });
+      })
+      .catch((e) => {
+        console.error("Failed to fetch initial node:", e);
+        toast.error("Failed to fetch initial node", {
+          duration: Infinity,
+          action: {
+            label: "Retry",
+            onClick: () => loadInitialNode(),
+          },
         });
+      });
+  };
+
+  // Get the graph from supabase if it exists
+  useEffect(() => {
+    const loadGraph = () => {
+      const graphPromise = fetchGraph().then(
+        ({ graph, nodesCount, linksCount }) => {
+          // throw new Error("test error"); // for testing
+          if (nodesCount === 0) {
+            console.log("Empty graph, fetching initial node");
+            loadInitialNode();
+          } else {
+            console.log("Nodes: ", nodesCount, "Links: ", linksCount);
+            setDataAction({ nodes: graph.nodes, links: graph.links });
+          }
+          return { nodesCount, linksCount };
+        },
+      );
+
+      toast.promise(graphPromise, {
+        loading: "Loading Graph...",
+        success: ({ nodesCount, linksCount }) =>
+          `Graph Loaded with ${nodesCount} nodes and ${linksCount} links`,
+        error: () => ({
+          message: "Failed to fetch graph",
+          duration: Infinity,
+          action: {
+            label: "Retry",
+            onClick: () => loadGraph(),
+          },
+        }),
+      });
     };
-    loadInitialNode();
+
+    loadGraph();
   }, [setDataAction]);
 
   const handleNodeClick = useCallback(
     (node: GraphNode, event?: MouseEvent) => {
       event?.preventDefault?.();
       setSelectedNodeAction(node);
+      console.log(node);
     },
     [setSelectedNodeAction],
   );
@@ -150,10 +185,38 @@ export default function Graph({
     }
   }, [selectedNode, data, setSelectedNodeAction]);
 
+  const [dimensions, setDimensions] = useState({
+    width: 0,
+    height: 0,
+  });
+
+  // Dynamically resize the graph if we need to (screen rotations, resizes, etc.)
+  useEffect(() => {
+    const updateDimensions = () => {
+      setDimensions({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    };
+
+    updateDimensions();
+    window.addEventListener("resize", updateDimensions);
+    window.addEventListener("orientationchange", updateDimensions);
+
+    return () => {
+      window.removeEventListener("resize", updateDimensions);
+      window.removeEventListener("orientationchange", updateDimensions);
+    };
+  }, []);
+
   return (
-    <div className={clsx(className ?? "")}>
+    <div className="absolute inset-0">
       <ForceGraph3D
         ref={graphRef}
+        // width={dimensions.squareSize}
+        // height={dimensions.squareSize}
+        width={dimensions.width}
+        height={dimensions.height}
         graphData={data}
         enableNodeDrag={false}
         onNodeClick={handleNodeClick}

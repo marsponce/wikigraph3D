@@ -45,7 +45,20 @@ export default function Main() {
           <p>Please enable JavaScript</p>
         </div>
       </noscript>
-      <Toaster />
+      <Toaster
+        toastOptions={{
+          classNames: {
+            toast: "!bg-gray-800 !border !border-gray-700",
+            icon: "!text-white",
+            title: "!text-white",
+            description: "!text-gray-300",
+            actionButton:
+              "!p-3 !rounded !transition-colors !duration-300 !bg-gray-900 hover:!bg-sky-600 active:!bg-sky-100 !text-white",
+            cancelButton:
+              "!p-3 !rounded !transition-colors !duration-300 !bg-gray-700 hover:!bg-gray-600 active:!bg-gray-500 !text-white",
+          },
+        }}
+      />
     </div>
   );
 }

@@ -185,10 +185,38 @@ export default function Graph({
     }
   }, [selectedNode, data, setSelectedNodeAction]);
 
+  const [dimensions, setDimensions] = useState({
+    width: 0,
+    height: 0,
+  });
+
+  // Dynamically resize the graph if we need to (screen rotations, resizes, etc.)
+  useEffect(() => {
+    const updateDimensions = () => {
+      setDimensions({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    };
+
+    updateDimensions();
+    window.addEventListener("resize", updateDimensions);
+    window.addEventListener("orientationchange", updateDimensions);
+
+    return () => {
+      window.removeEventListener("resize", updateDimensions);
+      window.removeEventListener("orientationchange", updateDimensions);
+    };
+  }, []);
+
   return (
-    <div className={clsx(className ?? "")}>
+    <div className="absolute inset-0">
       <ForceGraph3D
         ref={graphRef}
+        // width={dimensions.squareSize}
+        // height={dimensions.squareSize}
+        width={dimensions.width}
+        height={dimensions.height}
         graphData={data}
         enableNodeDrag={false}
         onNodeClick={handleNodeClick}

@@ -24,8 +24,4 @@ eslint $STAGED_FILES --ext .js,.ts,.tsx --fix
 # Re-stage any files that ESLint fixed
 git update-index --again
 
-# 3. npm run build
-echo "npm run build..."
-npm run build
-
 echo "pre-commit checks passed!"

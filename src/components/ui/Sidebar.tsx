@@ -6,6 +6,8 @@ import {
   ArticleCard,
   BreadCrumbs,
   DownloadCard,
+  SettingsCard,
+  StatsCard,
 } from "@/components/ui";
 import clsx from "clsx";
 import type { GraphData, GraphNode, GraphLink } from "@/types";
@@ -13,10 +15,9 @@ import type { ForceGraphMethods } from "react-force-graph-3d";
 import {
   ViewfinderCircleIcon,
   DocumentTextIcon,
-  CubeIcon,
-  HomeIcon,
+  ChartBarIcon,
   ArrowDownTrayIcon,
-  DocumentArrowDownIcon,
+  CogIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { downloadGraphJSON, downloadGraphModel } from "@/lib/graph";
@@ -50,6 +51,12 @@ export default function Sidebar({
         setSidebarState("article");
         break;
       case "downloads":
+        setSidebarState("article");
+        break;
+      case "settings":
+        setSidebarState("article");
+        break;
+      case "stats":
         setSidebarState("article");
         break;
       default:
@@ -101,6 +108,14 @@ export default function Sidebar({
           >
             {sidebarState === "closed" ? <DocumentTextIcon /> : <XMarkIcon />}
           </Button>
+          {/* stats button */}
+          <Button
+            onClick={() => setSidebarState("stats")}
+            toggled={sidebarState === "stats"}
+            aria-label={"See graph statistics"}
+          >
+            <ChartBarIcon />
+          </Button>
           {/* download button */}
           <Button
             onClick={() => setSidebarState("downloads")}
@@ -108,6 +123,13 @@ export default function Sidebar({
             aria-label={"Download today's graph"}
           >
             <ArrowDownTrayIcon />
+          </Button>
+          <Button
+            onClick={() => setSidebarState("settings")}
+            toggled={sidebarState === "settings"}
+            aria-label={"Change graph visualization settings"}
+          >
+            <CogIcon />
           </Button>
           {/* camera/control buttons */}
           <Button
@@ -154,7 +176,16 @@ export default function Sidebar({
               <DownloadCard graphRef={graphRef} graphData={graphData} />
             </>
           )}
-          {sidebarState === "settings" && <></>}
+          {sidebarState === "stats" && (
+            <>
+              <StatsCard graphData={graphData} />
+            </>
+          )}
+          {sidebarState === "settings" && (
+            <>
+              <SettingsCard graphRef={graphRef} />
+            </>
+          )}
         </div>
       </aside>
     </>

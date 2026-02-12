@@ -6,3 +6,5 @@ export { default as Searchbar } from "./Searchbar";
 export { default as Graph } from "./Graph";
 export { default as ArticleCard } from "./ArticleCard";
 export { default as DownloadCard } from "./DownloadCard";
+export { default as StatsCard } from "./StatsCard";
+export { default as SettingsCard } from "./SettingsCard";

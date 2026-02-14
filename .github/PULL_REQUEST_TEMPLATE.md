@@ -16,6 +16,7 @@ Closes #<issue_number> <!-- Replace with the issue this PR resolves -->
 - [ ] Prettier formatting applied
 - [ ] Code compiles and runs locally
 - [ ] Tests (if any) pass
+- [ ] update version environment variable before deploying to production
 
 ## Notes for Reviewers
 

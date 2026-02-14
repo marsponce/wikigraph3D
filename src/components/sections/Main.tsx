@@ -1,9 +1,10 @@
 // src/app/components/sections/Main.tsx
 "use client";
 import { Sidebar } from "../ui";
-import Graph from "../ui/Graph";
 import { useState, useRef } from "react";
 import { GraphData, GraphNode, GraphLink } from "@/types";
+import Graph from "@/components/ui/Graph";
+import type { GraphSettings } from "@/components/ui/Graph";
 import type { ForceGraphMethods } from "react-force-graph-3d";
 import { Toaster } from "sonner";
 
@@ -18,6 +19,19 @@ export default function Main() {
   const graphRef = useRef<ForceGraphMethods<GraphNode, GraphLink> | undefined>(
     undefined,
   );
+  const [graphSettings, setGraphSettings] = useState<GraphSettings>({
+    nodeSize: 1,
+    nodeOpacity: 0,
+    linkWidth: 1,
+    linkOpacity: 1,
+    showLabels: true,
+    showThumbnails: true,
+    cooldownTicks: 100,
+    enableNodeDrag: false,
+    showNavInfo: true,
+    darkMode: false,
+    controlType: "trackball",
+  } as GraphSettings);
   return (
     <div className="relative">
       <Sidebar
@@ -29,6 +43,8 @@ export default function Main() {
         className=""
         isFocused={isFocused}
         setIsFocused={setIsFocused}
+        graphSettings={graphSettings}
+        setGraphSettings={setGraphSettings}
       />
       <Graph
         graphRef={graphRef}
@@ -36,8 +52,8 @@ export default function Main() {
         setSelectedNodeAction={setSelectedNode}
         data={graphData}
         setDataAction={setGraphData}
-        className=""
         isFocused={isFocused}
+        {...graphSettings}
       />
       <noscript>
         <div className="my-auto ring-3 rounded p-2">

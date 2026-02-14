@@ -1,6 +1,5 @@
 "use client";
 
-import clsx from "clsx";
 import dynamic from "next/dynamic";
 import {
   useEffect,
@@ -28,8 +27,21 @@ const ForceGraph3D = dynamic(() => import("react-force-graph-3d"), {
   ssr: false,
 });
 
-type GraphProps = {
-  className?: string;
+export type GraphSettings = {
+  nodeSize: number;
+  nodeOpacity: number;
+  linkWidth: number;
+  linkOpacity: number;
+  showLabels: boolean;
+  showThumbnails: boolean;
+  cooldownTicks: number;
+  enableNodeDrag: boolean;
+  showNavInfo: boolean;
+  darkMode: boolean;
+  controlType: "trackball" | "orbit" | "fly";
+};
+
+type GraphProps = GraphSettings & {
   graphRef: RefObject<ForceGraphMethods<GraphNode, GraphLink> | undefined>;
   selectedNode: GraphNode | null;
   setSelectedNodeAction: (node: GraphNode | null) => void;
@@ -39,13 +51,23 @@ type GraphProps = {
 };
 
 export default function Graph({
-  className,
   graphRef,
   selectedNode,
   setSelectedNodeAction,
   data,
   setDataAction,
   isFocused,
+  // Settings
+  nodeSize = 1,
+  nodeOpacity = 0,
+  linkWidth = 1,
+  linkOpacity = 1,
+  showLabels = true,
+  cooldownTicks = 100,
+  enableNodeDrag = false,
+  showNavInfo = true,
+  darkMode = false,
+  controlType = "trackball",
 }: GraphProps) {
   const loadInitialNode = () => {
     fetchInitialNode()
@@ -218,18 +240,22 @@ export default function Graph({
         width={dimensions.width}
         height={dimensions.height}
         graphData={data}
-        enableNodeDrag={false}
+        enableNodeDrag={enableNodeDrag}
         onNodeClick={handleNodeClick}
         onBackgroundClick={handleBackgroundClick}
         nodeAutoColorBy="id"
         linkAutoColorBy="target"
         linkVisibility={(link) => highlightedLinks.has(link)}
-        linkWidth={1}
+        linkWidth={linkWidth}
+        linkOpacity={linkOpacity}
         nodeThreeObjectExtend={true}
-        nodeRelSize={1}
+        nodeRelSize={nodeSize}
+        nodeOpacity={nodeOpacity}
+        nodeLabel={(node) => (showLabels ? node.name : "")}
         nodeThreeObject={createNodeObjectCached}
-        showNavInfo={false}
-        cooldownTicks={100}
+        showNavInfo={showNavInfo}
+        controlType={controlType}
+        cooldownTicks={cooldownTicks}
         onEngineStop={handleEngineStop}
       />
     </div>

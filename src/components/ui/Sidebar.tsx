@@ -20,7 +20,7 @@ import {
   CogIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
-import { downloadGraphJSON, downloadGraphModel } from "@/lib/graph";
+import type { GraphSettings } from "@/components/ui/Graph";
 
 type SidebarProps = {
   graphRef: RefObject<ForceGraphMethods<GraphNode, GraphLink> | undefined>;
@@ -31,6 +31,8 @@ type SidebarProps = {
   setGraphData: Dispatch<SetStateAction<GraphData>>;
   isFocused: boolean;
   setIsFocused: (isFocused: boolean) => void;
+  graphSettings: GraphSettings;
+  setGraphSettings: (graphSettings: GraphSettings) => void;
 };
 
 export default function Sidebar({
@@ -42,6 +44,8 @@ export default function Sidebar({
   setGraphData,
   isFocused,
   setIsFocused,
+  graphSettings,
+  setGraphSettings,
 }: SidebarProps) {
   const [sidebarState, setSidebarState] = useState<string>("closed");
 
@@ -183,7 +187,11 @@ export default function Sidebar({
           )}
           {sidebarState === "settings" && (
             <>
-              <SettingsCard graphRef={graphRef} />
+              <SettingsCard
+                graphRef={graphRef}
+                graphSettings={graphSettings}
+                setGraphSettings={setGraphSettings}
+              />
             </>
           )}
         </div>

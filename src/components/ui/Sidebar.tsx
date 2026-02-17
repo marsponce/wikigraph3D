@@ -19,6 +19,8 @@ import {
   ArrowDownTrayIcon,
   CogIcon,
   XMarkIcon,
+  FunnelIcon,
+  HomeIcon,
 } from "@heroicons/react/24/outline";
 import type { GraphSettings } from "@/components/ui/Graph";
 
@@ -136,13 +138,19 @@ export default function Sidebar({
           >
             <CogIcon />
           </Button>
-          {/* camera/control buttons */}
+          {/* go to root node */}
           <Button
-            onClick={focusCamera}
-            toggled={isFocused}
-            aria-label={"Center Camera"}
+            onClick={console.log("Select root node")}
+            aria-label={"Select root node "}
           >
-            <ViewfinderCircleIcon />
+            <HomeIcon />
+          </Button>
+          {/* Filter button */}
+          <Button
+            onClick={console.log("Filter")}
+            aria-label={"Filter node settings"}
+          >
+            <FunnelIcon />
           </Button>
         </div>
         <div

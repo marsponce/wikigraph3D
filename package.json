@@ -29,9 +29,7 @@
     "sonner": "^2.0.7",
     "three": "^0.179.1",
     "three-spritetext": "^1.10.0",
-    "tween": "^0.9.0",
-    "tween.js": "^16.6.0",
-    "tweenjs": "^1.0.2"
+    "tween.js": "^16.6.0"
   },
   "devDependencies": {
     "@eslint/css": "^0.10.0",

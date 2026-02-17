@@ -109,33 +109,38 @@ export default function Graph({
   // Get the graph from supabase if it exists
   useEffect(() => {
     const loadGraph = () => {
-      const graphPromise = fetchGraph().then(
-        ({ graph, nodesCount, linksCount }) => {
-          // throw new Error("test error"); // for testing
-          if (nodesCount === 0) {
-            console.log("Empty graph, fetching initial node");
-            loadInitialNode();
-          } else {
-            console.log("Nodes: ", nodesCount, "Links: ", linksCount);
-            setDataAction({ nodes: graph.nodes, links: graph.links });
-          }
-          return { nodesCount, linksCount };
-        },
-      );
+      // Slight delay before starting the fetch to ensure toast is shown
+      setTimeout(() => {
+        toast.promise(
+          (async () => {
+            // Fetch the graph from Supabase
+            const { graph, nodesCount, linksCount } = await fetchGraph();
 
-      toast.promise(graphPromise, {
-        loading: "Loading Graph...",
-        success: ({ nodesCount, linksCount }) =>
-          `Graph Loaded with ${nodesCount} nodes and ${linksCount} links`,
-        error: () => ({
-          message: "Failed to fetch graph",
-          duration: Infinity,
-          action: {
-            label: "Retry",
-            onClick: () => loadGraph(),
+            if (nodesCount === 0) {
+              console.log("Empty graph, fetching initial node");
+              loadInitialNode();
+            } else {
+              console.log("Nodes: ", nodesCount, "Links: ", linksCount);
+              setDataAction({ nodes: graph.nodes, links: graph.links });
+            }
+
+            return { nodesCount, linksCount };
+          })(),
+          {
+            loading: "Loading Graph...", // This will show during the loading phase
+            success: ({ nodesCount, linksCount }) =>
+              `Graph Loaded with ${nodesCount} nodes and ${linksCount} links`, // Success message
+            error: () => ({
+              message: "Failed to fetch graph", // Error message if fetch fails
+              duration: Infinity, // Keeps the error toast indefinitely
+              action: {
+                label: "Retry", // Retry button for error
+                onClick: () => loadGraph(),
+              },
+            }),
           },
-        }),
-      });
+        );
+      }, 50); // Delay toast for 50ms to allow it to render before the async operation
     };
 
     loadGraph();

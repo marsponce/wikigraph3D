@@ -323,9 +323,7 @@ export default function SettingsCard({
             </Switch.Label>
             <Switch
               checked={graphSettings.darkMode}
-              onChange={(e) =>
-                updateSetting("darkMode", e.target.value || null)
-              }
+              onChange={(value) => updateSetting("darkMode", value || null)}
               className={clsx(
                 "relative inline-flex h-6 w-11 items-center rounded-full transition-colors",
                 "focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 focus:ring-offset-gray-900",

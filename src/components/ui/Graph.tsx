@@ -301,7 +301,7 @@ export default function Graph({
   }, [enableDynamicNodeSizing, nodeDegrees, nodeSize]);
 
   // dagMode
-  const handleDagError = useCallback((loopNodeIds: string[]) => {
+  const handleDagError = useCallback((loopNodeIds: (string | number)[]) => {
     console.warn("Cycle detected in graph:", loopNodeIds);
     toast.warning(
       `Graph contains a cycle involving ${loopNodeIds.length} nodes. DAG layout may be approximate.`,

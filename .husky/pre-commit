@@ -24,4 +24,11 @@ eslint $STAGED_FILES --ext .js,.ts,.tsx --fix
 # Re-stage any files that ESLint fixed
 git update-index --again
 
+# 3. Run TypeScript type check
+echo "TypeScript type check..."
+npx tsc --noEmit --skipLibCheck
+
+# 4. Optionally, re-stage any files that were fixed (e.g., ESLint or Prettier)
+git update-index --again
+
 echo "pre-commit checks passed!"

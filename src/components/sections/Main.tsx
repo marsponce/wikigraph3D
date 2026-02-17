@@ -21,7 +21,8 @@ export default function Main() {
   );
   const [graphSettings, setGraphSettings] = useState<GraphSettings>({
     nodeSize: 1,
-    nodeOpacity: 0,
+    enableDynamicNodeSizing: true,
+    nodeOpacity: 0.25,
     linkWidth: 1,
     linkOpacity: 1,
     showLabels: true,

@@ -285,7 +285,7 @@ export default function Graph({
 
   const handleNodeSizing = (node: GraphNode): number => {
     if (!enableDynamicNodeSizing) return nodeSize;
-    if (!node.id) return;
+    if (!node.id) return nodeSize;
     const degree = Math.max(nodeDegrees.get(node.id) || 1, 1);
     const normalizedDegree = degree / maxDegree;
     const multiplier =

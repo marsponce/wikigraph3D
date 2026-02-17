@@ -31,10 +31,6 @@
     @apply space-x-2;
   }
 
-  footer {
-    @apply fixed bottom-0 left-0 w-full h-8 bg-black/70 mx-auto;
-  }
-
   h1,
   h2,
   h3,

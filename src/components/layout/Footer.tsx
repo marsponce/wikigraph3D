@@ -3,14 +3,15 @@ type FooterProps = {
   children?: React.ReactNode;
 };
 
-export default function Footer({ children }: FooterProps) {
+export default function Footer() {
   return (
-    <footer>
-      <h6>
-        {process.env.NEXT_PUBLIC_APP_NAME} {process.env.NEXT_PUBLIC_APP_VERSION}{" "}
-        2026
+    <footer className="absolute bottom-0 left-0 w-full pointer-events-none">
+      <h6 className="relative">
+        <span className="absolute left-4 bottom-4">
+          {process.env.NEXT_PUBLIC_APP_NAME}{" "}
+          {process.env.NEXT_PUBLIC_APP_VERSION} 2026
+        </span>
       </h6>
-      {children}
     </footer>
   );
 }

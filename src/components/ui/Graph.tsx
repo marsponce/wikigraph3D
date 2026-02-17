@@ -87,7 +87,7 @@ export default function Graph({
   dagLevelDistance,
   enableDynamicNodeSizing = true,
 }: GraphProps) {
-  const loadInitialNode = () => {
+  const loadInitialNode = useCallback(() => {
     fetchInitialNode()
       .then((root) => {
         // throw new Error("Test error"); // for testing
@@ -104,7 +104,7 @@ export default function Graph({
           },
         });
       });
-  };
+  }, [setDataAction]);
 
   // Get the graph from supabase if it exists
   useEffect(() => {
@@ -139,7 +139,7 @@ export default function Graph({
     };
 
     loadGraph();
-  }, [setDataAction]);
+  }, [setDataAction, loadInitialNode]);
 
   const handleNodeClick = useCallback(
     (node: GraphNode, event?: MouseEvent) => {

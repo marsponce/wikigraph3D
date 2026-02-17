@@ -261,8 +261,9 @@ export default function Graph({
 
   // Memoize degree calculations for all nodes
   const nodeDegrees = useMemo(() => {
-    const degrees = new Map<string, number>();
+    const degrees = new Map<string | number, number>();
     data.nodes.forEach((node) => {
+      if (node.id == null) return;
       degrees.set(node.id, getNodeDegree(node, data));
     });
     return degrees;
@@ -284,6 +285,7 @@ export default function Graph({
 
   const handleNodeSizing = (node: GraphNode): number => {
     if (!enableDynamicNodeSizing) return nodeSize;
+    if (!node.id) return;
     const degree = Math.max(nodeDegrees.get(node.id) || 1, 1);
     const normalizedDegree = degree / maxDegree;
     const multiplier =

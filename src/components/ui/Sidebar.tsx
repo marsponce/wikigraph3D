@@ -13,7 +13,6 @@ import clsx from "clsx";
 import type { GraphData, GraphNode, GraphLink } from "@/types";
 import type { ForceGraphMethods } from "react-force-graph-3d";
 import {
-  ViewfinderCircleIcon,
   DocumentTextIcon,
   ChartBarIcon,
   ArrowDownTrayIcon,
@@ -23,6 +22,8 @@ import {
   HomeIcon,
 } from "@heroicons/react/24/outline";
 import type { GraphSettings } from "@/components/ui/Graph";
+import { getRootNode } from "@/lib/graph";
+import { todaysDate } from "@/lib/utils";
 
 type SidebarProps = {
   graphRef: RefObject<ForceGraphMethods<GraphNode, GraphLink> | undefined>;
@@ -69,10 +70,6 @@ export default function Sidebar({
         setSidebarState("closed");
         break;
     }
-  };
-
-  const focusCamera = () => {
-    setIsFocused(!isFocused);
   };
 
   return (
@@ -140,7 +137,12 @@ export default function Sidebar({
           </Button>
           {/* go to root node */}
           <Button
-            onClick={console.log("Select root node")}
+            onClick={() => {
+              const root = getRootNode(graphData, todaysDate());
+              console.log("Found root", root);
+              setSelectedNode(root);
+            }}
+            toggled={selectedNode !== null}
             aria-label={"Select root node "}
           >
             <HomeIcon />

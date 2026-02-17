@@ -155,3 +155,17 @@ export function getNodeDegree(node: GraphNode, data: GraphData): number {
   });
   return degree;
 }
+
+// get the root node
+export function getRootNode(
+  data: GraphData,
+  featured_date: string,
+): GraphNode | null {
+  for (const node of data.nodes) {
+    if (node.featured_date === featured_date) {
+      console.log("Found root node:", node);
+      return node;
+    }
+  }
+  return null;
+}

@@ -42,6 +42,17 @@ export type GraphSettings = {
   showNavInfo: boolean;
   darkMode: boolean;
   controlType: "trackball" | "orbit" | "fly";
+  dagMode:
+    | "td"
+    | "bu"
+    | "lr"
+    | "rl"
+    | "zout"
+    | "zin"
+    | "radialout"
+    | "radialin"
+    | null;
+  dagLevelDistance?: number;
 };
 
 type GraphProps = GraphSettings & {
@@ -72,6 +83,8 @@ export default function Graph({
   showNavInfo = true,
   darkMode = false,
   controlType = "trackball",
+  dagMode = null,
+  dagLevelDistance,
   enableDynamicNodeSizing = true,
 }: GraphProps) {
   const loadInitialNode = () => {
@@ -145,13 +158,7 @@ export default function Graph({
     [setSelectedNodeAction],
   );
 
-  // Auto focus camera
   const handleEngineStop = () => {
-    //    if (isFocused) {
-    //      focusCameraOnNode(graphRef, selectedNode, data);
-    //    } else {
-    //      zoomToFit(graphRef);
-    //    }
     console.log("Engine stop");
   };
 
@@ -281,9 +288,21 @@ export default function Graph({
     return nodeSize * multiplier;
   };
 
+  // Clear the cache when we change the following settings
   useEffect(() => {
     nodeObjects.current.clear();
   }, [enableDynamicNodeSizing, nodeDegrees, nodeSize]);
+
+  // dagMode
+  const handleDagError = useCallback((loopNodeIds: string[]) => {
+    console.warn("Cycle detected in graph:", loopNodeIds);
+    toast.warning(
+      `Graph contains a cycle involving ${loopNodeIds.length} nodes. DAG layout may be approximate.`,
+      {
+        duration: 5000,
+      },
+    );
+  }, []);
 
   return (
     <div className="absolute inset-0">
@@ -309,6 +328,9 @@ export default function Graph({
         controlType={controlType}
         cooldownTicks={cooldownTicks}
         onEngineStop={handleEngineStop}
+        dagMode={dagMode || undefined}
+        dagLevelDistance={dagLevelDistance || undefined}
+        onDagError={handleDagError}
       />
     </div>
   );

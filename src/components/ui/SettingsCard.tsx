@@ -20,7 +20,7 @@ export default function SettingsCard({
   // Helper to update individual settings
   const updateSetting = (
     key: keyof GraphSettings,
-    value: number | boolean | string,
+    value: number | boolean | string | null | undefined,
   ) => {
     setGraphSettings({ ...graphSettings, [key]: value });
   };
@@ -29,7 +29,7 @@ export default function SettingsCard({
     <div className="flex flex-col gap-6 p-4 overflow-y-auto">
       {/* Node Settings Section */}
       <div className="space-y-4">
-        <h3 className="text-2xl text-white">Node Settings</h3>
+        <h3 className="text-lg text-white">Node Settings</h3>
 
         {/* Dynamic Node Setting*/}
         <Switch.Group>
@@ -67,26 +67,10 @@ export default function SettingsCard({
         {/* Node Size Slider - Disabled when dynamic sizing is enabled */}
         <div className="space-y-2">
           <div className="flex justify-between items-center">
-            <label
-              className={clsx(
-                "text-sm",
-                //                graphSettings.enableDynamicNodeSizing
-                //                  ? "text-gray-500"
-                //                  : "text-gray-300"
-                "text-gray-300",
-              )}
-            >
+            <label className={clsx("text-sm", "text-gray-300")}>
               Base Node Size
             </label>
-            <span
-              className={clsx(
-                "text-sm",
-                // graphSettings.enableDynamicNodeSizing
-                //  ? "text-gray-600"
-                //  : "text-gray-400"
-                "text-gray-400",
-              )}
-            >
+            <span className={clsx("text-sm", "text-gray-400")}>
               {graphSettings.nodeSize}
             </span>
           </div>
@@ -100,9 +84,6 @@ export default function SettingsCard({
             // disabled={graphSettings.enableDynamicNodeSizing}
             className={clsx(
               "w-full h-2 rounded-lg appearance-none cursor-pointer accent-sky-500",
-              // graphSettings.enableDynamicNodeSizing
-              //  ? "bg-gray-800 opacity-50 cursor-not-allowed"
-              //  : "bg-gray-700"
               "bg-gray-700",
             )}
           />
@@ -144,7 +125,7 @@ export default function SettingsCard({
           </div>
           <input
             type="range"
-            min="0.5"
+            min="0"
             max="5"
             step="0.1"
             value={graphSettings.linkWidth}
@@ -342,7 +323,9 @@ export default function SettingsCard({
             </Switch.Label>
             <Switch
               checked={graphSettings.darkMode}
-              onChange={(value) => updateSetting("darkMode", value)}
+              onChange={(e) =>
+                updateSetting("darkMode", e.target.value || null)
+              }
               className={clsx(
                 "relative inline-flex h-6 w-11 items-center rounded-full transition-colors",
                 "focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 focus:ring-offset-gray-900",
@@ -358,6 +341,61 @@ export default function SettingsCard({
             </Switch>
           </div>
         </Switch.Group>
+      </div>
+
+      {/* Layout Settings Section */}
+      <div className="space-y-4">
+        <h3 className="text-lg font-semibold text-white">Layout</h3>
+
+        {/* DAG Mode Select */}
+        <div className="space-y-2">
+          <label className="text-sm text-gray-300">DAG Layout Mode</label>
+          <select
+            value={graphSettings.dagMode || ""}
+            onChange={(e) => updateSetting("dagMode", e.target.value || null)}
+            className="w-full px-3 py-2 bg-gray-700 text-white rounded-lg border border-gray-600 focus:outline-none focus:ring-2 focus:ring-sky-500"
+          >
+            <option value="">None (Free layout)</option>
+            <option value="td">Top-Down</option>
+            <option value="bu">Bottom-Up</option>
+            <option value="lr">Left-Right</option>
+            <option value="rl">Right-Left</option>
+            <option value="zout">Near-Far</option>
+            <option value="zin">Far-Near</option>
+            <option value="radialout">Radial Out</option>
+            <option value="radialin">Radial In</option>
+          </select>
+          <p className="text-xs text-gray-500">
+            Apply hierarchical layout constraints (works best for acyclic
+            graphs)
+          </p>
+        </div>
+
+        {/* DAG Level Distance - Only show when dagMode is active */}
+        {graphSettings.dagMode && (
+          <div className="space-y-2">
+            <div className="flex justify-between items-center">
+              <label className="text-sm text-gray-300">Level Distance</label>
+              <span className="text-sm text-gray-400">
+                {graphSettings.dagLevelDistance || 200}
+              </span>
+            </div>
+            <input
+              type="range"
+              min={50}
+              max={500}
+              step={10}
+              value={graphSettings.dagLevelDistance || 200}
+              onChange={(e) =>
+                updateSetting("dagLevelDistance", Number(e.target.value))
+              }
+              className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-sky-500"
+            />
+            <p className="text-xs text-gray-500">
+              Distance between graph hierarchy levels
+            </p>
+          </div>
+        )}
       </div>
 
       {/* Reset Button */}
@@ -376,6 +414,8 @@ export default function SettingsCard({
             darkMode: false,
             controlType: "trackball",
             enableDynamicNodeSizing: true,
+            dagMode: null,
+            dagLevelDistance: undefined,
           });
           toast.success("Settings reset to defaults");
         }}

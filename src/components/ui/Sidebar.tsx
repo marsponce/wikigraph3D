@@ -19,7 +19,7 @@ import {
   CogIcon,
   XMarkIcon,
   FunnelIcon,
-  HomeIcon,
+  ViewfinderCircleIcon,
 } from "@heroicons/react/24/outline";
 import type { GraphSettings } from "@/components/ui/Graph";
 import { getRootNode } from "@/lib/graph";
@@ -145,7 +145,7 @@ export default function Sidebar({
             toggled={selectedNode !== null}
             aria-label={"Select root node "}
           >
-            <HomeIcon />
+            <ViewfinderCircleIcon />
           </Button>
           {/* Filter button */}
           <Button

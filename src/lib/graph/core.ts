@@ -100,7 +100,11 @@ export function mergeGraphData(
 }
 
 // create the THREE.Sprite object to represent an article node
-export function createNodeSprite(node: GraphNode): THREE.Sprite {
+export function createNodeSprite(
+  node: GraphNode,
+  graphData: GraphData,
+  size: number,
+): THREE.Sprite {
   const texture = new THREE.TextureLoader().load(
     node.thumbnail?.source ?? WIKIPEDIA_ICON_URL,
   );
@@ -122,7 +126,7 @@ export function createNodeSprite(node: GraphNode): THREE.Sprite {
     width *= scale;
     height *= scale;
   }
-  sprite.scale.set(width, height, 1);
+  sprite.scale.set(width * size, height * size, 1);
 
   return sprite;
 }
@@ -140,4 +144,14 @@ export function updateSpriteHighlight(
     material.color.setHex(0x888888);
     material.opacity = 0.2;
   }
+}
+
+// get the degree of a node (count of it's connections in the graph)
+export function getNodeDegree(node: GraphNode, data: GraphData): number {
+  let degree = 0;
+  data.links.forEach((link) => {
+    if (link.source === node.id || link.target === node.id) degree++;
+    else if (link.source === node || link.target === node) degree++;
+  });
+  return degree;
 }

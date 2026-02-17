@@ -9,6 +9,7 @@ import {
   Dispatch,
   SetStateAction,
   RefObject,
+  useMemo,
 } from "react";
 import * as THREE from "three";
 import { GraphNode, GraphLink, GraphData } from "@/types";
@@ -19,6 +20,7 @@ import {
   focusCameraOnNode,
   zoomToFit,
   updateSpriteHighlight,
+  getNodeDegree,
 } from "@/lib/graph";
 import type { ForceGraphMethods } from "react-force-graph-3d";
 import { toast } from "sonner";
@@ -29,6 +31,7 @@ const ForceGraph3D = dynamic(() => import("react-force-graph-3d"), {
 
 export type GraphSettings = {
   nodeSize: number;
+  enableDynamicNodeSizing: boolean;
   nodeOpacity: number;
   linkWidth: number;
   linkOpacity: number;
@@ -63,11 +66,13 @@ export default function Graph({
   linkWidth = 1,
   linkOpacity = 1,
   showLabels = true,
+  showThumbnails = true,
   cooldownTicks = 100,
   enableNodeDrag = false,
   showNavInfo = true,
   darkMode = false,
   controlType = "trackball",
+  enableDynamicNodeSizing = true,
 }: GraphProps) {
   const loadInitialNode = () => {
     fetchInitialNode()
@@ -142,17 +147,24 @@ export default function Graph({
 
   // Auto focus camera
   const handleEngineStop = () => {
-    if (isFocused) {
-      focusCameraOnNode(graphRef, selectedNode, data);
-    } else {
-      zoomToFit(graphRef);
-    }
+    //    if (isFocused) {
+    //      focusCameraOnNode(graphRef, selectedNode, data);
+    //    } else {
+    //      zoomToFit(graphRef);
+    //    }
+    console.log("Engine stop");
   };
 
   const nodeObjects = useRef<Map<GraphNode, THREE.Sprite>>(new Map());
 
-  const createNodeObject = (node: GraphNode): THREE.Sprite => {
-    const sprite = createNodeSprite(node);
+  const createNodeObject = (
+    node: GraphNode,
+    graphData: GraphData,
+  ): THREE.Sprite => {
+    let sprite;
+    if (enableDynamicNodeSizing)
+      sprite = createNodeSprite(node, graphData, handleNodeSizing(node));
+    else sprite = createNodeSprite(node, graphData, 1);
     updateSpriteHighlight(sprite, highlightedNodes.has(node));
     return sprite;
   };
@@ -160,7 +172,7 @@ export default function Graph({
   const createNodeObjectCached = (node: GraphNode): THREE.Sprite => {
     let sprite = nodeObjects.current.get(node);
     if (!sprite) {
-      sprite = createNodeObject(node);
+      sprite = createNodeObject(node, data);
       nodeObjects.current.set(node, sprite);
     }
     if (sprite) {
@@ -231,12 +243,52 @@ export default function Graph({
     };
   }, []);
 
+  // Node sizing
+  const MIN_SIZE_MULTIPLIER = 0.01;
+  const MAX_SIZE_MULTIPLIER = 2;
+
+  // Memoize degree calculations for all nodes
+  const nodeDegrees = useMemo(() => {
+    const degrees = new Map<string, number>();
+    data.nodes.forEach((node) => {
+      degrees.set(node.id, getNodeDegree(node, data));
+    });
+    return degrees;
+  }, [data.nodes.length, data.links.length]); // Only recalc when counts change
+
+  const maxDegree = useMemo(
+    () => Math.max(...Array.from(nodeDegrees.values()), 1),
+    [nodeDegrees],
+  );
+
+  const prevMaxDegree = useRef(maxDegree);
+
+  useEffect(() => {
+    if (prevMaxDegree.current !== maxDegree) {
+      nodeObjects.current.clear();
+      prevMaxDegree.current = maxDegree;
+    }
+  }, [maxDegree]);
+
+  const handleNodeSizing = (node: GraphNode): number => {
+    if (!enableDynamicNodeSizing) return nodeSize;
+    const degree = Math.max(nodeDegrees.get(node.id) || 1, 1);
+    const normalizedDegree = degree / maxDegree;
+    const multiplier =
+      MIN_SIZE_MULTIPLIER +
+      normalizedDegree * (MAX_SIZE_MULTIPLIER - MIN_SIZE_MULTIPLIER);
+
+    return nodeSize * multiplier;
+  };
+
+  useEffect(() => {
+    nodeObjects.current.clear();
+  }, [enableDynamicNodeSizing, nodeDegrees, nodeSize]);
+
   return (
     <div className="absolute inset-0">
       <ForceGraph3D
         ref={graphRef}
-        // width={dimensions.squareSize}
-        // height={dimensions.squareSize}
         width={dimensions.width}
         height={dimensions.height}
         graphData={data}
@@ -248,11 +300,11 @@ export default function Graph({
         linkVisibility={(link) => highlightedLinks.has(link)}
         linkWidth={linkWidth}
         linkOpacity={linkOpacity}
-        nodeThreeObjectExtend={true}
-        nodeRelSize={nodeSize}
+        nodeThreeObjectExtend={false}
+        nodeVal={handleNodeSizing}
         nodeOpacity={nodeOpacity}
         nodeLabel={(node) => (showLabels ? node.name : "")}
-        nodeThreeObject={createNodeObjectCached}
+        nodeThreeObject={showThumbnails ? createNodeObjectCached : undefined}
         showNavInfo={showNavInfo}
         controlType={controlType}
         cooldownTicks={cooldownTicks}

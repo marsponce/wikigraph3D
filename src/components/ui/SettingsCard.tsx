@@ -4,6 +4,7 @@ import { ForceGraphMethods } from "react-force-graph-3d";
 import type { GraphNode, GraphLink } from "@/types";
 import type { GraphSettings } from "@/components/ui/Graph";
 import { Switch } from "@headlessui/react";
+import clsx from "clsx";
 
 type SettingsCardProps = {
   graphRef: RefObject<ForceGraphMethods<GraphNode, GraphLink> | undefined>;
@@ -25,27 +26,85 @@ export default function SettingsCard({
   };
 
   return (
-    <div className="flex flex-col gap-6 p-4">
+    <div className="flex flex-col gap-6 p-4 overflow-y-auto">
       {/* Node Settings Section */}
       <div className="space-y-4">
         <h3 className="text-2xl text-white">Node Settings</h3>
 
-        {/* Node Size Slider */}
+        {/* Dynamic Node Setting*/}
+        <Switch.Group>
+          <div className="space-y-2">
+            <div className="flex justify-between items-center">
+              <Switch.Label className="text-sm text-gray-300">
+                Enable Dynamic Node sizing
+              </Switch.Label>
+              <Switch
+                checked={graphSettings.enableDynamicNodeSizing}
+                onChange={(value) =>
+                  updateSetting("enableDynamicNodeSizing", value)
+                }
+                className={clsx(
+                  "relative inline-flex h-6 w-11 items-center rounded-full transition-colors",
+                  "focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 focus:ring-offset-gray-900",
+                  graphSettings.enableDynamicNodeSizing
+                    ? "bg-sky-500"
+                    : "bg-gray-700",
+                )}
+              >
+                <span
+                  className={clsx(
+                    "inline-block h-4 w-4 transform rounded-full bg-white transition-transform",
+                    graphSettings.enableDynamicNodeSizing
+                      ? "translate-x-6"
+                      : "translate-x-1",
+                  )}
+                />
+              </Switch>
+            </div>
+          </div>
+        </Switch.Group>
+
+        {/* Node Size Slider - Disabled when dynamic sizing is enabled */}
         <div className="space-y-2">
           <div className="flex justify-between items-center">
-            <label className="text-sm text-gray-300">Node Size</label>
-            <span className="text-sm text-gray-400">
+            <label
+              className={clsx(
+                "text-sm",
+                //                graphSettings.enableDynamicNodeSizing
+                //                  ? "text-gray-500"
+                //                  : "text-gray-300"
+                "text-gray-300",
+              )}
+            >
+              Base Node Size
+            </label>
+            <span
+              className={clsx(
+                "text-sm",
+                // graphSettings.enableDynamicNodeSizing
+                //  ? "text-gray-600"
+                //  : "text-gray-400"
+                "text-gray-400",
+              )}
+            >
               {graphSettings.nodeSize}
             </span>
           </div>
           <input
             type="range"
-            min="0.5"
+            min="0"
             max="5"
             step="0.1"
             value={graphSettings.nodeSize}
             onChange={(e) => updateSetting("nodeSize", Number(e.target.value))}
-            className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-sky-500"
+            // disabled={graphSettings.enableDynamicNodeSizing}
+            className={clsx(
+              "w-full h-2 rounded-lg appearance-none cursor-pointer accent-sky-500",
+              // graphSettings.enableDynamicNodeSizing
+              //  ? "bg-gray-800 opacity-50 cursor-not-allowed"
+              //  : "bg-gray-700"
+              "bg-gray-700",
+            )}
           />
         </div>
 
@@ -153,16 +212,19 @@ export default function SettingsCard({
             <Switch
               checked={graphSettings.enableNodeDrag}
               onChange={(value) => updateSetting("enableNodeDrag", value)}
-              className={`${
-                graphSettings.enableNodeDrag ? "bg-sky-500" : "bg-gray-700"
-              } relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 focus:ring-offset-gray-900`}
+              className={clsx(
+                "relative inline-flex h-6 w-11 items-center rounded-full transition-colors",
+                "focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 focus:ring-offset-gray-900",
+                graphSettings.enableNodeDrag ? "bg-sky-500" : "bg-gray-700",
+              )}
             >
               <span
-                className={`${
+                className={clsx(
+                  "inline-block h-4 w-4 transform rounded-full bg-white transition-transform",
                   graphSettings.enableNodeDrag
                     ? "translate-x-6"
-                    : "translate-x-1"
-                } inline-block h-4 w-4 transform rounded-full bg-white transition-transform`}
+                    : "translate-x-1",
+                )}
               />
             </Switch>
           </div>
@@ -177,18 +239,22 @@ export default function SettingsCard({
             <Switch
               checked={graphSettings.showNavInfo}
               onChange={(value) => updateSetting("showNavInfo", value)}
-              className={`${
-                graphSettings.showNavInfo ? "bg-sky-500" : "bg-gray-700"
-              } relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 focus:ring-offset-gray-900`}
+              className={clsx(
+                "relative inline-flex h-6 w-11 items-center rounded-full transition-colors",
+                "focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 focus:ring-offset-gray-900",
+                graphSettings.showNavInfo ? "bg-sky-500" : "bg-gray-700",
+              )}
             >
               <span
-                className={`${
-                  graphSettings.showNavInfo ? "translate-x-6" : "translate-x-1"
-                } inline-block h-4 w-4 transform rounded-full bg-white transition-transform`}
+                className={clsx(
+                  "inline-block h-4 w-4 transform rounded-full bg-white transition-transform",
+                  graphSettings.showNavInfo ? "translate-x-6" : "translate-x-1",
+                )}
               />
             </Switch>
           </div>
         </Switch.Group>
+
         {/* Control Type Select */}
         <div className="space-y-2">
           <label className="text-sm text-gray-300">Camera Control Type</label>
@@ -225,14 +291,17 @@ export default function SettingsCard({
             <Switch
               checked={graphSettings.showLabels}
               onChange={(value) => updateSetting("showLabels", value)}
-              className={`${
-                graphSettings.showLabels ? "bg-sky-500" : "bg-gray-700"
-              } relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 focus:ring-offset-gray-900`}
+              className={clsx(
+                "relative inline-flex h-6 w-11 items-center rounded-full transition-colors",
+                "focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 focus:ring-offset-gray-900",
+                graphSettings.showLabels ? "bg-sky-500" : "bg-gray-700",
+              )}
             >
               <span
-                className={`${
-                  graphSettings.showLabels ? "translate-x-6" : "translate-x-1"
-                } inline-block h-4 w-4 transform rounded-full bg-white transition-transform`}
+                className={clsx(
+                  "inline-block h-4 w-4 transform rounded-full bg-white transition-transform",
+                  graphSettings.showLabels ? "translate-x-6" : "translate-x-1",
+                )}
               />
             </Switch>
           </div>
@@ -247,20 +316,24 @@ export default function SettingsCard({
             <Switch
               checked={graphSettings.showThumbnails}
               onChange={(value) => updateSetting("showThumbnails", value)}
-              className={`${
-                graphSettings.showThumbnails ? "bg-sky-500" : "bg-gray-700"
-              } relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 focus:ring-offset-gray-900`}
+              className={clsx(
+                "relative inline-flex h-6 w-11 items-center rounded-full transition-colors",
+                "focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 focus:ring-offset-gray-900",
+                graphSettings.showThumbnails ? "bg-sky-500" : "bg-gray-700",
+              )}
             >
               <span
-                className={`${
+                className={clsx(
+                  "inline-block h-4 w-4 transform rounded-full bg-white transition-transform",
                   graphSettings.showThumbnails
                     ? "translate-x-6"
-                    : "translate-x-1"
-                } inline-block h-4 w-4 transform rounded-full bg-white transition-transform`}
+                    : "translate-x-1",
+                )}
               />
             </Switch>
           </div>
         </Switch.Group>
+
         {/* Dark Mode Toggle */}
         <Switch.Group>
           <div className="flex items-center justify-between">
@@ -270,14 +343,17 @@ export default function SettingsCard({
             <Switch
               checked={graphSettings.darkMode}
               onChange={(value) => updateSetting("darkMode", value)}
-              className={`${
-                graphSettings.darkMode ? "bg-sky-500" : "bg-gray-700"
-              } relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 focus:ring-offset-gray-900`}
+              className={clsx(
+                "relative inline-flex h-6 w-11 items-center rounded-full transition-colors",
+                "focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 focus:ring-offset-gray-900",
+                graphSettings.darkMode ? "bg-sky-500" : "bg-gray-700",
+              )}
             >
               <span
-                className={`${
-                  graphSettings.darkMode ? "translate-x-6" : "translate-x-1"
-                } inline-block h-4 w-4 transform rounded-full bg-white transition-transform`}
+                className={clsx(
+                  "inline-block h-4 w-4 transform rounded-full bg-white transition-transform",
+                  graphSettings.darkMode ? "translate-x-6" : "translate-x-1",
+                )}
               />
             </Switch>
           </div>
@@ -292,12 +368,14 @@ export default function SettingsCard({
             nodeOpacity: 1.0,
             linkWidth: 1,
             linkOpacity: 1.0,
-            showLabels: false,
-            showThumbnails: false,
+            showLabels: true,
+            showThumbnails: true,
             cooldownTicks: 100,
             enableNodeDrag: false,
             showNavInfo: false,
             darkMode: false,
+            controlType: "trackball",
+            enableDynamicNodeSizing: true,
           });
           toast.success("Settings reset to defaults");
         }}

@@ -82,7 +82,8 @@ export default function Sidebar({
           "fixed right-0 top-0 z-3",
           "flex flex-row",
           "h-screen",
-          "transition-all duration-500",
+          "duration-500",
+          "transition",
           "w-screen",
           // State-specific styles
           {

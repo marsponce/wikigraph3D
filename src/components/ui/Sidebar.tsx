@@ -1,5 +1,12 @@
 // src/app/components/ui/Sidebar.tsx
-import { useState, RefObject, Dispatch, SetStateAction } from "react";
+import {
+  useState,
+  RefObject,
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useEffect,
+} from "react";
 import {
   Button,
   Searchbar,
@@ -72,6 +79,43 @@ export default function Sidebar({
     }
   };
 
+  const handleKeyPress = useCallback((event: KeyboardEvent) => {
+    console.log("Key pressed:", event.key);
+    // Ignore shortcuts if user is typing in an input
+    if (
+      event.target instanceof HTMLInputElement ||
+      event.target instanceof HTMLTextAreaElement
+    )
+      return;
+    switch (event.key) {
+      case "a":
+        setSidebarState("article");
+        break;
+      case "s":
+        setSidebarState("settings");
+        break;
+      case "d":
+        setSidebarState("downloads");
+        break;
+      case "z":
+        setSidebarState("stats");
+        break;
+      case "Escape":
+        setSidebarState("closed");
+        break;
+    }
+  }, []);
+
+  useEffect(() => {
+    // attach the event listener
+    document.addEventListener("keydown", handleKeyPress);
+
+    // remove the event listener
+    return () => {
+      document.removeEventListener("keydown", handleKeyPress);
+    };
+  }, [handleKeyPress]);
+
   return (
     <>
       <aside
@@ -109,6 +153,11 @@ export default function Sidebar({
             aria-label={
               sidebarState === "closed" ? "Open Sidebar" : "Close Sidebar"
             }
+            title={
+              sidebarState === "closed"
+                ? "Open Sidebar (A)"
+                : "Close Sidebar (Esc)"
+            }
           >
             {sidebarState === "closed" ? <DocumentTextIcon /> : <XMarkIcon />}
           </Button>
@@ -117,6 +166,7 @@ export default function Sidebar({
             onClick={() => setSidebarState("stats")}
             toggled={sidebarState === "stats"}
             aria-label={"See graph statistics"}
+            title={"Stats (Z)"}
           >
             <ChartBarIcon />
           </Button>
@@ -125,6 +175,7 @@ export default function Sidebar({
             onClick={() => setSidebarState("downloads")}
             toggled={sidebarState === "downloads"}
             aria-label={"Download today's graph"}
+            title={"Download (D)"}
           >
             <ArrowDownTrayIcon />
           </Button>
@@ -132,18 +183,18 @@ export default function Sidebar({
             onClick={() => setSidebarState("settings")}
             toggled={sidebarState === "settings"}
             aria-label={"Change graph visualization settings"}
+            title={"Stats (S)"}
           >
             <CogIcon />
           </Button>
           {/* go to root node */}
           <Button
             onClick={() => {
-              const root = getRootNode(graphData, todaysDate());
-              console.log("Found root", root);
-              setSelectedNode(root);
+              setSelectedNode(getRootNode(graphData, todaysDate()));
             }}
             toggled={selectedNode === getRootNode(graphData, todaysDate())}
             aria-label={"Select root node "}
+            title={"Root Node (R)"}
           >
             <ViewfinderCircleIcon />
           </Button>
@@ -151,6 +202,7 @@ export default function Sidebar({
           <Button
             onClick={console.log("Filter")}
             aria-label={"Filter node settings"}
+            title={"Filter (F)"}
           >
             <FunnelIcon />
           </Button>

@@ -5,6 +5,8 @@ import type { ComponentPropsWithoutRef } from "react";
 
 interface ButtonProps extends ComponentPropsWithoutRef<typeof HeadlessButton> {
   toggled?: boolean;
+  title?: string;
+  className?: string;
 }
 
 export default function Button({

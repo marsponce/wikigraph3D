@@ -273,7 +273,7 @@ export default function Graph({
       degrees.set(node.id, getNodeDegree(node, data));
     });
     return degrees;
-  }, [data.nodes.length, data.links.length]); // Only recalc when counts change
+  }, [data]); // Only recalc when counts change
 
   const maxDegree = useMemo(
     () => Math.max(...Array.from(nodeDegrees.values()), 1),
@@ -317,7 +317,7 @@ export default function Graph({
     );
   }, []);
 
-  // Link coloring
+  // Link & Node coloring
   const rootNode = useMemo(() => getRootNode(data, todaysDate()), [data]);
 
   const nodeDepths = useMemo(() => {
@@ -343,6 +343,16 @@ export default function Graph({
     [nodeDepths, maxDepth, edgeColorMode],
   );
 
+  const getNodeColor = useCallback(
+    (node: GraphNode): string => {
+      if (edgeColorMode !== "depth" || nodeDepths.size === 0) return "#ffffff";
+      if (node.id == null) return "#ffffff";
+      const depth = nodeDepths.get(node.id) ?? maxDepth;
+      return depthToColor(depth, maxDepth);
+    },
+    [nodeDepths, maxDepth, edgeColorMode],
+  );
+
   return (
     <div className="absolute inset-0">
       <ForceGraph3D
@@ -354,6 +364,7 @@ export default function Graph({
         onNodeClick={handleNodeClick}
         onBackgroundClick={handleBackgroundClick}
         nodeAutoColorBy="id"
+        nodeColor={edgeColorMode === "depth" ? getNodeColor : undefined}
         linkAutoColorBy="target"
         linkColor={edgeColorMode === "depth" ? getLinkColor : undefined}
         linkVisibility={(link) => highlightedLinks.has(link)}

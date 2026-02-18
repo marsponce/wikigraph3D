@@ -33,6 +33,7 @@ export default function Main() {
     darkMode: false,
     controlType: "trackball",
     edgeColorMode: "depth",
+    highlightDistance: 4,
   } as GraphSettings);
   return (
     <div className="relative">

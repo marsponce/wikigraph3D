@@ -62,6 +62,9 @@ export default function SettingsCard({
               </Switch>
             </div>
           </div>
+          <p className="text-xs text-gray-500">
+            Scales nodes by the number of connections they have
+          </p>
         </Switch.Group>
 
         {/* Node Size Slider - Disabled when dynamic sizing is enabled */}
@@ -87,6 +90,10 @@ export default function SettingsCard({
               "bg-gray-700",
             )}
           />
+          <p className="text-xs text-gray-500">
+            Base size of each node — used as a multiplier when dynamic sizing is
+            on
+          </p>
         </div>
 
         {/* Node Opacity Slider */}
@@ -108,6 +115,10 @@ export default function SettingsCard({
             }
             className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-sky-500"
           />
+          <p className="text-xs text-gray-500">
+            Transparency of the default node sphere (has no effect when
+            thumbnails are enabled)
+          </p>
         </div>
       </div>
 
@@ -132,6 +143,9 @@ export default function SettingsCard({
             onChange={(e) => updateSetting("linkWidth", Number(e.target.value))}
             className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-sky-500"
           />
+          <p className="text-xs text-gray-500">
+            Thickness of the lines connecting nodes
+          </p>
         </div>
 
         {/* Link Opacity Slider */}
@@ -153,6 +167,34 @@ export default function SettingsCard({
             }
             className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-sky-500"
           />
+          <p className="text-xs text-gray-500">
+            Global transparency of all links
+          </p>
+        </div>
+
+        {/* Highlight Distance Slider */}
+        <div className="space-y-2">
+          <div className="flex justify-between items-center">
+            <label className="text-sm text-gray-300">Highlight Distance</label>
+            <span className="text-sm text-gray-400">
+              {graphSettings.highlightDistance}
+            </span>
+          </div>
+          <input
+            type="range"
+            min="1"
+            max="6"
+            step="1"
+            value={graphSettings.highlightDistance}
+            onChange={(e) =>
+              updateSetting("highlightDistance", Number(e.target.value))
+            }
+            className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-sky-500"
+          />
+          <p className="text-xs text-gray-500">
+            How many hops from the selected node remain visible — links beyond
+            this fade out
+          </p>
         </div>
 
         {/* Edge Colour Mode */}
@@ -175,6 +217,10 @@ export default function SettingsCard({
             ))}
           </div>
         </div>
+        <p className="text-xs text-gray-500">
+          Auto: default colouring | Depth: colour by distance from today&aposs
+          root article
+        </p>
       </div>
 
       {/* Behavior Settings Section */}
@@ -230,6 +276,9 @@ export default function SettingsCard({
               />
             </Switch>
           </div>
+          <p className="text-xs text-gray-500">
+            Allows nodes to be repositioned by dragging
+          </p>
         </Switch.Group>
 
         {/* Show Nav Info Toggle */}
@@ -255,6 +304,9 @@ export default function SettingsCard({
               />
             </Switch>
           </div>
+          <p className="text-xs text-gray-500">
+            Shows camera controls hint in the bottom-left corner of the graph
+          </p>
         </Switch.Group>
 
         {/* Control Type Select */}
@@ -307,6 +359,9 @@ export default function SettingsCard({
               />
             </Switch>
           </div>
+          <p className="text-xs text-gray-500">
+            Displays article names below each node on hover
+          </p>
         </Switch.Group>
 
         {/* Show Thumbnails Toggle */}
@@ -334,6 +389,10 @@ export default function SettingsCard({
               />
             </Switch>
           </div>
+          <p className="text-xs text-gray-500">
+            Renders Wikipedia thumbnail images as node sprites — disabling
+            improves performance on large graphs
+          </p>
         </Switch.Group>
 
         {/* Dark Mode Toggle */}
@@ -359,6 +418,9 @@ export default function SettingsCard({
               />
             </Switch>
           </div>
+          <p className="text-xs text-gray-500">
+            Switches the graph background to a dark theme
+          </p>
         </Switch.Group>
       </div>
 

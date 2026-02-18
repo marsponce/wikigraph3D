@@ -240,7 +240,7 @@ export default function Graph({
   const getDepthsFromNode = useCallback(
     (nodeId: string | number): Map<string | number, number> => {
       if (depthCache.current.has(nodeId)) {
-        return depthCache.current.get(nodeId)!; // 👈 cache hit, no BFS needed
+        return depthCache.current.get(nodeId)!;
       }
       const depths = computeNodeDepths(nodeId, data, highlightDistance);
       depthCache.current.set(nodeId, depths);

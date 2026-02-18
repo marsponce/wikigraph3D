@@ -5,6 +5,7 @@ import * as THREE from "three";
 import { WIKIPEDIA_ICON_URL } from "@/lib/constants";
 import { apiFetch } from "@/lib/api";
 import { todaysDate } from "@/lib/utils";
+import chroma from "chroma-js";
 
 // Fetch the graph json from supabase
 export async function fetchGraph(): Promise<{
@@ -168,4 +169,58 @@ export function getRootNode(
     }
   }
   return null;
+}
+
+// since the graph initially uses numerical ids, but in runtime uses GraphNode objects, this function normalizes either to an id value.
+function resolveID(
+  node: string | number | GraphNode | undefined,
+): string | number | undefined {
+  if (node == null) return undefined;
+  if (typeof node === "object") return node.id;
+  return node;
+}
+
+export function computeNodeDepths(
+  root: string | number | GraphNode,
+  data: GraphData,
+): Map<string | number, number> {
+  const rootId = resolveID(root);
+  if (rootId == null) return new Map();
+
+  const depths = new Map<string | number, number>();
+  depths.set(rootId, 0);
+  const queue: Array<string | number> = [rootId];
+
+  // Build adjacency list keyed by resolved IDs
+  const adjacency = new Map<string | number, Set<string | number>>();
+  data.links.forEach((link) => {
+    const src = resolveID(link.source);
+    const tgt = resolveID(link.target);
+    if (src == null || tgt == null) return;
+
+    if (!adjacency.has(src)) adjacency.set(src, new Set());
+    if (!adjacency.has(tgt)) adjacency.set(tgt, new Set());
+    adjacency.get(src)!.add(tgt);
+    adjacency.get(tgt)!.add(src);
+  });
+
+  while (queue.length > 0) {
+    const current = queue.shift()!;
+    const currentDepth = depths.get(current)!;
+    adjacency.get(current)?.forEach((neighbour) => {
+      if (!depths.has(neighbour)) {
+        depths.set(neighbour, currentDepth + 1);
+        queue.push(neighbour);
+      }
+    });
+  }
+
+  return depths;
+}
+
+// Map a depth + maxDepth to a hex colour along a gradient
+export function depthToColor(depth: number, maxDepth: number): string {
+  const t = maxDepth > 0 ? Math.min(depth / maxDepth, 1) : 0;
+  const scale = chroma.scale("Spectral"); //chroma.scale(["#000000", "#ffffff"]);
+  return scale(t).hex();
 }

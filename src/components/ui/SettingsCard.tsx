@@ -436,6 +436,7 @@ export default function SettingsCard({
             dagMode: null,
             dagLevelDistance: undefined,
             edgeColorMode: "depth",
+            highlightDistance: 4,
           });
           toast.success("Settings reset to defaults");
         }}

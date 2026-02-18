@@ -135,16 +135,13 @@ export function createNodeSprite(
 // update a THREE.Sprite object to be "highlighted" (opaque) or not
 export function updateSpriteHighlight(
   sprite: THREE.Sprite,
-  isHighlighted: boolean,
+  distance: number,
+  maxDistance: number,
 ) {
   const material = sprite.material as THREE.SpriteMaterial;
-  if (isHighlighted) {
-    material.color.setHex(0xffffff);
-    material.opacity = 1;
-  } else {
-    material.color.setHex(0x888888);
-    material.opacity = 0.2;
-  }
+  const t = maxDistance > 0 ? Math.min(distance / maxDistance, 1) : 0;
+  material.opacity = 1 - t * 0.95;
+  material.color.setHex(t > 0.5 ? 0x888888 : 0xffffff);
 }
 
 // get the degree of a node (count of it's connections in the graph)
@@ -183,6 +180,7 @@ export function resolveID(
 export function computeNodeDepths(
   root: string | number | GraphNode,
   data: GraphData,
+  maxDepth?: number,
 ): Map<string | number, number> {
   const rootId = resolveID(root);
   if (rootId == null) return new Map();
@@ -207,6 +205,7 @@ export function computeNodeDepths(
   while (queue.length > 0) {
     const current = queue.shift()!;
     const currentDepth = depths.get(current)!;
+    if (maxDepth !== undefined && currentDepth >= maxDepth) continue;
     adjacency.get(current)?.forEach((neighbour) => {
       if (!depths.has(neighbour)) {
         depths.set(neighbour, currentDepth + 1);

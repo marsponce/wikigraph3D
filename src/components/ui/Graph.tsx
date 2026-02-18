@@ -186,7 +186,8 @@ export default function Graph({
     if (enableDynamicNodeSizing)
       sprite = createNodeSprite(node, graphData, handleNodeSizing(node));
     else sprite = createNodeSprite(node, graphData, 1);
-    updateSpriteHighlight(sprite, highlightedNodes.has(node));
+    const distance = highlightedNodes.get(node) ?? highlightDistance;
+    updateSpriteHighlight(sprite, distance, highlightDistance);
     return sprite;
   };
 
@@ -197,7 +198,8 @@ export default function Graph({
       nodeObjects.current.set(node, sprite);
     }
     if (sprite) {
-      updateSpriteHighlight(sprite, highlightedNodes.has(node));
+      const distance = highlightedNodes.get(node) ?? highlightDistance;
+      updateSpriteHighlight(sprite, distance, highlightDistance);
     }
     return sprite;
   };
@@ -209,6 +211,43 @@ export default function Graph({
   const [highlightedLinks, setHighlightedLinks] = useState<
     Map<GraphLink, number>
   >(new Map());
+
+  // Build adjacency list once when data changes, not on every BFS
+  const adjacency = useMemo(() => {
+    const adj = new Map<string | number, Set<string | number>>();
+    data.links.forEach((link) => {
+      const src = resolveID(link.source);
+      const tgt = resolveID(link.target);
+      if (src == null || tgt == null) return;
+      if (!adj.has(src)) adj.set(src, new Set());
+      if (!adj.has(tgt)) adj.set(tgt, new Set());
+      adj.get(src)!.add(tgt);
+      adj.get(tgt)!.add(src);
+    });
+    return adj;
+  }, [data.links.length]);
+
+  // Cache BFS results per node — only recompute if the node hasn't been visited before
+  const depthCache = useRef<Map<string | number, Map<string | number, number>>>(
+    new Map(),
+  );
+
+  // Clear cache when graph structure changes
+  useEffect(() => {
+    depthCache.current.clear();
+  }, [data.nodes.length, data.links.length]);
+
+  const getDepthsFromNode = useCallback(
+    (nodeId: string | number): Map<string | number, number> => {
+      if (depthCache.current.has(nodeId)) {
+        return depthCache.current.get(nodeId)!; // 👈 cache hit, no BFS needed
+      }
+      const depths = computeNodeDepths(nodeId, data, highlightDistance);
+      depthCache.current.set(nodeId, depths);
+      return depths;
+    },
+    [data, highlightDistance],
+  );
 
   useEffect(() => {
     const nodes = new Map<GraphNode, number>();
@@ -223,7 +262,11 @@ export default function Graph({
       return;
     }
 
-    const depths = computeNodeDepths(selectedNode, data);
+    const id = resolveID(selectedNode);
+    if (id == null) return;
+
+    const depths = getDepthsFromNode(id);
+
     data.nodes.forEach((node) => {
       if (node.id == null) return;
       const distance = depths.get(node.id) ?? Infinity;
@@ -246,14 +289,14 @@ export default function Graph({
 
     setHighlightedNodes(nodes);
     setHighlightedLinks(links);
-  }, [selectedNode, data, highlightDistance]);
+  }, [selectedNode, data, highlightDistance, getDepthsFromNode]);
 
+  // Dynamically resize the graph if we need to (screen rotations, resizes, etc.)
   const [dimensions, setDimensions] = useState({
     width: 0,
     height: 0,
   });
 
-  // Dynamically resize the graph if we need to (screen rotations, resizes, etc.)
   useEffect(() => {
     const updateDimensions = () => {
       setDimensions({
@@ -334,7 +377,7 @@ export default function Graph({
   const nodeDepths = useMemo(() => {
     if (edgeColorMode !== "depth" || !rootNode?.id) return new Map();
     return computeNodeDepths(rootNode.id, data);
-  }, [edgeColorMode, rootNode, data]);
+  }, [edgeColorMode, rootNode, data.nodes.length, data.links.length]);
 
   const maxDepth = useMemo(
     () => Math.max(...Array.from(nodeDepths.values()), 1),
@@ -349,9 +392,20 @@ export default function Graph({
           ? (link.target as GraphNode).id!
           : link.target;
       const depth = nodeDepths.get(tgt) ?? maxDepth;
-      return depthToColor(depth, maxDepth);
+      const color = depthToColor(depth, maxDepth);
+
+      const highlightDist = highlightedLinks.get(link) ?? Infinity;
+      const t =
+        highlightDistance > 0
+          ? Math.min(highlightDist / highlightDistance, 1)
+          : 0;
+      const alpha = Math.round((1 - t * 0.95) * 255)
+        .toString(16)
+        .padStart(2, "0");
+
+      return color + alpha;
     },
-    [nodeDepths, maxDepth, edgeColorMode],
+    [nodeDepths, maxDepth, edgeColorMode, highlightedLinks, highlightDistance],
   );
 
   const getNodeColor = useCallback(

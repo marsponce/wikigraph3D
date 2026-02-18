@@ -24,6 +24,8 @@ _This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next
 ### Run Locally
 -->
 
+test
+
 ### Development
 
 0. `git clone` the repository

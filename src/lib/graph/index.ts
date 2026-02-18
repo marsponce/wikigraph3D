@@ -2,3 +2,4 @@
 export * from "./core";
 export * from "./camera";
 export * from "./download";
+export * from "./stats";

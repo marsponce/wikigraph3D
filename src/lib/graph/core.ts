@@ -172,7 +172,7 @@ export function getRootNode(
 }
 
 // since the graph initially uses numerical ids, but in runtime uses GraphNode objects, this function normalizes either to an id value.
-function resolveID(
+export function resolveID(
   node: string | number | GraphNode | undefined,
 ): string | number | undefined {
   if (node == null) return undefined;

@@ -24,6 +24,7 @@ import {
   computeNodeDepths,
   depthToColor,
   getRootNode,
+  resolveID,
 } from "@/lib/graph";
 import { todaysDate } from "@/lib/utils";
 import type { ForceGraphMethods } from "react-force-graph-3d";
@@ -58,6 +59,7 @@ export type GraphSettings = {
     | null;
   dagLevelDistance?: number;
   edgeColorMode: "auto" | "depth";
+  highlightDistance: number;
 };
 
 type GraphProps = GraphSettings & {
@@ -92,6 +94,7 @@ export default function Graph({
   dagLevelDistance,
   enableDynamicNodeSizing = true,
   edgeColorMode = "depth",
+  highlightDistance = 4,
 }: GraphProps) {
   const loadInitialNode = useCallback(() => {
     fetchInitialNode()
@@ -199,43 +202,51 @@ export default function Graph({
     return sprite;
   };
 
-  const [highlightedNodes, setHighlightedNodes] = useState<Set<GraphNode>>(
-    new Set(),
-  );
-  const [highlightedLinks, setHighlightedLinks] = useState<Set<GraphLink>>(
-    new Set(),
-  );
-  // highlight selected Node, or highlight everything
+  // Highlight based on highlightDistance rather than direct neighbours only
+  const [highlightedNodes, setHighlightedNodes] = useState<
+    Map<GraphNode, number>
+  >(new Map());
+  const [highlightedLinks, setHighlightedLinks] = useState<
+    Map<GraphLink, number>
+  >(new Map());
+
   useEffect(() => {
-    const HighlightNode = (
-      node: GraphNode | null,
-      nodes: Set<GraphNode>,
-      links: Set<GraphLink>,
-    ) => {
-      if (!node) return;
-      nodes.add(node);
-      data.links.forEach((link) => {
-        if (link.source === node || link.source === node.id) {
-          links.add(link);
-          nodes.add(link.target as GraphNode);
-        } else if (link.target === node || link.target === node.id) {
-          links.add(link);
-          nodes.add(link.source as GraphNode);
-        }
-      });
+    const nodes = new Map<GraphNode, number>();
+    const links = new Map<GraphLink, number>();
+
+    if (!selectedNode) {
+      // everything should be visible
+      data.nodes.forEach((node) => nodes.set(node, 0));
+      data.links.forEach((link) => links.set(link, 0));
       setHighlightedNodes(nodes);
       setHighlightedLinks(links);
-    };
-    const nodes = new Set<GraphNode>();
-    const links = new Set<GraphLink>();
-    if (selectedNode) {
-      HighlightNode(selectedNode, nodes, links);
-    } else {
-      data.nodes.forEach((node) => {
-        HighlightNode(node, nodes, links);
-      });
+      return;
     }
-  }, [selectedNode, data, setSelectedNodeAction]);
+
+    const depths = computeNodeDepths(selectedNode, data);
+    data.nodes.forEach((node) => {
+      if (node.id == null) return;
+      const distance = depths.get(node.id) ?? Infinity;
+      if (distance <= highlightDistance) {
+        nodes.set(node, distance);
+      }
+    });
+
+    data.links.forEach((link) => {
+      const src = resolveID(link.source);
+      const tgt = resolveID(link.target);
+      if (src == null || tgt == null) return;
+
+      const srcDepth = depths.get(src) ?? Infinity;
+      const tgtDepth = depths.get(tgt) ?? Infinity;
+      if (srcDepth <= highlightDistance && tgtDepth <= highlightDistance) {
+        links.set(link, Math.min(srcDepth, tgtDepth));
+      }
+    });
+
+    setHighlightedNodes(nodes);
+    setHighlightedLinks(links);
+  }, [selectedNode, data, highlightDistance]);
 
   const [dimensions, setDimensions] = useState({
     width: 0,

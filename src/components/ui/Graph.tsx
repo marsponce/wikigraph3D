@@ -21,7 +21,11 @@ import {
   zoomToFit,
   updateSpriteHighlight,
   getNodeDegree,
+  computeNodeDepths,
+  depthToColor,
+  getRootNode,
 } from "@/lib/graph";
+import { todaysDate } from "@/lib/utils";
 import type { ForceGraphMethods } from "react-force-graph-3d";
 import { toast } from "sonner";
 
@@ -53,6 +57,7 @@ export type GraphSettings = {
     | "radialin"
     | null;
   dagLevelDistance?: number;
+  edgeColorMode: "auto" | "depth";
 };
 
 type GraphProps = GraphSettings & {
@@ -86,6 +91,7 @@ export default function Graph({
   dagMode = null,
   dagLevelDistance,
   enableDynamicNodeSizing = true,
+  edgeColorMode = "depth",
 }: GraphProps) {
   const loadInitialNode = useCallback(() => {
     fetchInitialNode()
@@ -311,6 +317,32 @@ export default function Graph({
     );
   }, []);
 
+  // Link coloring
+  const rootNode = useMemo(() => getRootNode(data, todaysDate()), [data]);
+
+  const nodeDepths = useMemo(() => {
+    if (edgeColorMode !== "depth" || !rootNode?.id) return new Map();
+    return computeNodeDepths(rootNode.id, data);
+  }, [edgeColorMode, rootNode, data]);
+
+  const maxDepth = useMemo(
+    () => Math.max(...Array.from(nodeDepths.values()), 1),
+    [nodeDepths],
+  );
+
+  const getLinkColor = useCallback(
+    (link: GraphLink): string => {
+      if (edgeColorMode !== "depth" || nodeDepths.size === 0) return "#ffffff";
+      const tgt =
+        typeof link.target === "object"
+          ? (link.target as GraphNode).id!
+          : link.target;
+      const depth = nodeDepths.get(tgt) ?? maxDepth;
+      return depthToColor(depth, maxDepth);
+    },
+    [nodeDepths, maxDepth, edgeColorMode],
+  );
+
   return (
     <div className="absolute inset-0">
       <ForceGraph3D
@@ -323,6 +355,7 @@ export default function Graph({
         onBackgroundClick={handleBackgroundClick}
         nodeAutoColorBy="id"
         linkAutoColorBy="target"
+        linkColor={edgeColorMode === "depth" ? getLinkColor : undefined}
         linkVisibility={(link) => highlightedLinks.has(link)}
         linkWidth={linkWidth}
         linkOpacity={linkOpacity}

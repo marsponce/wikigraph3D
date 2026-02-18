@@ -154,6 +154,27 @@ export default function SettingsCard({
             className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-sky-500"
           />
         </div>
+
+        {/* Edge Colour Mode */}
+        <div className="space-y-2">
+          <label className="text-sm text-gray-300">Edge Colour Mode</label>
+          <div className="flex gap-2">
+            {(["auto", "depth"] as const).map((mode) => (
+              <button
+                key={mode}
+                onClick={() => updateSetting("edgeColorMode", mode)}
+                className={clsx(
+                  "flex-1 py-1.5 rounded-md text-sm capitalize transition-colors",
+                  graphSettings.edgeColorMode === mode
+                    ? "bg-sky-500 text-white"
+                    : "bg-gray-700 text-gray-300 hover:bg-gray-600",
+                )}
+              >
+                {mode}
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
 
       {/* Behavior Settings Section */}
@@ -414,6 +435,7 @@ export default function SettingsCard({
             enableDynamicNodeSizing: true,
             dagMode: null,
             dagLevelDistance: undefined,
+            edgeColorMode: "depth",
           });
           toast.success("Settings reset to defaults");
         }}

@@ -142,7 +142,7 @@ export default function Sidebar({
               console.log("Found root", root);
               setSelectedNode(root);
             }}
-            toggled={selectedNode !== null}
+            toggled={selectedNode === getRootNode(graphData, todaysDate())}
             aria-label={"Select root node "}
           >
             <ViewfinderCircleIcon />

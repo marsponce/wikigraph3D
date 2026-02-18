@@ -32,6 +32,7 @@ export default function Main() {
     showNavInfo: true,
     darkMode: false,
     controlType: "trackball",
+    edgeColorMode: "depth",
   } as GraphSettings);
   return (
     <div className="relative">

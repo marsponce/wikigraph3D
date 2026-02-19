@@ -401,7 +401,7 @@ export default function SettingsCard({
 
         {/* Sidebar Mode Toggle */}
         <Switch.Group>
-          <div className="flex items-center justify-between hidden sm:block">
+          <div className="hidden sm:flex items-center justify-between">
             <Switch.Label className="text-sm text-gray-300 cursor-pointer">
               Fullscreen Sidebar
             </Switch.Label>

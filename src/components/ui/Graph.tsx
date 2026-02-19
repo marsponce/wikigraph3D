@@ -97,22 +97,11 @@ export default function Graph({
   highlightDistance = 4,
 }: GraphProps) {
   const loadInitialNode = useCallback(() => {
-    fetchInitialNode()
-      .then((root) => {
-        // throw new Error("Test error"); // for testing
-        console.log(root);
-        setDataAction({ nodes: [{ ...root }], links: [] });
-      })
-      .catch((e) => {
-        console.error("Failed to fetch initial node:", e);
-        toast.error("Failed to fetch initial node", {
-          duration: Infinity,
-          action: {
-            label: "Retry",
-            onClick: () => loadInitialNode(),
-          },
-        });
-      });
+    fetchInitialNode().then((root) => {
+      // throw new Error("Test error"); // for testing
+      console.log(root);
+      setDataAction({ nodes: [{ ...root }], links: [] });
+    });
   }, [setDataAction]);
 
   // Get the graph from supabase if it exists
@@ -123,6 +112,7 @@ export default function Graph({
         toast.promise(
           (async () => {
             // Fetch the graph from Supabase
+
             const { graph, nodesCount, linksCount } = await fetchGraph();
 
             if (nodesCount === 0) {
@@ -132,13 +122,14 @@ export default function Graph({
               console.log("Nodes: ", nodesCount, "Links: ", linksCount);
               setDataAction({ nodes: graph.nodes, links: graph.links });
             }
-
             return { nodesCount, linksCount };
           })(),
           {
             loading: "Loading Graph...", // This will show during the loading phase
             success: ({ nodesCount, linksCount }) =>
-              `Graph Loaded with ${nodesCount} nodes and ${linksCount} links`, // Success message
+              `Graph loaded with ${nodesCount === 0 ? 1 : nodesCount} ${nodesCount === 1 ? "node" : "nodes"} and ${linksCount} ${linksCount === 1 ? "link" : "links"}`,
+            //            success: ({ nodesCount, linksCount }) =>
+            //            `Graph Loaded with ${nodesCount === 0 ? 1 : nodesCount} node(s) and ${linksCount} link(s)`, // Success message
             error: () => ({
               message: "Failed to fetch graph", // Error message if fetch fails
               duration: Infinity, // Keeps the error toast indefinitely
@@ -155,13 +146,27 @@ export default function Graph({
     loadGraph();
   }, [setDataAction, loadInitialNode]);
 
+  const clickTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const handleNodeClick = useCallback(
     (node: GraphNode, event?: MouseEvent) => {
       event?.preventDefault?.();
-      setSelectedNodeAction(node);
-      console.log(node);
+
+      if (clickTimeout.current) {
+        // double click
+        clearTimeout(clickTimeout.current);
+        clickTimeout.current = null;
+        focusCameraOnNode(graphRef, node, data);
+        setSelectedNodeAction(node);
+      }
+
+      clickTimeout.current = setTimeout(() => {
+        clickTimeout.current = null;
+        // single click
+        setSelectedNodeAction(node);
+      }, 250);
     },
-    [setSelectedNodeAction],
+    [setSelectedNodeAction, data, graphRef],
   );
 
   const handleBackgroundClick = useCallback(

@@ -2,6 +2,7 @@ import type { GraphData } from "@/types";
 import type { GraphStats } from "@/lib/graph";
 import { computeGraphStats } from "@/lib/graph";
 import { useMemo } from "react";
+import { WIKIPEDIA_ICON_URL } from "@/lib/constants";
 import Image from "next/image";
 
 type StatsCardProps = {
@@ -54,7 +55,7 @@ export default function StatsCard({ graphData }: StatsCardProps) {
               {/* Thumbnail */}
               {node.thumbnail?.source && (
                 <Image
-                  src={node.thumbnail.source}
+                  src={node.thumbnail?.source ?? WIKIPEDIA_ICON_URL}
                   alt={node.name || ""}
                   width={32}
                   height={32}

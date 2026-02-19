@@ -27,9 +27,11 @@ import {
   XMarkIcon,
   FunnelIcon,
   ViewfinderCircleIcon,
+  VideoCameraIcon,
+  VideoCameraSlashIcon,
 } from "@heroicons/react/24/outline";
 import type { GraphSettings } from "@/components/ui/Graph";
-import { getRootNode } from "@/lib/graph";
+import { getRootNode, focusCameraOnGraph } from "@/lib/graph";
 import { todaysDate } from "@/lib/utils";
 
 type SidebarProps = {
@@ -79,32 +81,43 @@ export default function Sidebar({
     }
   };
 
-  const handleKeyPress = useCallback((event: KeyboardEvent) => {
-    console.log("Key pressed:", event.key);
-    // Ignore shortcuts if user is typing in an input
-    if (
-      event.target instanceof HTMLInputElement ||
-      event.target instanceof HTMLTextAreaElement
-    )
-      return;
-    switch (event.key) {
-      case "a":
-        setSidebarState("article");
-        break;
-      case "s":
-        setSidebarState("settings");
-        break;
-      case "d":
-        setSidebarState("downloads");
-        break;
-      case "z":
-        setSidebarState("stats");
-        break;
-      case "Escape":
-        setSidebarState("closed");
-        break;
-    }
-  }, []);
+  const selectRootNode = useCallback(() => {
+    setSelectedNode(getRootNode(graphData, todaysDate()));
+  }, [graphData, setSelectedNode]);
+
+  const handleKeyPress = useCallback(
+    (event: KeyboardEvent) => {
+      console.log("Key pressed:", event.key);
+      // Ignore shortcuts if user is typing in an input
+      if (
+        event.target instanceof HTMLInputElement ||
+        event.target instanceof HTMLTextAreaElement
+      )
+        return;
+      switch (event.key) {
+        case "a":
+          setSidebarState("article");
+          break;
+        case "s":
+          setSidebarState("settings");
+          break;
+        case "d":
+          setSidebarState("downloads");
+          break;
+        case "z":
+          setSidebarState("stats");
+          break;
+        case "r":
+          selectRootNode();
+          break;
+        case "Escape":
+          if (sidebarState !== "closed") setSidebarState("closed");
+          else setSelectedNode(null);
+          break;
+      }
+    },
+    [selectRootNode, setSelectedNode, sidebarState],
+  );
 
   useEffect(() => {
     // attach the event listener
@@ -190,13 +203,21 @@ export default function Sidebar({
           {/* go to root node */}
           <Button
             onClick={() => {
-              setSelectedNode(getRootNode(graphData, todaysDate()));
+              selectRootNode();
             }}
             toggled={selectedNode === getRootNode(graphData, todaysDate())}
             aria-label={"Select root node "}
             title={"Root Node (R)"}
           >
             <ViewfinderCircleIcon />
+          </Button>
+          <Button
+            onClick={() => graphRef.current?.zoomToFit(400)}
+            toggled={isFocused}
+            aria-label={"Focus camera on graph"}
+            title={"Focus Camera on Graph (C)"}
+          >
+            {selectedNode ? <VideoCameraIcon /> : <VideoCameraSlashIcon />}
           </Button>
           {/* Filter button */}
           <Button

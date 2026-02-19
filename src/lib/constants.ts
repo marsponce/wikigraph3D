@@ -11,7 +11,8 @@ export const TFA_API_BASE = "https://api.wikimedia.org/feed/v1/wikipedia";
 
 // Wikipedia Icon URL
 export const WIKIPEDIA_ICON_URL =
-  "https://upload.wikimedia.org/wikipedia/commons/6/63/Wikipedia-logo.png";
+  //   "https://upload.wikimedia.org/wikipedia/commons/6/63/Wikipedia-logo.png";
+  "/wikipedia.png";
 
 // Backend API Base
 export const API = "/api/wikipedia";

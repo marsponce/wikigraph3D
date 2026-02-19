@@ -60,6 +60,9 @@ export default function Sidebar({
   setGraphSettings,
 }: SidebarProps) {
   const [sidebarState, setSidebarState] = useState<string>("closed");
+  const [sidebarMode, setSidebarMode] = useState<"fullscreen" | "one-third">(
+    "fullscreen",
+  );
 
   const toggleSidebar = () => {
     switch (sidebarState) {
@@ -110,13 +113,16 @@ export default function Sidebar({
         case "r":
           selectRootNode();
           break;
+        case "c":
+          graphRef.current?.zoomToFit(400);
+          break;
         case "Escape":
           if (sidebarState !== "closed") setSidebarState("closed");
           else setSelectedNode(null);
           break;
       }
     },
-    [selectRootNode, setSelectedNode, sidebarState],
+    [selectRootNode, setSelectedNode, sidebarState, graphRef],
   );
 
   useEffect(() => {
@@ -140,8 +146,11 @@ export default function Sidebar({
           "h-screen",
           "duration-500",
           "transition",
-          "w-screen",
           // State-specific styles
+          {
+            "w-screen": sidebarMode === "fullscreen",
+            "w-1/3": sidebarMode === "one-third",
+          },
           {
             "bg-white/10 [transform:translateX(calc(100%-4rem))]":
               sidebarState === "closed",
@@ -275,6 +284,8 @@ export default function Sidebar({
                 graphRef={graphRef}
                 graphSettings={graphSettings}
                 setGraphSettings={setGraphSettings}
+                sidebarMode={sidebarMode}
+                setSidebarMode={setSidebarMode}
               />
             </>
           )}

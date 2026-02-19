@@ -10,12 +10,16 @@ type SettingsCardProps = {
   graphRef: RefObject<ForceGraphMethods<GraphNode, GraphLink> | undefined>;
   graphSettings: GraphSettings;
   setGraphSettings: (graphSettings: GraphSettings) => void;
+  sidebarMode: "fullscreen" | "one-third";
+  setSidebarMode: (sidebarMode: "fullscreen" | "one-third") => void;
 };
 
 export default function SettingsCard({
   graphRef,
   graphSettings,
   setGraphSettings,
+  sidebarMode,
+  setSidebarMode,
 }: SettingsCardProps) {
   // Helper to update individual settings
   const updateSetting = (
@@ -392,6 +396,38 @@ export default function SettingsCard({
           <p className="text-xs text-gray-500">
             Renders Wikipedia thumbnail images as node sprites — disabling
             improves performance on large graphs
+          </p>
+        </Switch.Group>
+
+        {/* Sidebar Mode Toggle */}
+        <Switch.Group>
+          <div className="flex items-center justify-between">
+            <Switch.Label className="text-sm text-gray-300 cursor-pointer">
+              Sidebar Mode
+            </Switch.Label>
+            <Switch
+              checked={sidebarMode === "fullscreen"}
+              onChange={(value) =>
+                setSidebarMode(value ? "fullscreen" : "one-third")
+              }
+              className={clsx(
+                "relative inline-flex h-6 w-11 items-center rounded-full transition-colors",
+                "focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 focus:ring-offset-gray-900",
+                sidebarMode === "fullscreen" ? "bg-sky-500" : "bg-gray-700",
+              )}
+            >
+              <span
+                className={clsx(
+                  "inline-block h-4 w-4 transform rounded-full bg-white transition-transform",
+                  sidebarMode === "fullscreen"
+                    ? "translate-x-6"
+                    : "translate-x-1",
+                )}
+              />
+            </Switch>
+          </div>
+          <p className="text-xs text-gray-500">
+            Switches the sidebar between fullscreen or one-third widths
           </p>
         </Switch.Group>
 

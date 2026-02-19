@@ -401,9 +401,9 @@ export default function SettingsCard({
 
         {/* Sidebar Mode Toggle */}
         <Switch.Group>
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between hidden sm:block">
             <Switch.Label className="text-sm text-gray-300 cursor-pointer">
-              Sidebar Mode
+              Fullscreen Sidebar
             </Switch.Label>
             <Switch
               checked={sidebarMode === "fullscreen"}
@@ -536,6 +536,7 @@ export default function SettingsCard({
             edgeColorMode: "depth",
             highlightDistance: 4,
           });
+          setSidebarMode("one-third");
           toast.success("Settings reset to defaults");
         }}
         className="w-full px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"

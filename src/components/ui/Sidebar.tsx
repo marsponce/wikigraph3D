@@ -61,7 +61,7 @@ export default function Sidebar({
 }: SidebarProps) {
   const [sidebarState, setSidebarState] = useState<string>("closed");
   const [sidebarMode, setSidebarMode] = useState<"fullscreen" | "one-third">(
-    "fullscreen",
+    "one-third",
   );
 
   const toggleSidebar = () => {
@@ -149,7 +149,7 @@ export default function Sidebar({
           // State-specific styles
           {
             "w-screen": sidebarMode === "fullscreen",
-            "w-1/3": sidebarMode === "one-third",
+            "sm:w-1/3": sidebarMode === "one-third",
           },
           {
             "bg-white/10 [transform:translateX(calc(100%-4rem))]":

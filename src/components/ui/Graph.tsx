@@ -96,14 +96,6 @@ export default function Graph({
   edgeColorMode = "depth",
   highlightDistance = 4,
 }: GraphProps) {
-  const loadInitialNode = useCallback(() => {
-    fetchInitialNode().then((root) => {
-      // throw new Error("Test error"); // for testing
-      console.log(root);
-      setDataAction({ nodes: [{ ...root }], links: [] });
-    });
-  }, [setDataAction]);
-
   // Get the graph from supabase if it exists
   useEffect(() => {
     const loadGraph = () => {
@@ -112,12 +104,12 @@ export default function Graph({
         toast.promise(
           (async () => {
             // Fetch the graph from Supabase
-
             const { graph, nodesCount, linksCount } = await fetchGraph();
-
             if (nodesCount === 0) {
               console.log("Empty graph, fetching initial node");
-              loadInitialNode();
+              // Fetch the root from the server
+              const root = await fetchInitialNode();
+              setDataAction({ nodes: [{ ...root }], links: [] });
             } else {
               console.log("Nodes: ", nodesCount, "Links: ", linksCount);
               setDataAction({ nodes: graph.nodes, links: graph.links });
@@ -127,9 +119,7 @@ export default function Graph({
           {
             loading: "Loading Graph...", // This will show during the loading phase
             success: ({ nodesCount, linksCount }) =>
-              `Graph loaded with ${nodesCount === 0 ? 1 : nodesCount} ${nodesCount === 1 ? "node" : "nodes"} and ${linksCount} ${linksCount === 1 ? "link" : "links"}`,
-            //            success: ({ nodesCount, linksCount }) =>
-            //            `Graph Loaded with ${nodesCount === 0 ? 1 : nodesCount} node(s) and ${linksCount} link(s)`, // Success message
+              `Graph loaded with ${nodesCount === 0 ? 1 : nodesCount} ${nodesCount === 1 || nodesCount === 0 ? "node" : "nodes"} and ${linksCount} ${linksCount === 1 ? "link" : "links"}`,
             error: () => ({
               message: "Failed to fetch graph", // Error message if fetch fails
               duration: Infinity, // Keeps the error toast indefinitely
@@ -144,7 +134,7 @@ export default function Graph({
     };
 
     loadGraph();
-  }, [setDataAction, loadInitialNode]);
+  }, [setDataAction]);
 
   const clickTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 

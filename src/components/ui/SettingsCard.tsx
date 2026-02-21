@@ -499,7 +499,7 @@ export default function SettingsCard({
             </div>
             <input
               type="range"
-              min={50}
+              min={10}
               max={500}
               step={10}
               value={graphSettings.dagLevelDistance || 200}

@@ -527,7 +527,7 @@ export default function SettingsCard({
             showThumbnails: true,
             cooldownTicks: 100,
             enableNodeDrag: false,
-            showNavInfo: false,
+            showNavInfo: true,
             darkMode: false,
             controlType: "trackball",
             enableDynamicNodeSizing: true,

@@ -117,7 +117,6 @@ export default function Graph({
             }
 
             // Zoom to fit the graph
-            graphRef.current?.zoomToFit(1000);
             return { nodesCount, linksCount };
           })(),
           {
@@ -170,6 +169,9 @@ export default function Graph({
       event?.preventDefault?.();
 
       if (clickTimeout.current) {
+        // double click
+        clearTimeout(clickTimeout.current);
+        clickTimeout.current = null;
         graphRef.current?.zoomToFit(1000);
       } else {
         clickTimeout.current = setTimeout(() => {
@@ -183,8 +185,14 @@ export default function Graph({
     [setSelectedNodeAction, setIsFocused, graphRef],
   );
 
+  // Fit the camera on initial load
+  const hasInitiallyFit = useRef<boolean>(false);
   const handleEngineStop = () => {
     console.log("Engine stop");
+    if (!hasInitiallyFit.current) {
+      graphRef.current?.zoomToFit(1000);
+      hasInitiallyFit.current = true;
+    }
   };
 
   const nodeObjects = useRef<Map<GraphNode, THREE.Sprite>>(new Map());

@@ -18,7 +18,6 @@ import {
   fetchGraph,
   createNodeSprite,
   focusCameraOnNode,
-  zoomToFit,
   updateSpriteHighlight,
   getNodeDegree,
   computeNodeDepths,
@@ -69,6 +68,7 @@ type GraphProps = GraphSettings & {
   data: GraphData;
   setDataAction: Dispatch<SetStateAction<GraphData>>;
   isFocused: boolean;
+  setIsFocused: (focus: boolean) => void;
 };
 
 export default function Graph({
@@ -78,6 +78,7 @@ export default function Graph({
   data,
   setDataAction,
   isFocused,
+  setIsFocused,
   // Settings
   nodeSize = 1,
   nodeOpacity = 0,
@@ -147,24 +148,27 @@ export default function Graph({
         clearTimeout(clickTimeout.current);
         clickTimeout.current = null;
         focusCameraOnNode(graphRef, node, data);
+        setIsFocused(true);
         setSelectedNodeAction(node);
+      } else {
+        clickTimeout.current = setTimeout(() => {
+          clickTimeout.current = null;
+          // single click
+          setSelectedNodeAction(node);
+          setIsFocused(false);
+        }, 250);
       }
-
-      clickTimeout.current = setTimeout(() => {
-        clickTimeout.current = null;
-        // single click
-        setSelectedNodeAction(node);
-      }, 250);
     },
-    [setSelectedNodeAction, data, graphRef],
+    [setSelectedNodeAction, data, graphRef, setIsFocused],
   );
 
   const handleBackgroundClick = useCallback(
     (event?: MouseEvent) => {
       event?.preventDefault?.();
       setSelectedNodeAction(null);
+      setIsFocused(false);
     },
-    [setSelectedNodeAction],
+    [setSelectedNodeAction, setIsFocused],
   );
 
   const handleEngineStop = () => {

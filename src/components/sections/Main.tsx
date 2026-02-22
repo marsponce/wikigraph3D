@@ -56,6 +56,7 @@ export default function Main() {
         data={graphData}
         setDataAction={setGraphData}
         isFocused={isFocused}
+        setIsFocused={setIsFocused}
         {...graphSettings}
       />
       <noscript>

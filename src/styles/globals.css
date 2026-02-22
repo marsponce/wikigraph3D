@@ -73,15 +73,6 @@
   .about {
     @apply md:mx-auto max-w-3xl p-4 md:p-12 lg:p-18 space-y-6;
   }
-
-  /* Button */
-  .btn {
-    @apply pointer-events-auto size-10 sm:size-7 rounded transition-colors duration-300 bg-gray-900 hover:bg-sky-600 active:bg-sky-100;
-  }
-
-  .btn[data-toggled="true"] {
-    @apply bg-sky-600;
-  }
 }
 
 @layer utilities {

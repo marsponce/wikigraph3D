@@ -29,9 +29,10 @@ import {
   ViewfinderCircleIcon,
   VideoCameraIcon,
   VideoCameraSlashIcon,
+  ArrowsPointingOutIcon,
 } from "@heroicons/react/24/outline";
 import type { GraphSettings } from "@/components/ui/Graph";
-import { getRootNode, focusCameraOnGraph } from "@/lib/graph";
+import { getRootNode, focusCameraOnNode } from "@/lib/graph";
 import { todaysDate } from "@/lib/utils";
 
 type SidebarProps = {
@@ -114,7 +115,7 @@ export default function Sidebar({
           selectRootNode();
           break;
         case "c":
-          graphRef.current?.zoomToFit(400);
+          graphRef.current?.zoomToFit(500);
           break;
         case "Escape":
           if (sidebarState !== "closed") setSidebarState("closed");
@@ -209,24 +210,31 @@ export default function Sidebar({
           >
             <CogIcon />
           </Button>
-          {/* go to root node */}
+          {/* focus camera on selectedNode */}
           <Button
             onClick={() => {
-              selectRootNode();
+              if (selectedNode) {
+                focusCameraOnNode(graphRef, selectedNode, graphData);
+                setIsFocused(true);
+              }
             }}
-            toggled={selectedNode === getRootNode(graphData, todaysDate())}
-            aria-label={"Select root node "}
-            title={"Root Node (R)"}
-          >
-            <ViewfinderCircleIcon />
-          </Button>
-          <Button
-            onClick={() => graphRef.current?.zoomToFit(400)}
+            aria-label={"Focus camera on selected node"}
+            title={"Focus camera on selected node (F)"}
             toggled={isFocused}
-            aria-label={"Focus camera on graph"}
-            title={"Focus Camera on Graph (C)"}
+            disabled={!selectedNode}
           >
             {selectedNode ? <VideoCameraIcon /> : <VideoCameraSlashIcon />}
+          </Button>
+          {/* reset camera */}
+          <Button
+            onClick={() => {
+              graphRef.current?.zoomToFit(1000);
+              setIsFocused(false);
+            }}
+            aria-label={"Focus camera on graph"}
+            title={"Focus camera on Graph (G)"}
+          >
+            <ArrowsPointingOutIcon />
           </Button>
           {/* Filter button */}
           <Button

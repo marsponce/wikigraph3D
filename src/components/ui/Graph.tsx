@@ -115,6 +115,9 @@ export default function Graph({
               console.log("Nodes: ", nodesCount, "Links: ", linksCount);
               setDataAction({ nodes: graph.nodes, links: graph.links });
             }
+
+            // Zoom to fit the graph
+            graphRef.current?.zoomToFit(1000);
             return { nodesCount, linksCount };
           })(),
           {
@@ -165,10 +168,19 @@ export default function Graph({
   const handleBackgroundClick = useCallback(
     (event?: MouseEvent) => {
       event?.preventDefault?.();
-      setSelectedNodeAction(null);
-      setIsFocused(false);
+
+      if (clickTimeout.current) {
+        graphRef.current?.zoomToFit(1000);
+      } else {
+        clickTimeout.current = setTimeout(() => {
+          clickTimeout.current = null;
+          // single click
+          setSelectedNodeAction(null);
+          setIsFocused(false);
+        }, 250);
+      }
     },
-    [setSelectedNodeAction, setIsFocused],
+    [setSelectedNodeAction, setIsFocused, graphRef],
   );
 
   const handleEngineStop = () => {

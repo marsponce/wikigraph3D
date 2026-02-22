@@ -115,7 +115,7 @@ export default function Sidebar({
           selectRootNode();
           break;
         case "c":
-          graphRef.current?.zoomToFit(500);
+          graphRef.current?.zoomToFit(1000);
           break;
         case "Escape":
           if (sidebarState !== "closed") setSidebarState("closed");

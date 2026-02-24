@@ -290,7 +290,12 @@ export default function Sidebar({
           )}
           {sidebarState === "stats" && (
             <>
-              <StatsCard graphData={graphData} />
+              <StatsCard
+                graphRef={graphRef}
+                graphData={graphData}
+                setSelectedNode={setSelectedNode}
+                setIsFocused={setIsFocused}
+              />
             </>
           )}
           {sidebarState === "settings" && (

@@ -19,34 +19,38 @@ export default function Main() {
   const graphRef = useRef<ForceGraphMethods<GraphNode, GraphLink> | undefined>(
     undefined,
   );
-  const [graphSettings, setGraphSettings] = useState<GraphSettings>(
-    () =>
-      ({
-        nodeSize: 1,
-        enableDynamicNodeSizing: true,
-        nodeOpacity: 0.25,
-        linkWidth: 1,
-        linkOpacity: 1,
-        showLabels: true,
-        showThumbnails: true,
-        cooldownTicks: 100,
-        enableNodeDrag: false,
-        showNavInfo: true,
-        controlType: "trackball",
-        edgeColorMode: "depth",
-        highlightDistance: 4,
-      }) as GraphSettings,
-  );
 
-  // Change the background according to os theme
+  // Graph settings
+  const defaults = {
+    nodeSize: 1,
+    enableDynamicNodeSizing: true,
+    nodeOpacity: 1,
+    linkWidth: 1,
+    linkOpacity: 1,
+    showLabels: true,
+    showThumbnails: true,
+    cooldownTicks: 100,
+    enableNodeDrag: false,
+    showNavInfo: true,
+    dagMode: null,
+    dagLevelDistance: 10,
+    edgeColorMode: "depth",
+    highlightDistance: 4,
+  } as GraphSettings;
+
+  const [graphSettings, setGraphSettings] = useState<GraphSettings>(() => {
+    const stored =
+      typeof window !== "undefined"
+        ? localStorage.getItem("graphSettings")
+        : null;
+    return stored ? { ...defaults, ...JSON.parse(stored) } : defaults;
+  });
+
+  // Store graph settings in localStorage
   useEffect(() => {
-    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-    const handler = (event: MediaQueryListEvent) => {
-      setGraphSettings((prev) => ({ ...prev, darkMode: event.matches }));
-    };
-    mediaQuery.addEventListener("change", handler);
-    return () => mediaQuery.removeEventListener("change", handler);
-  }, []);
+    localStorage.setItem("graphSettings", JSON.stringify(graphSettings));
+  }, [graphSettings]);
+
   return (
     <div className="relative">
       <Sidebar

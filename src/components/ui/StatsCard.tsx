@@ -1,12 +1,17 @@
-import type { GraphData } from "@/types";
+import type { GraphData, GraphNode, GraphLink } from "@/types";
 import type { GraphStats } from "@/lib/graph";
 import { computeGraphStats } from "@/lib/graph";
-import { useMemo } from "react";
+import { useMemo, RefObject } from "react";
 import { WIKIPEDIA_ICON_URL } from "@/lib/constants";
 import Image from "next/image";
+import { focusCameraOnNode } from "@/lib/graph";
+import type { ForceGraphMethods } from "react-force-graph-3d";
 
 type StatsCardProps = {
+  graphRef: RefObject<ForceGraphMethods<GraphNode, GraphLink> | undefined>;
   graphData: GraphData;
+  setSelectedNode: (node: GraphNode | null) => void;
+  setIsFocused: (isFocused: boolean) => void;
 };
 
 function StatRow({ label, value }: { label: string; value: string | number }) {
@@ -18,7 +23,12 @@ function StatRow({ label, value }: { label: string; value: string | number }) {
   );
 }
 
-export default function StatsCard({ graphData }: StatsCardProps) {
+export default function StatsCard({
+  graphRef,
+  graphData,
+  setSelectedNode,
+  setIsFocused,
+}: StatsCardProps) {
   const stats: GraphStats = useMemo(
     () => computeGraphStats(graphData),
     [graphData.nodes.length, graphData.links.length],
@@ -45,9 +55,17 @@ export default function StatsCard({ graphData }: StatsCardProps) {
       {/* Most Connected Nodes */}
       <div className="space-y-2">
         <h3 className="text-lg">Most Connected</h3>
-        <div className="dark:bg-gray-800 bg-gray-400 rounded-lg divide-y divide-gray-300 dark:divide-gray-700">
+        <div className="dark:bg-gray-800 bg-gray-400 rounded-lg divide-y divide-gray-300 dark:divide-gray-700 overflow-hidden">
           {stats.maxDegreeNodes.map((node, i) => (
-            <div key={node.id} className="flex items-center gap-3 p-2">
+            <div
+              key={node.id}
+              className="flex items-center gap-3 p-2 cursor-pointer hover:bg-sky-600 active:bg-sky-100"
+              onClick={() => {
+                setSelectedNode(node);
+                focusCameraOnNode(graphRef, node, graphData);
+                setIsFocused(true);
+              }}
+            >
               {/* Rank badge */}
               <span className="text-xs text-white font-mono w-5 text-right">
                 {i + 1}

@@ -18,7 +18,6 @@ export default function Button({
     <HeadlessButton
       className={clsx(
         "pointer-events-auto size-10 sm:size-7 rounded transition-colors duration-300",
-        "dark:bg-gray-900 dark:hover:bg-sky-600 dark:active:bg-sky-100 dark:text-white",
         "bg-gray-900 hover:bg-sky-600 active:bg-sky-100 text-white",
         "data-[toggled=true]:bg-sky-600",
         "data-disabled:opacity-40 data-disabled:cursor-not-allowed data-disabled:hover:bg-gray-900 data-disabled:pointer-events-none",

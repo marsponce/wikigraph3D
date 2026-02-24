@@ -304,28 +304,6 @@ export default function SettingsCard({
             Shows camera controls hint in the bottom-left corner of the graph
           </p>
         </Switch.Group>
-
-        {/* Control Type Select */}
-        <div className="space-y-2">
-          <label className="text-sm">Camera Control Type</label>
-          <select
-            value={graphSettings.controlType}
-            onChange={(e) =>
-              updateSetting(
-                "controlType",
-                e.target.value as "trackball" | "orbit" | "fly",
-              )
-            }
-            className="w-full px-3 py-2 bg-gray-700 text-white rounded-lg border border-gray-600 focus:outline-none focus:ring-2 focus:ring-sky-500"
-          >
-            <option value="trackball">Trackball</option>
-            <option value="orbit">Orbit</option>
-            <option value="fly">Fly</option>
-          </select>
-          <p className="text-xs">
-            Trackball: Free rotation | Orbit: Around target | Fly: First-person
-          </p>
-        </div>
       </div>
 
       {/* Display Settings Section */}
@@ -461,7 +439,7 @@ export default function SettingsCard({
               min={10}
               max={500}
               step={10}
-              value={graphSettings.dagLevelDistance || 200}
+              value={graphSettings.dagLevelDistance || 10}
               onChange={(e) =>
                 updateSetting("dagLevelDistance", Number(e.target.value))
               }
@@ -488,7 +466,7 @@ export default function SettingsCard({
             controlType: "trackball",
             enableDynamicNodeSizing: true,
             dagMode: null,
-            dagLevelDistance: undefined,
+            dagLevelDistance: 10,
             edgeColorMode: "depth",
             highlightDistance: 4,
           });

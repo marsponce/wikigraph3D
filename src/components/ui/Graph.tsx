@@ -437,7 +437,8 @@ export default function Graph({
 
   // Check for system theme
   const [isDark, setIsDark] = useState<boolean>(
-    window.matchMedia("(prefers-color-scheme: dark)").matches,
+    typeof window !== "undefined" &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches,
   );
 
   useEffect(() => {

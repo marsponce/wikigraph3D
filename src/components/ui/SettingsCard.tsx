@@ -21,6 +21,18 @@ export default function SettingsCard({
   sidebarMode,
   setSidebarMode,
 }: SettingsCardProps) {
+  const cx = {
+    sectionHeader: "text-lg font-semibold",
+    rowLayout: "flex items-center justify-between",
+    rangeInput:
+      "w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-sky-500",
+    switchLabel: "text-sm cursor-pointer",
+    switchTrack:
+      "relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 focus:ring-offset-gray-900",
+    switchThumb:
+      "inline-block h-4 w-4 transform rounded-full bg-white transition-transform",
+  } as const;
+
   // Helper to update individual settings
   const updateSetting = (
     key: keyof GraphSettings,
@@ -33,12 +45,12 @@ export default function SettingsCard({
     <div className="flex flex-col gap-6 p-4 overflow-y-auto">
       {/* Node Settings Section */}
       <div className="space-y-4">
-        <h3 className="text-lg ">Node Settings</h3>
+        <h3 className={cx.sectionHeader}>Node Settings</h3>
 
         {/* Dynamic Node Setting*/}
         <Switch.Group>
           <div className="space-y-2">
-            <div className="flex justify-between items-center">
+            <div className={cx.rowLayout}>
               <Switch.Label className="text-sm">
                 Enable Dynamic Node sizing
               </Switch.Label>
@@ -48,8 +60,7 @@ export default function SettingsCard({
                   updateSetting("enableDynamicNodeSizing", value)
                 }
                 className={clsx(
-                  "relative inline-flex h-6 w-11 items-center rounded-full transition-colors",
-                  "focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 focus:ring-offset-gray-900",
+                  cx.switchTrack,
                   graphSettings.enableDynamicNodeSizing
                     ? "bg-sky-500"
                     : "bg-gray-700",
@@ -57,7 +68,7 @@ export default function SettingsCard({
               >
                 <span
                   className={clsx(
-                    "inline-block h-4 w-4 transform rounded-full bg-white transition-transform",
+                    cx.switchThumb,
                     graphSettings.enableDynamicNodeSizing
                       ? "translate-x-6"
                       : "translate-x-1",
@@ -73,7 +84,7 @@ export default function SettingsCard({
 
         {/* Node Size Slider - Disabled when dynamic sizing is enabled */}
         <div className="space-y-2">
-          <div className="flex justify-between items-center">
+          <div className={cx.rowLayout}>
             <label className={clsx("text-sm", "")}>Base Node Size</label>
             <span className={clsx("text-sm", "")}>
               {graphSettings.nodeSize}
@@ -87,10 +98,7 @@ export default function SettingsCard({
             value={graphSettings.nodeSize}
             onChange={(e) => updateSetting("nodeSize", Number(e.target.value))}
             // disabled={graphSettings.enableDynamicNodeSizing}
-            className={clsx(
-              "w-full h-2 rounded-lg appearance-none cursor-pointer accent-sky-500",
-              "bg-gray-700",
-            )}
+            className={cx.rangeInput}
           />
           <p className="text-xs">
             Base size of each node — used as a multiplier when dynamic sizing is
@@ -100,7 +108,7 @@ export default function SettingsCard({
 
         {/* Node Opacity Slider */}
         <div className="space-y-2">
-          <div className="flex justify-between items-center">
+          <div className={cx.rowLayout}>
             <label className="text-sm">Node Opacity</label>
             <span className="text-sm">
               {graphSettings.nodeOpacity.toFixed(2)}
@@ -115,7 +123,7 @@ export default function SettingsCard({
             onChange={(e) =>
               updateSetting("nodeOpacity", Number(e.target.value))
             }
-            className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-sky-500"
+            className={cx.rangeInput}
           />
           <p className="text-xs">
             Transparency of the default node sphere (has no effect when
@@ -126,11 +134,11 @@ export default function SettingsCard({
 
       {/* Link Settings Section */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold">Link Settings</h3>
+        <h3 className={cx.sectionHeader}>Link Settings</h3>
 
         {/* Link Width Slider */}
         <div className="space-y-2">
-          <div className="flex justify-between items-center">
+          <div className={cx.rowLayout}>
             <label className="text-sm">Link Width</label>
             <span className="text-sm">{graphSettings.linkWidth}</span>
           </div>
@@ -141,14 +149,14 @@ export default function SettingsCard({
             step="0.1"
             value={graphSettings.linkWidth}
             onChange={(e) => updateSetting("linkWidth", Number(e.target.value))}
-            className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-sky-500"
+            className={cx.rangeInput}
           />
           <p className="text-xs">Thickness of the lines connecting nodes</p>
         </div>
 
         {/* Link Opacity Slider */}
         <div className="space-y-2">
-          <div className="flex justify-between items-center">
+          <div className={cx.rowLayout}>
             <label className="text-sm">Link Opacity</label>
             <span className="text-sm">
               {graphSettings.linkOpacity.toFixed(2)}
@@ -163,14 +171,14 @@ export default function SettingsCard({
             onChange={(e) =>
               updateSetting("linkOpacity", Number(e.target.value))
             }
-            className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-sky-500"
+            className={cx.rangeInput}
           />
           <p className="text-xs">Global transparency of all links</p>
         </div>
 
         {/* Highlight Distance Slider */}
         <div className="space-y-2">
-          <div className="flex justify-between items-center">
+          <div className={cx.rowLayout}>
             <label className="text-sm">Highlight Distance</label>
             <span className="text-sm">{graphSettings.highlightDistance}</span>
           </div>
@@ -183,7 +191,7 @@ export default function SettingsCard({
             onChange={(e) =>
               updateSetting("highlightDistance", Number(e.target.value))
             }
-            className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-sky-500"
+            className={cx.rangeInput}
           />
           <p className="text-xs">
             How many hops from the selected node remain visible — links beyond
@@ -219,11 +227,11 @@ export default function SettingsCard({
 
       {/* Behavior Settings Section */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold">Behavior</h3>
+        <h3 className={cx.sectionHeader}>Behavior</h3>
 
         {/* Cooldown Ticks Slider */}
         <div className="space-y-2">
-          <div className="flex justify-between items-center">
+          <div className={cx.rowLayout}>
             <label className="text-sm">Simulation Cooldown</label>
             <span className="text-sm">{graphSettings.cooldownTicks}</span>
           </div>
@@ -236,7 +244,7 @@ export default function SettingsCard({
             onChange={(e) =>
               updateSetting("cooldownTicks", Number(e.target.value))
             }
-            className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-sky-500"
+            className={cx.rangeInput}
           />
           <p className="text-xs">
             Higher values = smoother animation but slower settling
@@ -245,22 +253,21 @@ export default function SettingsCard({
 
         {/* Enable Node Drag Toggle */}
         <Switch.Group>
-          <div className="flex items-center justify-between">
-            <Switch.Label className="text-sm cursor-pointer">
+          <div className={cx.rowLayout}>
+            <Switch.Label className={cx.switchLabel}>
               Enable Node Dragging
             </Switch.Label>
             <Switch
               checked={graphSettings.enableNodeDrag}
               onChange={(value) => updateSetting("enableNodeDrag", value)}
               className={clsx(
-                "relative inline-flex h-6 w-11 items-center rounded-full transition-colors",
-                "focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 focus:ring-offset-gray-900",
+                cx.switchTrack,
                 graphSettings.enableNodeDrag ? "bg-sky-500" : "bg-gray-700",
               )}
             >
               <span
                 className={clsx(
-                  "inline-block h-4 w-4 transform rounded-full bg-white transition-transform",
+                  cx.switchThumb,
                   graphSettings.enableNodeDrag
                     ? "translate-x-6"
                     : "translate-x-1",
@@ -273,22 +280,21 @@ export default function SettingsCard({
 
         {/* Show Nav Info Toggle */}
         <Switch.Group>
-          <div className="flex items-center justify-between">
-            <Switch.Label className="text-sm cursor-pointer">
+          <div className={cx.rowLayout}>
+            <Switch.Label className={cx.switchLabel}>
               Show Navigation Info
             </Switch.Label>
             <Switch
               checked={graphSettings.showNavInfo}
               onChange={(value) => updateSetting("showNavInfo", value)}
               className={clsx(
-                "relative inline-flex h-6 w-11 items-center rounded-full transition-colors",
-                "focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 focus:ring-offset-gray-900",
+                cx.switchTrack,
                 graphSettings.showNavInfo ? "bg-sky-500" : "bg-gray-700",
               )}
             >
               <span
                 className={clsx(
-                  "inline-block h-4 w-4 transform rounded-full bg-white transition-transform",
+                  cx.switchThumb,
                   graphSettings.showNavInfo ? "translate-x-6" : "translate-x-1",
                 )}
               />
@@ -324,26 +330,23 @@ export default function SettingsCard({
 
       {/* Display Settings Section */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold">Display</h3>
+        <h3 className={cx.sectionHeader}>Display</h3>
 
         {/* Show Labels Toggle */}
         <Switch.Group>
-          <div className="flex items-center justify-between">
-            <Switch.Label className="text-sm cursor-pointer">
-              Show Labels
-            </Switch.Label>
+          <div className={cx.rowLayout}>
+            <Switch.Label className={cx.switchLabel}>Show Labels</Switch.Label>
             <Switch
               checked={graphSettings.showLabels}
               onChange={(value) => updateSetting("showLabels", value)}
               className={clsx(
-                "relative inline-flex h-6 w-11 items-center rounded-full transition-colors",
-                "focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 focus:ring-offset-gray-900",
+                cx.switchTrack,
                 graphSettings.showLabels ? "bg-sky-500" : "bg-gray-700",
               )}
             >
               <span
                 className={clsx(
-                  "inline-block h-4 w-4 transform rounded-full bg-white transition-transform",
+                  cx.switchThumb,
                   graphSettings.showLabels ? "translate-x-6" : "translate-x-1",
                 )}
               />
@@ -356,22 +359,21 @@ export default function SettingsCard({
 
         {/* Show Thumbnails Toggle */}
         <Switch.Group>
-          <div className="flex items-center justify-between">
-            <Switch.Label className="text-sm cursor-pointer">
+          <div className={cx.rowLayout}>
+            <Switch.Label className={cx.switchLabel}>
               Show Thumbnails
             </Switch.Label>
             <Switch
               checked={graphSettings.showThumbnails}
               onChange={(value) => updateSetting("showThumbnails", value)}
               className={clsx(
-                "relative inline-flex h-6 w-11 items-center rounded-full transition-colors",
-                "focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 focus:ring-offset-gray-900",
+                cx.switchTrack,
                 graphSettings.showThumbnails ? "bg-sky-500" : "bg-gray-700",
               )}
             >
               <span
                 className={clsx(
-                  "inline-block h-4 w-4 transform rounded-full bg-white transition-transform",
+                  cx.switchThumb,
                   graphSettings.showThumbnails
                     ? "translate-x-6"
                     : "translate-x-1",
@@ -388,7 +390,7 @@ export default function SettingsCard({
         {/* Sidebar Mode Toggle */}
         <Switch.Group>
           <div className="hidden sm:flex items-center justify-between">
-            <Switch.Label className="text-sm cursor-pointer">
+            <Switch.Label className={cx.switchLabel}>
               Fullscreen Sidebar
             </Switch.Label>
             <Switch
@@ -397,14 +399,13 @@ export default function SettingsCard({
                 setSidebarMode(value ? "fullscreen" : "one-third")
               }
               className={clsx(
-                "relative inline-flex h-6 w-11 items-center rounded-full transition-colors",
-                "focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 focus:ring-offset-gray-900",
+                cx.switchTrack,
                 sidebarMode === "fullscreen" ? "bg-sky-500" : "bg-gray-700",
               )}
             >
               <span
                 className={clsx(
-                  "inline-block h-4 w-4 transform rounded-full bg-white transition-transform",
+                  cx.switchThumb,
                   sidebarMode === "fullscreen"
                     ? "translate-x-6"
                     : "translate-x-1",
@@ -420,7 +421,7 @@ export default function SettingsCard({
 
       {/* Layout Settings Section */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold">Layout</h3>
+        <h3 className={cx.sectionHeader}>Layout</h3>
 
         {/* DAG Mode Select */}
         <div className="space-y-2">
@@ -449,7 +450,7 @@ export default function SettingsCard({
         {/* DAG Level Distance - Only show when dagMode is active */}
         {graphSettings.dagMode && (
           <div className="space-y-2">
-            <div className="flex justify-between items-center">
+            <div className={cx.rowLayout}>
               <label className="text-sm">Level Distance</label>
               <span className="text-sm">
                 {graphSettings.dagLevelDistance || 200}
@@ -464,7 +465,7 @@ export default function SettingsCard({
               onChange={(e) =>
                 updateSetting("dagLevelDistance", Number(e.target.value))
               }
-              className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-sky-500"
+              className={cx.rangeInput}
             />
             <p className="text-xs">Distance between graph hierarchy levels</p>
           </div>

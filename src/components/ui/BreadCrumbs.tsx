@@ -119,7 +119,8 @@ export default function BreadCrumbs({
                   className={clsx(
                     "inline-block",
                     "font-bold",
-                    "bg-zinc-950 hover:bg-zinc-300 active:bg-zinc-100",
+                    "dark:bg-zinc-950 dark:hover:bg-zinc-300 dark:active:bg-zinc-100",
+                    "bg-zinc-100 hover:bg-zinc-300 active:bg-zinc-950",
                     "transition-all",
                     "rounded-xl",
                     "p-1",

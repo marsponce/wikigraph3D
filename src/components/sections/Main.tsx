@@ -32,10 +32,6 @@ export default function Main() {
         cooldownTicks: 100,
         enableNodeDrag: false,
         showNavInfo: true,
-        darkMode:
-          typeof window !== "undefined"
-            ? window.matchMedia("(prefers-color-scheme: dark)").matches
-            : false,
         controlType: "trackball",
         edgeColorMode: "depth",
         highlightDistance: 4,

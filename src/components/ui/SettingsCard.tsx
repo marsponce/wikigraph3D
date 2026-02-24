@@ -416,34 +416,6 @@ export default function SettingsCard({
             Switches the sidebar between fullscreen or one-third widths
           </p>
         </Switch.Group>
-
-        {/* Dark Mode Toggle */}
-        <Switch.Group>
-          <div className="flex items-center justify-between">
-            <Switch.Label className="text-sm cursor-pointer">
-              Dark Mode
-            </Switch.Label>
-            <Switch
-              checked={graphSettings.darkMode}
-              onChange={(value) => updateSetting("darkMode", value || null)}
-              className={clsx(
-                "relative inline-flex h-6 w-11 items-center rounded-full transition-colors",
-                "focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 focus:ring-offset-gray-900",
-                graphSettings.darkMode ? "bg-sky-500" : "bg-gray-700",
-              )}
-            >
-              <span
-                className={clsx(
-                  "inline-block h-4 w-4 transform rounded-full bg-white transition-transform",
-                  graphSettings.darkMode ? "translate-x-6" : "translate-x-1",
-                )}
-              />
-            </Switch>
-          </div>
-          <p className="text-xs">
-            Switches the graph background to a dark theme
-          </p>
-        </Switch.Group>
       </div>
 
       {/* Layout Settings Section */}
@@ -512,7 +484,6 @@ export default function SettingsCard({
             cooldownTicks: 100,
             enableNodeDrag: false,
             showNavInfo: true,
-            darkMode: false,
             controlType: "trackball",
             enableDynamicNodeSizing: true,
             dagMode: null,

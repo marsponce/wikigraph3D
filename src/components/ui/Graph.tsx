@@ -44,7 +44,6 @@ export type GraphSettings = {
   cooldownTicks: number;
   enableNodeDrag: boolean;
   showNavInfo: boolean;
-  darkMode: boolean;
   controlType: "trackball" | "orbit" | "fly";
   dagMode:
     | "td"
@@ -89,7 +88,6 @@ export default function Graph({
   cooldownTicks = 100,
   enableNodeDrag = false,
   showNavInfo = true,
-  darkMode = false,
   controlType = "trackball",
   dagMode = null,
   dagLevelDistance,
@@ -437,13 +435,26 @@ export default function Graph({
     [nodeDepths, maxDepth, edgeColorMode],
   );
 
+  // Check for system theme
+  const [isDark, setIsDark] = useState<boolean>(
+    window.matchMedia("(prefers-color-scheme: dark)").matches,
+  );
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    const handler = (e: MediaQueryListEvent) => setIsDark(e.matches);
+
+    mediaQuery.addEventListener("change", handler);
+    return () => mediaQuery.removeEventListener("change", handler);
+  }, []);
+
   return (
     <div className="absolute inset-0">
       <ForceGraph3D
         ref={graphRef}
         width={dimensions.width}
         height={dimensions.height}
-        backgroundColor={darkMode ? "#050524" : "#99CCFF"}
+        backgroundColor={isDark ? "#050524" : "#99CCFF"}
         graphData={data}
         enableNodeDrag={enableNodeDrag}
         onNodeClick={handleNodeClick}

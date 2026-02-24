@@ -15,6 +15,7 @@
 </p>
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/c6c521be-c5c7-41f6-bfd4-b52ecfcebcfd/deploy-status)](https://app.netlify.com/projects/wikigraph3d/deploys)
+[![Made with Supabase](https://supabase.com/badge-made-with-supabase-dark.svg)](https://supabase.com)
 
 ## Getting Started
 

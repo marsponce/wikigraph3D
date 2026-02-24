@@ -7,15 +7,12 @@
 </p>
 <p align="center">
     A 3D graph connecting wikipedia articles by their hyperlinks.
-</p>
-<p align="center">
     <!-- Insert Demo video here
     <img src="src" alt="Wikigraph3D Demo" width="800"/>
     -->
+    <img width="600" height="600" alt="out" src="https://github.com/user-attachments/assets/a0469983-85da-428a-9a5b-889a8fe4f5ef" />
+    [![Netlify Status](https://api.netlify.com/api/v1/badges/c6c521be-c5c7-41f6-bfd4-b52ecfcebcfd/deploy-status)](https://app.netlify.com/projects/wikigraph3d/deploys)
 </p>
-
-[![Netlify Status](https://api.netlify.com/api/v1/badges/c6c521be-c5c7-41f6-bfd4-b52ecfcebcfd/deploy-status)](https://app.netlify.com/projects/wikigraph3d/deploys)
-
 ## Getting Started
 
 _This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app)._

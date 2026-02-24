@@ -443,7 +443,7 @@ export default function Graph({
         ref={graphRef}
         width={dimensions.width}
         height={dimensions.height}
-        backgroundColor={darkMode ? "#010133" : "#99CCFF"}
+        backgroundColor={darkMode ? "#050524" : "#99CCFF"}
         graphData={data}
         enableNodeDrag={enableNodeDrag}
         onNodeClick={handleNodeClick}

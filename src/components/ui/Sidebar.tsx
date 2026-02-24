@@ -168,9 +168,9 @@ export default function Sidebar({
             "sm:w-1/3": sidebarMode === "one-third",
           },
           {
-            "bg-white/10 [transform:translateX(calc(100%-4rem))]":
+            "bg-white/10 dark:bg-white/10 [transform:translateX(calc(100%-4rem))]":
               sidebarState === "closed",
-            "sm:bg-black/60": sidebarState !== "closed",
+            "sm:bg-white/60 dark:sm:bg-black/60": sidebarState !== "closed",
           },
         )}
         data-sidebar-state={sidebarState}

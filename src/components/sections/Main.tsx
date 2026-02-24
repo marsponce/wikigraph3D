@@ -1,7 +1,7 @@
 // src/app/components/sections/Main.tsx
 "use client";
 import { Sidebar } from "../ui";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { GraphData, GraphNode, GraphLink } from "@/types";
 import Graph from "@/components/ui/Graph";
 import type { GraphSettings } from "@/components/ui/Graph";
@@ -19,22 +19,38 @@ export default function Main() {
   const graphRef = useRef<ForceGraphMethods<GraphNode, GraphLink> | undefined>(
     undefined,
   );
-  const [graphSettings, setGraphSettings] = useState<GraphSettings>({
-    nodeSize: 1,
-    enableDynamicNodeSizing: true,
-    nodeOpacity: 0.25,
-    linkWidth: 1,
-    linkOpacity: 1,
-    showLabels: true,
-    showThumbnails: true,
-    cooldownTicks: 100,
-    enableNodeDrag: false,
-    showNavInfo: true,
-    darkMode: false,
-    controlType: "trackball",
-    edgeColorMode: "depth",
-    highlightDistance: 4,
-  } as GraphSettings);
+  const [graphSettings, setGraphSettings] = useState<GraphSettings>(
+    () =>
+      ({
+        nodeSize: 1,
+        enableDynamicNodeSizing: true,
+        nodeOpacity: 0.25,
+        linkWidth: 1,
+        linkOpacity: 1,
+        showLabels: true,
+        showThumbnails: true,
+        cooldownTicks: 100,
+        enableNodeDrag: false,
+        showNavInfo: true,
+        darkMode:
+          typeof window !== "undefined"
+            ? window.matchMedia("(prefers-color-scheme: dark)").matches
+            : false,
+        controlType: "trackball",
+        edgeColorMode: "depth",
+        highlightDistance: 4,
+      }) as GraphSettings,
+  );
+
+  // Change the background according to os theme
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    const handler = (event: MediaQueryListEvent) => {
+      setGraphSettings((prev) => ({ ...prev, darkMode: event.matches }));
+    };
+    mediaQuery.addEventListener("change", handler);
+    return () => mediaQuery.removeEventListener("change", handler);
+  }, []);
   return (
     <div className="relative">
       <Sidebar
@@ -68,14 +84,15 @@ export default function Main() {
       <Toaster
         toastOptions={{
           classNames: {
-            toast: "!bg-gray-800 !border !border-gray-700",
-            icon: "!text-white",
-            title: "!text-white",
-            description: "!text-gray-300",
+            toast:
+              "!bg-gray-100 !border !border-gray-300 dark:!bg-gray-800 dark:!border-gray-700",
+            icon: "!text-gray-900 dark:!text-white",
+            title: "!text-gray-900 dark:!text-white",
+            description: "!text-gray-600 dark:!text-gray-300",
             actionButton:
-              "!p-3 !rounded !transition-colors !duration-300 !bg-gray-900 hover:!bg-sky-600 active:!bg-sky-100 !text-white",
+              "!p-3 !rounded !transition-colors !duration-300 !bg-gray-200 hover:!bg-sky-400 active:!bg-sky-200 !text-gray-900 dark:!bg-gray-900 dark:hover:!bg-sky-600 dark:active:!bg-sky-100 dark:!text-white",
             cancelButton:
-              "!p-3 !rounded !transition-colors !duration-300 !bg-gray-700 hover:!bg-gray-600 active:!bg-gray-500 !text-white",
+              "!p-3 !rounded !transition-colors !duration-300 !bg-gray-300 hover:!bg-gray-400 active:!bg-gray-500 !text-gray-900 dark:!bg-gray-700 dark:hover:!bg-gray-600 dark:active:!bg-gray-500 dark:!text-white",
           },
         }}
       />

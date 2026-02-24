@@ -11,8 +11,8 @@ type StatsCardProps = {
 
 function StatRow({ label, value }: { label: string; value: string | number }) {
   return (
-    <div className="flex justify-between items-center py-2 border-b border-gray-700 last:border-0">
-      <span className="text-sm text-gray-400">{label}</span>
+    <div className="flex justify-between items-center py-2 border-b border-gray-300 dark:border-gray-700 last:border-0">
+      <span className="text-sm text-white">{label}</span>
       <span className="text-sm text-white font-mono">{value}</span>
     </div>
   );
@@ -28,8 +28,8 @@ export default function StatsCard({ graphData }: StatsCardProps) {
     <div className="flex flex-col gap-6 p-4 overflow-y-auto">
       {/* Graph Overview */}
       <div className="space-y-1">
-        <h3 className="text-lg text-white">Graph Overview</h3>
-        <div className="bg-gray-800 rounded-lg p-3">
+        <h3 className="text-lg">Graph Overview</h3>
+        <div className="dark:bg-gray-800 bg-gray-400 rounded-lg p-3">
           <StatRow label="Nodes" value={stats.nodeCount} />
           <StatRow label="Links" value={stats.linkCount} />
           <StatRow label="Avg. Degree" value={stats.averageDegree.toFixed(2)} />
@@ -44,12 +44,12 @@ export default function StatsCard({ graphData }: StatsCardProps) {
 
       {/* Most Connected Nodes */}
       <div className="space-y-2">
-        <h3 className="text-lg text-white">Most Connected</h3>
-        <div className="bg-gray-800 rounded-lg divide-y divide-gray-700">
+        <h3 className="text-lg">Most Connected</h3>
+        <div className="dark:bg-gray-800 bg-gray-400 rounded-lg divide-y divide-gray-300 dark:divide-gray-700">
           {stats.maxDegreeNodes.map((node, i) => (
             <div key={node.id} className="flex items-center gap-3 p-2">
               {/* Rank badge */}
-              <span className="text-xs text-gray-500 font-mono w-5 text-right">
+              <span className="text-xs text-white font-mono w-5 text-right">
                 {i + 1}
               </span>
               {/* Thumbnail */}

@@ -31,7 +31,10 @@ export default function About() {
           >
             GitHub
           </span>
-          <a href="https://github.com/marceloponceardon" className="relative">
+          <a
+            href="https://github.com/marceloponceardon"
+            className="relative text-sky-400"
+          >
             GitHub
           </a>{" "}
           or reach out by email at{" "}
@@ -43,7 +46,7 @@ export default function About() {
           </span>
           <a
             href="mailto:marcelo.ponce@alumni.utoronto.ca"
-            className="relative"
+            className="relative text-sky-400"
           >
             marcelo.ponce@alumni.utoronto.ca
           </a>

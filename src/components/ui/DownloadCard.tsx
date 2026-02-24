@@ -17,14 +17,14 @@ export default function DownloadCard({
       <div className="flex flex-col justify-center items-center h-full">
         <button
           type="button"
-          className="flex-none m-3 p-3 w-100 text-lg pointer-events-auto rounded transition-colors duration-300 bg-gray-900 hover:bg-sky-600 active:bg-sky-100"
+          className="flex-none m-3 p-3 w-80 text-lg pointer-events-auto rounded transition-colors duration-300 bg-gray-900 hover:bg-sky-600 active:bg-sky-100 text-white"
           onClick={() => downloadGraphJSON(graphData)}
         >
           Download as JSON
         </button>
         <button
           type="button"
-          className="flex-none m-3 p-3 w-100 text-lg pointer-events-auto rounded transition-colors duration-300 bg-gray-900 hover:bg-sky-600 active:bg-sky-100"
+          className="flex-none m-3 p-3 w-80 text-lg pointer-events-auto rounded transition-colors duration-300 bg-gray-900 hover:bg-sky-600 active:bg-sky-100 text-white"
           onClick={() => downloadGraphModel(graphRef)}
         >
           Download as GLB

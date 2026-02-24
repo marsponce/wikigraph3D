@@ -33,13 +33,13 @@ export default function SettingsCard({
     <div className="flex flex-col gap-6 p-4 overflow-y-auto">
       {/* Node Settings Section */}
       <div className="space-y-4">
-        <h3 className="text-lg text-white">Node Settings</h3>
+        <h3 className="text-lg ">Node Settings</h3>
 
         {/* Dynamic Node Setting*/}
         <Switch.Group>
           <div className="space-y-2">
             <div className="flex justify-between items-center">
-              <Switch.Label className="text-sm text-gray-300">
+              <Switch.Label className="text-sm">
                 Enable Dynamic Node sizing
               </Switch.Label>
               <Switch
@@ -66,7 +66,7 @@ export default function SettingsCard({
               </Switch>
             </div>
           </div>
-          <p className="text-xs text-gray-500">
+          <p className="text-xs">
             Scales nodes by the number of connections they have
           </p>
         </Switch.Group>
@@ -74,10 +74,8 @@ export default function SettingsCard({
         {/* Node Size Slider - Disabled when dynamic sizing is enabled */}
         <div className="space-y-2">
           <div className="flex justify-between items-center">
-            <label className={clsx("text-sm", "text-gray-300")}>
-              Base Node Size
-            </label>
-            <span className={clsx("text-sm", "text-gray-400")}>
+            <label className={clsx("text-sm", "")}>Base Node Size</label>
+            <span className={clsx("text-sm", "")}>
               {graphSettings.nodeSize}
             </span>
           </div>
@@ -94,7 +92,7 @@ export default function SettingsCard({
               "bg-gray-700",
             )}
           />
-          <p className="text-xs text-gray-500">
+          <p className="text-xs">
             Base size of each node — used as a multiplier when dynamic sizing is
             on
           </p>
@@ -103,8 +101,8 @@ export default function SettingsCard({
         {/* Node Opacity Slider */}
         <div className="space-y-2">
           <div className="flex justify-between items-center">
-            <label className="text-sm text-gray-300">Node Opacity</label>
-            <span className="text-sm text-gray-400">
+            <label className="text-sm">Node Opacity</label>
+            <span className="text-sm">
               {graphSettings.nodeOpacity.toFixed(2)}
             </span>
           </div>
@@ -119,7 +117,7 @@ export default function SettingsCard({
             }
             className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-sky-500"
           />
-          <p className="text-xs text-gray-500">
+          <p className="text-xs">
             Transparency of the default node sphere (has no effect when
             thumbnails are enabled)
           </p>
@@ -128,15 +126,13 @@ export default function SettingsCard({
 
       {/* Link Settings Section */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-white">Link Settings</h3>
+        <h3 className="text-lg font-semibold">Link Settings</h3>
 
         {/* Link Width Slider */}
         <div className="space-y-2">
           <div className="flex justify-between items-center">
-            <label className="text-sm text-gray-300">Link Width</label>
-            <span className="text-sm text-gray-400">
-              {graphSettings.linkWidth}
-            </span>
+            <label className="text-sm">Link Width</label>
+            <span className="text-sm">{graphSettings.linkWidth}</span>
           </div>
           <input
             type="range"
@@ -147,16 +143,14 @@ export default function SettingsCard({
             onChange={(e) => updateSetting("linkWidth", Number(e.target.value))}
             className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-sky-500"
           />
-          <p className="text-xs text-gray-500">
-            Thickness of the lines connecting nodes
-          </p>
+          <p className="text-xs">Thickness of the lines connecting nodes</p>
         </div>
 
         {/* Link Opacity Slider */}
         <div className="space-y-2">
           <div className="flex justify-between items-center">
-            <label className="text-sm text-gray-300">Link Opacity</label>
-            <span className="text-sm text-gray-400">
+            <label className="text-sm">Link Opacity</label>
+            <span className="text-sm">
               {graphSettings.linkOpacity.toFixed(2)}
             </span>
           </div>
@@ -171,18 +165,14 @@ export default function SettingsCard({
             }
             className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-sky-500"
           />
-          <p className="text-xs text-gray-500">
-            Global transparency of all links
-          </p>
+          <p className="text-xs">Global transparency of all links</p>
         </div>
 
         {/* Highlight Distance Slider */}
         <div className="space-y-2">
           <div className="flex justify-between items-center">
-            <label className="text-sm text-gray-300">Highlight Distance</label>
-            <span className="text-sm text-gray-400">
-              {graphSettings.highlightDistance}
-            </span>
+            <label className="text-sm">Highlight Distance</label>
+            <span className="text-sm">{graphSettings.highlightDistance}</span>
           </div>
           <input
             type="range"
@@ -195,7 +185,7 @@ export default function SettingsCard({
             }
             className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-sky-500"
           />
-          <p className="text-xs text-gray-500">
+          <p className="text-xs">
             How many hops from the selected node remain visible — links beyond
             this fade out
           </p>
@@ -203,7 +193,7 @@ export default function SettingsCard({
 
         {/* Edge Colour Mode */}
         <div className="space-y-2">
-          <label className="text-sm text-gray-300">Edge Colour Mode</label>
+          <label className="text-sm">Edge Colour Mode</label>
           <div className="flex gap-2">
             {(["auto", "depth"] as const).map((mode) => (
               <button
@@ -221,23 +211,21 @@ export default function SettingsCard({
             ))}
           </div>
         </div>
-        <p className="text-xs text-gray-500">
-          Auto: default colouring | Depth: colour by distance from today&aposs
+        <p className="text-xs">
+          Auto: default colouring | Depth: colour by distance from today&apos;s
           root article
         </p>
       </div>
 
       {/* Behavior Settings Section */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-white">Behavior</h3>
+        <h3 className="text-lg font-semibold">Behavior</h3>
 
         {/* Cooldown Ticks Slider */}
         <div className="space-y-2">
           <div className="flex justify-between items-center">
-            <label className="text-sm text-gray-300">Simulation Cooldown</label>
-            <span className="text-sm text-gray-400">
-              {graphSettings.cooldownTicks}
-            </span>
+            <label className="text-sm">Simulation Cooldown</label>
+            <span className="text-sm">{graphSettings.cooldownTicks}</span>
           </div>
           <input
             type="range"
@@ -250,7 +238,7 @@ export default function SettingsCard({
             }
             className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-sky-500"
           />
-          <p className="text-xs text-gray-500">
+          <p className="text-xs">
             Higher values = smoother animation but slower settling
           </p>
         </div>
@@ -258,7 +246,7 @@ export default function SettingsCard({
         {/* Enable Node Drag Toggle */}
         <Switch.Group>
           <div className="flex items-center justify-between">
-            <Switch.Label className="text-sm text-gray-300 cursor-pointer">
+            <Switch.Label className="text-sm cursor-pointer">
               Enable Node Dragging
             </Switch.Label>
             <Switch
@@ -280,15 +268,13 @@ export default function SettingsCard({
               />
             </Switch>
           </div>
-          <p className="text-xs text-gray-500">
-            Allows nodes to be repositioned by dragging
-          </p>
+          <p className="text-xs">Allows nodes to be repositioned by dragging</p>
         </Switch.Group>
 
         {/* Show Nav Info Toggle */}
         <Switch.Group>
           <div className="flex items-center justify-between">
-            <Switch.Label className="text-sm text-gray-300 cursor-pointer">
+            <Switch.Label className="text-sm cursor-pointer">
               Show Navigation Info
             </Switch.Label>
             <Switch
@@ -308,14 +294,14 @@ export default function SettingsCard({
               />
             </Switch>
           </div>
-          <p className="text-xs text-gray-500">
+          <p className="text-xs">
             Shows camera controls hint in the bottom-left corner of the graph
           </p>
         </Switch.Group>
 
         {/* Control Type Select */}
         <div className="space-y-2">
-          <label className="text-sm text-gray-300">Camera Control Type</label>
+          <label className="text-sm">Camera Control Type</label>
           <select
             value={graphSettings.controlType}
             onChange={(e) =>
@@ -330,7 +316,7 @@ export default function SettingsCard({
             <option value="orbit">Orbit</option>
             <option value="fly">Fly</option>
           </select>
-          <p className="text-xs text-gray-500">
+          <p className="text-xs">
             Trackball: Free rotation | Orbit: Around target | Fly: First-person
           </p>
         </div>
@@ -338,12 +324,12 @@ export default function SettingsCard({
 
       {/* Display Settings Section */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-white">Display</h3>
+        <h3 className="text-lg font-semibold">Display</h3>
 
         {/* Show Labels Toggle */}
         <Switch.Group>
           <div className="flex items-center justify-between">
-            <Switch.Label className="text-sm text-gray-300 cursor-pointer">
+            <Switch.Label className="text-sm cursor-pointer">
               Show Labels
             </Switch.Label>
             <Switch
@@ -363,7 +349,7 @@ export default function SettingsCard({
               />
             </Switch>
           </div>
-          <p className="text-xs text-gray-500">
+          <p className="text-xs">
             Displays article names below each node on hover
           </p>
         </Switch.Group>
@@ -371,7 +357,7 @@ export default function SettingsCard({
         {/* Show Thumbnails Toggle */}
         <Switch.Group>
           <div className="flex items-center justify-between">
-            <Switch.Label className="text-sm text-gray-300 cursor-pointer">
+            <Switch.Label className="text-sm cursor-pointer">
               Show Thumbnails
             </Switch.Label>
             <Switch
@@ -393,7 +379,7 @@ export default function SettingsCard({
               />
             </Switch>
           </div>
-          <p className="text-xs text-gray-500">
+          <p className="text-xs">
             Renders Wikipedia thumbnail images as node sprites — disabling
             improves performance on large graphs
           </p>
@@ -402,7 +388,7 @@ export default function SettingsCard({
         {/* Sidebar Mode Toggle */}
         <Switch.Group>
           <div className="hidden sm:flex items-center justify-between">
-            <Switch.Label className="text-sm text-gray-300 cursor-pointer">
+            <Switch.Label className="text-sm cursor-pointer">
               Fullscreen Sidebar
             </Switch.Label>
             <Switch
@@ -426,7 +412,7 @@ export default function SettingsCard({
               />
             </Switch>
           </div>
-          <p className="text-xs text-gray-500">
+          <p className="text-xs">
             Switches the sidebar between fullscreen or one-third widths
           </p>
         </Switch.Group>
@@ -434,7 +420,7 @@ export default function SettingsCard({
         {/* Dark Mode Toggle */}
         <Switch.Group>
           <div className="flex items-center justify-between">
-            <Switch.Label className="text-sm text-gray-300 cursor-pointer">
+            <Switch.Label className="text-sm cursor-pointer">
               Dark Mode
             </Switch.Label>
             <Switch
@@ -454,7 +440,7 @@ export default function SettingsCard({
               />
             </Switch>
           </div>
-          <p className="text-xs text-gray-500">
+          <p className="text-xs">
             Switches the graph background to a dark theme
           </p>
         </Switch.Group>
@@ -462,11 +448,11 @@ export default function SettingsCard({
 
       {/* Layout Settings Section */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-white">Layout</h3>
+        <h3 className="text-lg font-semibold">Layout</h3>
 
         {/* DAG Mode Select */}
         <div className="space-y-2">
-          <label className="text-sm text-gray-300">DAG Layout Mode</label>
+          <label className="text-sm">DAG Layout Mode</label>
           <select
             value={graphSettings.dagMode || ""}
             onChange={(e) => updateSetting("dagMode", e.target.value || null)}
@@ -482,7 +468,7 @@ export default function SettingsCard({
             <option value="radialout">Radial Out</option>
             <option value="radialin">Radial In</option>
           </select>
-          <p className="text-xs text-gray-500">
+          <p className="text-xs">
             Apply hierarchical layout constraints (works best for acyclic
             graphs)
           </p>
@@ -492,8 +478,8 @@ export default function SettingsCard({
         {graphSettings.dagMode && (
           <div className="space-y-2">
             <div className="flex justify-between items-center">
-              <label className="text-sm text-gray-300">Level Distance</label>
-              <span className="text-sm text-gray-400">
+              <label className="text-sm">Level Distance</label>
+              <span className="text-sm">
                 {graphSettings.dagLevelDistance || 200}
               </span>
             </div>
@@ -508,9 +494,7 @@ export default function SettingsCard({
               }
               className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-sky-500"
             />
-            <p className="text-xs text-gray-500">
-              Distance between graph hierarchy levels
-            </p>
+            <p className="text-xs">Distance between graph hierarchy levels</p>
           </div>
         )}
       </div>

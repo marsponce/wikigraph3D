@@ -10,7 +10,7 @@
   }
 
   body {
-    @apply antialiased min-h-screen min-w-screen text-white bg-black;
+    @apply antialiased min-h-screen min-w-screen text-black bg-white dark:text-white dark:bg-black;
     @apply text-xs sm:text-sm md:text-base lg:text-lg;
   }
 
@@ -19,7 +19,7 @@
   }
 
   header {
-    @apply bg-black/70 fixed z-1;
+    @apply bg-white/70 dark:bg-black/70 fixed z-1;
     @apply top-0 bottom-auto right-auto p-2 m-2 rounded;
   }
 

@@ -114,8 +114,15 @@ export default function Sidebar({
         case "r":
           selectRootNode();
           break;
-        case "c":
+        case "g":
           graphRef.current?.zoomToFit(1000);
+          setIsFocused(false);
+          break;
+        case "f":
+          if (selectedNode) {
+            focusCameraOnNode(graphRef, selectedNode, graphData);
+            setIsFocused(true);
+          }
           break;
         case "Escape":
           if (sidebarState !== "closed") setSidebarState("closed");
@@ -123,7 +130,15 @@ export default function Sidebar({
           break;
       }
     },
-    [selectRootNode, setSelectedNode, sidebarState, graphRef],
+    [
+      selectRootNode,
+      setSelectedNode,
+      sidebarState,
+      graphRef,
+      graphData,
+      selectedNode,
+      setIsFocused,
+    ],
   );
 
   useEffect(() => {
@@ -188,8 +203,8 @@ export default function Sidebar({
           <Button
             onClick={() => setSidebarState("stats")}
             toggled={sidebarState === "stats"}
-            aria-label={"See graph statistics"}
-            title={"Stats (Z)"}
+            aria-label={"Statistics"}
+            title={"Statistics (Z)"}
           >
             <ChartBarIcon />
           </Button>
@@ -197,7 +212,7 @@ export default function Sidebar({
           <Button
             onClick={() => setSidebarState("downloads")}
             toggled={sidebarState === "downloads"}
-            aria-label={"Download today's graph"}
+            aria-label={"Download"}
             title={"Download (D)"}
           >
             <ArrowDownTrayIcon />
@@ -205,8 +220,8 @@ export default function Sidebar({
           <Button
             onClick={() => setSidebarState("settings")}
             toggled={sidebarState === "settings"}
-            aria-label={"Change graph visualization settings"}
-            title={"Stats (S)"}
+            aria-label={"Settings"}
+            title={"Settings (S)"}
           >
             <CogIcon />
           </Button>
@@ -231,18 +246,10 @@ export default function Sidebar({
               graphRef.current?.zoomToFit(1000);
               setIsFocused(false);
             }}
-            aria-label={"Focus camera on graph"}
+            aria-label={"Focus camera on Graph"}
             title={"Focus camera on Graph (G)"}
           >
             <ArrowsPointingOutIcon />
-          </Button>
-          {/* Filter button */}
-          <Button
-            onClick={console.log("Filter")}
-            aria-label={"Filter node settings"}
-            title={"Filter (F)"}
-          >
-            <FunnelIcon />
           </Button>
         </div>
         <div

@@ -18,9 +18,11 @@ export default function About() {
         </p>
 
         <p>
-          <strong>Wikigraph3d</strong> is built with <strong>Next.js</strong>{" "}
-          and <strong>Tailwind CSS</strong>, and deployed via{" "}
-          <strong>TBD</strong>.
+          <strong>Wikigraph3d</strong> is built with <strong>Next.js</strong>,{" "}
+          <strong>Tailwind CSS</strong>,{" "}
+          <strong>{process.env.NEXT_PUBLIC_DATABASE_NAME || "Supabase"}</strong>{" "}
+          and deployed via{" "}
+          <strong>{process.env.NEXT_PUBLIC_DEPLOY_ENV || "Netlify"}</strong>.
         </p>
 
         <p className="relative inline-block">
@@ -32,7 +34,7 @@ export default function About() {
             GitHub
           </span>
           <a
-            href="https://github.com/marceloponceardon"
+            href={`https://github.com/${process.env.NEXT_PUBLIC_GITHUB_USERNAME}`}
             className="relative text-sky-400"
           >
             GitHub
@@ -42,13 +44,13 @@ export default function About() {
             className="absolute z-0 blur text-sky-400 select-none font-extrabold"
             aria-hidden="true"
           >
-            marcelo.ponce@alumni.utoronto.ca
+            {process.env.NEXT_PUBLIC_CONTACT}
           </span>
           <a
-            href="mailto:marcelo.ponce@alumni.utoronto.ca"
+            href={`mailto:${process.env.NEXT_PUBLIC_CONTACT}`}
             className="relative text-sky-400"
           >
-            marcelo.ponce@alumni.utoronto.ca
+            {process.env.NEXT_PUBLIC_CONTACT}
           </a>
           .
         </p>

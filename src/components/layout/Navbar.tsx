@@ -14,7 +14,7 @@ export default function Navbar() {
 
   return (
     <nav>
-      <ul>
+      <ul className="space-x-2">
         {links.map(({ href, label }) => {
           const isActive = pathname === href;
 

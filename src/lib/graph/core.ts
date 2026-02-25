@@ -161,7 +161,6 @@ export function getRootNode(
 ): GraphNode | null {
   for (const node of data.nodes) {
     if (node.featured_date === featured_date) {
-      console.log("Found root node:", node);
       return node;
     }
   }

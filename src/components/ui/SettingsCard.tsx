@@ -463,7 +463,6 @@ export default function SettingsCard({
             cooldownTicks: 100,
             enableNodeDrag: false,
             showNavInfo: true,
-            controlType: "trackball",
             enableDynamicNodeSizing: true,
             dagMode: null,
             dagLevelDistance: 10,

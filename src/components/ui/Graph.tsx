@@ -44,7 +44,6 @@ export type GraphSettings = {
   cooldownTicks: number;
   enableNodeDrag: boolean;
   showNavInfo: boolean;
-  controlType: "trackball" | "orbit" | "fly";
   dagMode:
     | "td"
     | "bu"
@@ -88,7 +87,6 @@ export default function Graph({
   cooldownTicks = 100,
   enableNodeDrag = false,
   showNavInfo = true,
-  controlType = "trackball",
   dagMode = null,
   dagLevelDistance,
   enableDynamicNodeSizing = true,
@@ -473,7 +471,6 @@ export default function Graph({
         nodeLabel={(node) => (showLabels ? node.name : "")}
         nodeThreeObject={showThumbnails ? createNodeObjectCached : undefined}
         showNavInfo={showNavInfo}
-        controlType={controlType}
         cooldownTicks={cooldownTicks}
         onEngineStop={handleEngineStop}
         dagMode={dagMode || undefined}

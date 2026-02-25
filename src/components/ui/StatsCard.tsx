@@ -71,15 +71,18 @@ export default function StatsCard({
                 {i + 1}
               </span>
               {/* Thumbnail */}
-              {node.thumbnail?.source && (
-                <Image
-                  src={node.thumbnail?.source ?? WIKIPEDIA_ICON_URL}
-                  alt={node.name || ""}
-                  width={32}
-                  height={32}
-                  className="w-8 h-8 rounded object-cover flex-shrink-0"
-                />
-              )}
+              <Image
+                src={node.thumbnail?.source ?? WIKIPEDIA_ICON_URL}
+                alt={node.name || ""}
+                width={32}
+                height={32}
+                className="w-8 h-8 rounded object-cover flex-shrink-0"
+                onError={(event) => {
+                  if (event.currentTarget.src !== WIKIPEDIA_ICON_URL) {
+                    event.currentTarget.src = WIKIPEDIA_ICON_URL;
+                  }
+                }}
+              />
               {/* Name + degree bar */}
               <div className="flex flex-col flex-1 min-w-0">
                 <span className="text-sm text-gray-200 truncate">

@@ -95,7 +95,8 @@ export default function Sidebar({
       // Ignore shortcuts if user is typing in an input
       if (
         event.target instanceof HTMLInputElement ||
-        event.target instanceof HTMLTextAreaElement
+        event.target instanceof HTMLTextAreaElement ||
+        (event.target instanceof HTMLElement && event.target.isContentEditable)
       )
         return;
       switch (event.key) {

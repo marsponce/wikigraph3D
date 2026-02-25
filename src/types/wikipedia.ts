@@ -1,4 +1,5 @@
 // src/types/wikipedia.ts
+import * as THREE from "three";
 
 // Page object returned in the MediaWiki api response
 export interface Page {
@@ -88,5 +89,5 @@ export interface GraphData {
 export type GraphHandle = {
   resetCamera: () => void;
   focusOnCamera: () => void;
-  scene: () => void;
+  scene: () => THREE.Scene;
 };

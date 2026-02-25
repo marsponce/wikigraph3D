@@ -103,12 +103,12 @@ export default function Graph({
             // Fetch the graph from Supabase
             const { graph, nodesCount, linksCount } = await fetchGraph();
             if (nodesCount === 0) {
-              console.log("Empty graph, fetching initial node");
+              console.debug("Empty graph, fetching initial node");
               // Fetch the root from the server
               const root = await fetchInitialNode();
               setDataAction({ nodes: [{ ...root }], links: [] });
             } else {
-              console.log("Nodes: ", nodesCount, "Links: ", linksCount);
+              console.debug("Nodes: ", nodesCount, "Links: ", linksCount);
               setDataAction({ nodes: graph.nodes, links: graph.links });
             }
 
@@ -184,7 +184,7 @@ export default function Graph({
   // Fit the camera on initial load
   const hasInitiallyFit = useRef<boolean>(false);
   const handleEngineStop = () => {
-    console.log("Engine stop");
+    console.debug("Engine stop");
     if (!hasInitiallyFit.current) {
       graphRef.current?.zoomToFit(1000);
       hasInitiallyFit.current = true;

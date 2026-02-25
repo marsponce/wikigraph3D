@@ -21,7 +21,7 @@ export async function fetchGraph(): Promise<{
     route: API_ROUTES.GRAPH,
     params: { date: todaysDate() },
   });
-  console.log("Fetching today's graph:", todaysDate());
+  console.debug("Fetching today's graph:", todaysDate());
   return response;
 }
 
@@ -31,7 +31,7 @@ export async function fetchInitialNode(): Promise<GraphNode> {
     route: API_ROUTES.TODAY,
     params: { date: todaysDate() },
   });
-  console.log("Fetching todays AOTD:", todaysDate());
+  console.debug("Fetching todays AOTD:", todaysDate());
   return response.node;
 }
 

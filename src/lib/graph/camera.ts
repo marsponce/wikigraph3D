@@ -41,7 +41,14 @@ export function focusCameraOnNode(
   if (!selectedNode || !fgRef.current) return;
 
   const camera = fgRef.current.camera();
-  const distanceBase = 250;
+  const center = getGraphCenter(data);
+  const radius = getGraphRadius(data, center);
+  const minDistanceBase = 25;
+  const maxDistanceBase = 250;
+  const distanceBase = Math.min(
+    Math.max(radius, minDistanceBase),
+    maxDistanceBase,
+  );
   const neighborFactor = 0.75;
 
   const connectedNodes = data.links.filter(

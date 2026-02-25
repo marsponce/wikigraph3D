@@ -227,21 +227,6 @@ export default function Graph({
     Map<GraphLink, number>
   >(new Map());
 
-  // Build adjacency list once when data changes, not on every BFS
-  const adjacency = useMemo(() => {
-    const adj = new Map<string | number, Set<string | number>>();
-    data.links.forEach((link) => {
-      const src = resolveID(link.source);
-      const tgt = resolveID(link.target);
-      if (src == null || tgt == null) return;
-      if (!adj.has(src)) adj.set(src, new Set());
-      if (!adj.has(tgt)) adj.set(tgt, new Set());
-      adj.get(src)!.add(tgt);
-      adj.get(tgt)!.add(src);
-    });
-    return adj;
-  }, [data.links.length]);
-
   // Cache BFS results per node — only recompute if the node hasn't been visited before
   const depthCache = useRef<Map<string | number, Map<string | number, number>>>(
     new Map(),

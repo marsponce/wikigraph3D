@@ -43,7 +43,7 @@ export default function Navbar() {
 
   return (
     <nav>
-      <ul className="space-x-2 text-sm">
+      <ul className="space-x-2 text-sm flex font-light space-x-2">
         {links.map(({ href, label, icon }) => {
           const isActive = pathname === href;
 

@@ -220,6 +220,6 @@ export function computeNodeDepths(
 // Map a depth + maxDepth to a hex colour along a gradient
 export function depthToColor(depth: number, maxDepth: number): string {
   const t = maxDepth > 0 ? Math.min(depth / maxDepth, 1) : 0;
-  const scale = chroma.scale("Spectral"); //chroma.scale(["#000000", "#ffffff"]);
+  const scale = chroma.scale("Spectral");
   return scale(t).hex();
 }

@@ -39,16 +39,24 @@ export default function Main() {
   } as GraphSettings;
 
   const [graphSettings, setGraphSettings] = useState<GraphSettings>(() => {
-    const stored =
-      typeof window !== "undefined"
-        ? localStorage.getItem("graphSettings")
-        : null;
-    return stored ? { ...defaults, ...JSON.parse(stored) } : defaults;
+    if (typeof window === "undefined" || !window.localStorage) return defaults;
+    try {
+      const stored = window.localStorage.getItem("graphSettings");
+      return stored ? { ...defaults, ...JSON.parse(stored) } : defaults;
+    } catch (error) {
+      console.error("Failed to read graphSettings from localStorage:", error);
+      return defaults;
+    }
   });
 
   // Store graph settings in localStorage
   useEffect(() => {
-    localStorage.setItem("graphSettings", JSON.stringify(graphSettings));
+    if (typeof window === "undefined" || window.localStorage) return;
+    try {
+      localStorage.setItem("graphSettings", JSON.stringify(graphSettings));
+    } catch (error) {
+      console.error("Failed to save graphSettings to localStorage:", error);
+    }
   }, [graphSettings]);
 
   return (

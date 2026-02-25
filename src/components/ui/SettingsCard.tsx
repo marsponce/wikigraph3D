@@ -364,7 +364,7 @@ export default function SettingsCard({
 
         {/* Sidebar Mode Toggle */}
         <Switch.Group>
-          <div className="hidden sm:flex items-center justify-between">
+          <div className={clsx(cx.rowLayout, "hidden sm:flex")}>
             <Switch.Label className={cx.switchLabel}>
               Fullscreen Sidebar
             </Switch.Label>
@@ -388,7 +388,7 @@ export default function SettingsCard({
               />
             </Switch>
           </div>
-          <p className="text-xs">
+          <p className="text-xs hidden sm:block">
             Switches the sidebar between fullscreen or one-third widths
           </p>
         </Switch.Group>

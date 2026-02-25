@@ -168,10 +168,11 @@ export default function Sidebar({
           "h-screen",
           "duration-500",
           "transition",
+          "max-w-screen",
           // State-specific styles
           {
             "w-screen": sidebarMode === "fullscreen",
-            "sm:w-1/3": sidebarMode === "one-third",
+            "w-screen sm:w-1/3": sidebarMode === "one-third",
           },
           {
             "bg-white/10 dark:bg-white/10 [transform:translateX(calc(100%-4rem))]":

@@ -60,7 +60,7 @@ export default function StatsCard({
     <>
       <div
         className={clsx(
-          "flex flex-col gap-6 p-4 overflow-y-auto h-full w-fit mx-auto",
+          "flex flex-col gap-6 py-4 overflow-y-auto h-full w-full",
           !stats && "justify-center",
         )}
       >
@@ -74,7 +74,7 @@ export default function StatsCard({
           </button>
         )}
         {stats && (
-          <div>
+          <>
             {/* Graph Overview */}
             <div className="space-y-1">
               <h3 className="text-lg">Graph Overview</h3>
@@ -148,7 +148,7 @@ export default function StatsCard({
                 ))}
               </div>
             </div>
-          </div>
+          </>
         )}
       </div>
     </>

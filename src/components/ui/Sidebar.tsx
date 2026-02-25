@@ -91,7 +91,7 @@ export default function Sidebar({
 
   const handleKeyPress = useCallback(
     (event: KeyboardEvent) => {
-      console.log("Key pressed:", event.key);
+      console.debug("Key pressed:", event.key);
       // Ignore shortcuts if user is typing in an input
       if (
         event.target instanceof HTMLInputElement ||

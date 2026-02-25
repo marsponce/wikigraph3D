@@ -13,7 +13,7 @@ export type GraphStats = {
   averagePathLength: number;
 };
 
-export function computeGraphStats(data: GraphData): GraphStats {
+export async function computeGraphStats(data: GraphData): Promise<GraphStats> {
   const stats = <GraphStats>{};
 
   stats.nodeCount = data.nodes.length;

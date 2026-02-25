@@ -7,6 +7,7 @@ import Graph from "@/components/ui/Graph";
 import type { GraphSettings } from "@/components/ui/Graph";
 import type { ForceGraphMethods } from "react-force-graph-3d";
 import { Toaster } from "sonner";
+import type { GraphStats } from "@/lib/graph";
 
 export default function Main() {
   // State for the app
@@ -59,6 +60,13 @@ export default function Main() {
     }
   }, [graphSettings]);
 
+  // Graph Stats
+  const [stats, setStats] = useState<GraphStats | null>(null);
+  useEffect(() => {
+    // reset when graph changes
+    setStats(null);
+  }, [setStats, graphData.nodes, graphData.links]);
+
   return (
     <div className="relative">
       <Sidebar
@@ -72,6 +80,8 @@ export default function Main() {
         setIsFocused={setIsFocused}
         graphSettings={graphSettings}
         setGraphSettings={setGraphSettings}
+        stats={stats}
+        setStats={setStats}
       />
       <Graph
         graphRef={graphRef}

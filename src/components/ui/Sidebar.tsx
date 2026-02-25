@@ -34,6 +34,7 @@ import {
 import type { GraphSettings } from "@/components/ui/Graph";
 import { getRootNode, focusCameraOnNode } from "@/lib/graph";
 import { todaysDate } from "@/lib/utils";
+import type { GraphStats } from "@/lib/graph";
 
 type SidebarProps = {
   graphRef: RefObject<ForceGraphMethods<GraphNode, GraphLink> | undefined>;
@@ -46,6 +47,8 @@ type SidebarProps = {
   setIsFocused: (isFocused: boolean) => void;
   graphSettings: GraphSettings;
   setGraphSettings: (graphSettings: GraphSettings) => void;
+  stats: GraphStats | null;
+  setStats: (stats: GraphStats | null) => void;
 };
 
 export default function Sidebar({
@@ -59,6 +62,8 @@ export default function Sidebar({
   setIsFocused,
   graphSettings,
   setGraphSettings,
+  stats,
+  setStats,
 }: SidebarProps) {
   const [sidebarState, setSidebarState] = useState<string>("closed");
   const [sidebarMode, setSidebarMode] = useState<"fullscreen" | "one-third">(
@@ -296,6 +301,8 @@ export default function Sidebar({
                 graphData={graphData}
                 setSelectedNode={setSelectedNode}
                 setIsFocused={setIsFocused}
+                stats={stats}
+                setStats={setStats}
               />
             </>
           )}

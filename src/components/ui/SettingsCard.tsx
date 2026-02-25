@@ -85,10 +85,8 @@ export default function SettingsCard({
         {/* Node Size Slider - Disabled when dynamic sizing is enabled */}
         <div className="space-y-2">
           <div className={cx.rowLayout}>
-            <label className={clsx("text-sm", "")}>Base Node Size</label>
-            <span className={clsx("text-sm", "")}>
-              {graphSettings.nodeSize}
-            </span>
+            <label className="text-sm">Base Node Size</label>
+            <span className="text-sm">{graphSettings.nodeSize}</span>
           </div>
           <input
             type="range"
@@ -97,7 +95,6 @@ export default function SettingsCard({
             step="0.1"
             value={graphSettings.nodeSize}
             onChange={(e) => updateSetting("nodeSize", Number(e.target.value))}
-            // disabled={graphSettings.enableDynamicNodeSizing}
             className={cx.rangeInput}
           />
           <p className="text-xs">

@@ -344,7 +344,7 @@ export default function Graph({
       degrees.set(node.id, getNodeDegree(node, data));
     });
     return degrees;
-  }, [data]); // Only recalc when counts change
+  }, [data.nodes.length, data.links.length]); // Only recalc when counts change
 
   const maxDegree = useMemo(
     () => Math.max(...Array.from(nodeDegrees.values()), 1),

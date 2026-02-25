@@ -14,7 +14,6 @@ export async function fetchArticle(title: string): Promise<string> {
 
 // Server-side
 export function slimArticle(fullHtml: string | null): string {
-  console.log("Slimming article...");
   if (!fullHtml) return "<h6> No Article provided... </h6>";
   const $ = cheerio.load(fullHtml);
   // slim the article
@@ -79,6 +78,6 @@ export function slimArticle(fullHtml: string | null): string {
   $("[style]").removeAttr("style");
   const slim = $("body").length ? $("body").html() : "";
   slim!.trim();
-  console.log("Slimming article complete!");
+  console.debug("Slimming article complete!");
   return slim!;
 }

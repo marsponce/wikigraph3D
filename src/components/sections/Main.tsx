@@ -1,11 +1,13 @@
 // src/app/components/sections/Main.tsx
 "use client";
 import { Sidebar } from "../ui";
-import Graph from "../ui/Graph";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { GraphData, GraphNode, GraphLink } from "@/types";
+import Graph from "@/components/ui/Graph";
+import type { GraphSettings } from "@/components/ui/Graph";
 import type { ForceGraphMethods } from "react-force-graph-3d";
 import { Toaster } from "sonner";
+import type { GraphStats } from "@/lib/graph";
 
 export default function Main() {
   // State for the app
@@ -18,6 +20,53 @@ export default function Main() {
   const graphRef = useRef<ForceGraphMethods<GraphNode, GraphLink> | undefined>(
     undefined,
   );
+
+  // Graph settings
+  const defaults = {
+    nodeSize: 1,
+    enableDynamicNodeSizing: true,
+    nodeOpacity: 1,
+    linkWidth: 1,
+    linkOpacity: 1,
+    showLabels: true,
+    showThumbnails: true,
+    cooldownTicks: 100,
+    enableNodeDrag: false,
+    showNavInfo: true,
+    dagMode: null,
+    dagLevelDistance: 10,
+    edgeColorMode: "depth",
+    highlightDistance: 4,
+  } as GraphSettings;
+
+  const [graphSettings, setGraphSettings] = useState<GraphSettings>(() => {
+    if (typeof window === "undefined" || !window.localStorage) return defaults;
+    try {
+      const stored = window.localStorage.getItem("graphSettings");
+      return stored ? { ...defaults, ...JSON.parse(stored) } : defaults;
+    } catch (error) {
+      console.error("Failed to read graphSettings from localStorage:", error);
+      return defaults;
+    }
+  });
+
+  // Store graph settings in localStorage
+  useEffect(() => {
+    if (typeof window === "undefined" || window.localStorage) return;
+    try {
+      localStorage.setItem("graphSettings", JSON.stringify(graphSettings));
+    } catch (error) {
+      console.error("Failed to save graphSettings to localStorage:", error);
+    }
+  }, [graphSettings]);
+
+  // Graph Stats
+  const [stats, setStats] = useState<GraphStats | null>(null);
+  useEffect(() => {
+    // reset when graph changes
+    setStats(null);
+  }, [setStats, graphData.nodes, graphData.links]);
+
   return (
     <div className="relative">
       <Sidebar
@@ -29,6 +78,10 @@ export default function Main() {
         className=""
         isFocused={isFocused}
         setIsFocused={setIsFocused}
+        graphSettings={graphSettings}
+        setGraphSettings={setGraphSettings}
+        stats={stats}
+        setStats={setStats}
       />
       <Graph
         graphRef={graphRef}
@@ -36,8 +89,9 @@ export default function Main() {
         setSelectedNodeAction={setSelectedNode}
         data={graphData}
         setDataAction={setGraphData}
-        className=""
         isFocused={isFocused}
+        setIsFocused={setIsFocused}
+        {...graphSettings}
       />
       <noscript>
         <div className="my-auto ring-3 rounded p-2">
@@ -48,14 +102,15 @@ export default function Main() {
       <Toaster
         toastOptions={{
           classNames: {
-            toast: "!bg-gray-800 !border !border-gray-700",
-            icon: "!text-white",
-            title: "!text-white",
-            description: "!text-gray-300",
+            toast:
+              "!bg-gray-100 !border !border-gray-300 dark:!bg-gray-800 dark:!border-gray-700",
+            icon: "!text-gray-900 dark:!text-white",
+            title: "!text-gray-900 dark:!text-white",
+            description: "!text-gray-600 dark:!text-gray-300",
             actionButton:
-              "!p-3 !rounded !transition-colors !duration-300 !bg-gray-900 hover:!bg-sky-600 active:!bg-sky-100 !text-white",
+              "!p-3 !rounded !transition-colors !duration-300 !bg-gray-200 hover:!bg-sky-400 active:!bg-sky-200 !text-gray-900 dark:!bg-gray-900 dark:hover:!bg-sky-600 dark:active:!bg-sky-100 dark:!text-white",
             cancelButton:
-              "!p-3 !rounded !transition-colors !duration-300 !bg-gray-700 hover:!bg-gray-600 active:!bg-gray-500 !text-white",
+              "!p-3 !rounded !transition-colors !duration-300 !bg-gray-300 hover:!bg-gray-400 active:!bg-gray-500 !text-gray-900 dark:!bg-gray-700 dark:hover:!bg-gray-600 dark:active:!bg-gray-500 dark:!text-white",
           },
         }}
       />

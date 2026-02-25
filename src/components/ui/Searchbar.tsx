@@ -69,21 +69,22 @@ export default function Searchbar({
               placeholder="..."
               onChange={(e) => setQuery(e.target.value)}
               className={clsx(
-                "w-full container rounded border-none bg-black/100",
-                "text-2xl md:text-3xl font-bold text-white ring-2 ring-white/25",
-                "hover:ring-white focus:ring-2 focus:ring-white/100 p-2",
+                "w-full container rounded border-none",
+                "bg-white/100 text-gray-900 ring-2 ring-gray-900/35 dark:bg-black/100 dark:text-white dark:ring-white/35",
+                "hover:ring-gray-900 focus:ring-2 focus:ring-gray-900/100 p-2 dark:hover:ring-white dark:focus:ring-white/100",
+                "text-2xl md:text-3xl font-bold",
                 "group",
               )}
             />
             <ComboboxButton className="absolute inset-y-0 right-0 group">
-              <ChevronDownIcon className="size-8 fill-white sm:fill-white/0 sm:group-data-hover:fill-white" />
+              <ChevronDownIcon className="size-8 fill-gray-900 dark:fill-white sm:group-data-hover:fill-gray-900 dark:sm:group-data-hover:fill-white" />
             </ComboboxButton>
           </div>
 
           <ComboboxOptions
             anchor="bottom start"
             portal
-            className="container absolute overflow-hidden h-auto max-h-screen w-(--input-width) mt-1 rounded-lg ring-3 ring-white/15 bg-black/90 p-1 z-3"
+            className="container absolute overflow-hidden h-auto max-h-screen w-(--input-width) mt-1 rounded-lg ring-3 ring-gray-900/15 bg-white/90 p-1 z-3 dark:ring-white/15 dark:bg-black/90"
           >
             {filteredNodes.map((node) => (
               <ComboboxOption
@@ -91,11 +92,11 @@ export default function Searchbar({
                 value={node}
                 className={clsx(
                   "group flex cursor-default items-center gap-2 rounded px-3 py-1.5 select-none",
-                  "data-focus:ring-2 data-focus:right-white data-focus:ring-offset-0",
+                  "data-focus:ring-2 data-focus:ring-gray-900 data-focus:ring-offset-0 dark:data-focus:ring-white",
                 )}
               >
                 <CheckIcon className="invisible size-4 fill-white group-data-selected:visible" />
-                <div className="text-sm text-white">{node.name}</div>
+                <div className="text-sm">{node.name}</div>
               </ComboboxOption>
             ))}
             {hiddenCount > 0 && (

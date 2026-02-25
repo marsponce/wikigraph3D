@@ -8,13 +8,12 @@
 <p align="center">
     A 3D graph connecting wikipedia articles by their hyperlinks.
 </p>
-<p align="center">
-    <!-- Insert Demo video here
-    <img src="src" alt="Wikigraph3D Demo" width="800"/>
-    -->
-</p>
-
+<div align="center">
+    
 [![Netlify Status](https://api.netlify.com/api/v1/badges/c6c521be-c5c7-41f6-bfd4-b52ecfcebcfd/deploy-status)](https://app.netlify.com/projects/wikigraph3d/deploys)
+</div>   
+
+
 
 ## Getting Started
 

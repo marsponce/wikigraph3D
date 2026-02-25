@@ -1,6 +1,5 @@
 "use client";
 
-import clsx from "clsx";
 import dynamic from "next/dynamic";
 import {
   useEffect,
@@ -10,6 +9,7 @@ import {
   Dispatch,
   SetStateAction,
   RefObject,
+  useMemo,
 } from "react";
 import * as THREE from "three";
 import { GraphNode, GraphLink, GraphData } from "@/types";
@@ -18,9 +18,14 @@ import {
   fetchGraph,
   createNodeSprite,
   focusCameraOnNode,
-  zoomToFit,
   updateSpriteHighlight,
+  getNodeDegree,
+  computeNodeDepths,
+  depthToColor,
+  getRootNode,
+  resolveID,
 } from "@/lib/graph";
+import { todaysDate } from "@/lib/utils";
 import type { ForceGraphMethods } from "react-force-graph-3d";
 import { toast } from "sonner";
 
@@ -28,169 +33,270 @@ const ForceGraph3D = dynamic(() => import("react-force-graph-3d"), {
   ssr: false,
 });
 
-type GraphProps = {
-  className?: string;
+export type GraphSettings = {
+  nodeSize: number;
+  enableDynamicNodeSizing: boolean;
+  nodeOpacity: number;
+  linkWidth: number;
+  linkOpacity: number;
+  showLabels: boolean;
+  showThumbnails: boolean;
+  cooldownTicks: number;
+  enableNodeDrag: boolean;
+  showNavInfo: boolean;
+  dagMode:
+    | "td"
+    | "bu"
+    | "lr"
+    | "rl"
+    | "zout"
+    | "zin"
+    | "radialout"
+    | "radialin"
+    | null;
+  dagLevelDistance?: number;
+  edgeColorMode: "auto" | "depth";
+  highlightDistance: number;
+};
+
+type GraphProps = GraphSettings & {
   graphRef: RefObject<ForceGraphMethods<GraphNode, GraphLink> | undefined>;
   selectedNode: GraphNode | null;
   setSelectedNodeAction: (node: GraphNode | null) => void;
   data: GraphData;
   setDataAction: Dispatch<SetStateAction<GraphData>>;
   isFocused: boolean;
+  setIsFocused: (focus: boolean) => void;
 };
 
 export default function Graph({
-  className,
   graphRef,
   selectedNode,
   setSelectedNodeAction,
   data,
   setDataAction,
   isFocused,
+  setIsFocused,
+  // Settings
+  nodeSize = 1,
+  nodeOpacity = 0,
+  linkWidth = 1,
+  linkOpacity = 1,
+  showLabels = true,
+  showThumbnails = true,
+  cooldownTicks = 100,
+  enableNodeDrag = false,
+  showNavInfo = true,
+  dagMode = null,
+  dagLevelDistance,
+  enableDynamicNodeSizing = true,
+  edgeColorMode = "depth",
+  highlightDistance = 4,
 }: GraphProps) {
-  const loadInitialNode = () => {
-    fetchInitialNode()
-      .then((root) => {
-        // throw new Error("Test error"); // for testing
-        console.log(root);
-        setDataAction({ nodes: [{ ...root }], links: [] });
-      })
-      .catch((e) => {
-        console.error("Failed to fetch initial node:", e);
-        toast.error("Failed to fetch initial node", {
-          duration: Infinity,
-          action: {
-            label: "Retry",
-            onClick: () => loadInitialNode(),
-          },
-        });
-      });
-  };
-
   // Get the graph from supabase if it exists
   useEffect(() => {
     const loadGraph = () => {
-      const graphPromise = fetchGraph().then(
-        ({ graph, nodesCount, linksCount }) => {
-          // throw new Error("test error"); // for testing
-          if (nodesCount === 0) {
-            console.log("Empty graph, fetching initial node");
-            loadInitialNode();
-          } else {
-            console.log("Nodes: ", nodesCount, "Links: ", linksCount);
-            setDataAction({ nodes: graph.nodes, links: graph.links });
-          }
-          return { nodesCount, linksCount };
-        },
-      );
+      // Slight delay before starting the fetch to ensure toast is shown
+      setTimeout(() => {
+        toast.promise(
+          (async () => {
+            // Fetch the graph from Supabase
+            const { graph, nodesCount, linksCount } = await fetchGraph();
+            if (nodesCount === 0) {
+              console.debug("Empty graph, fetching initial node");
+              // Fetch the root from the server
+              const root = await fetchInitialNode();
+              setDataAction({ nodes: [{ ...root }], links: [] });
+            } else {
+              console.debug("Nodes: ", nodesCount, "Links: ", linksCount);
+              setDataAction({ nodes: graph.nodes, links: graph.links });
+            }
 
-      toast.promise(graphPromise, {
-        loading: "Loading Graph...",
-        success: ({ nodesCount, linksCount }) =>
-          `Graph Loaded with ${nodesCount} nodes and ${linksCount} links`,
-        error: () => ({
-          message: "Failed to fetch graph",
-          duration: Infinity,
-          action: {
-            label: "Retry",
-            onClick: () => loadGraph(),
+            // Zoom to fit the graph
+            return { nodesCount, linksCount };
+          })(),
+          {
+            loading: "Loading Graph...", // This will show during the loading phase
+            success: ({ nodesCount, linksCount }) =>
+              `Graph loaded with ${nodesCount === 0 ? 1 : nodesCount} ${nodesCount === 1 || nodesCount === 0 ? "node" : "nodes"} and ${linksCount} ${linksCount === 1 ? "link" : "links"}`,
+            error: () => ({
+              message: "Failed to fetch graph", // Error message if fetch fails
+              duration: Infinity, // Keeps the error toast indefinitely
+              action: {
+                label: "Retry", // Retry button for error
+                onClick: () => loadGraph(),
+              },
+            }),
           },
-        }),
-      });
+        );
+      }, 50); // Delay toast for 50ms to allow it to render before the async operation
     };
 
     loadGraph();
   }, [setDataAction]);
 
+  const clickTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const handleNodeClick = useCallback(
     (node: GraphNode, event?: MouseEvent) => {
       event?.preventDefault?.();
-      setSelectedNodeAction(node);
-      console.log(node);
+
+      if (clickTimeout.current) {
+        // double click
+        clearTimeout(clickTimeout.current);
+        clickTimeout.current = null;
+        focusCameraOnNode(graphRef, node, data);
+        setIsFocused(true);
+        setSelectedNodeAction(node);
+      } else {
+        clickTimeout.current = setTimeout(() => {
+          clickTimeout.current = null;
+          // single click
+          setSelectedNodeAction(node);
+          setIsFocused(false);
+        }, 250);
+      }
     },
-    [setSelectedNodeAction],
+    [setSelectedNodeAction, data, graphRef, setIsFocused],
   );
 
   const handleBackgroundClick = useCallback(
     (event?: MouseEvent) => {
       event?.preventDefault?.();
-      setSelectedNodeAction(null);
+
+      if (clickTimeout.current) {
+        // double click
+        clearTimeout(clickTimeout.current);
+        clickTimeout.current = null;
+        graphRef.current?.zoomToFit(1000);
+      } else {
+        clickTimeout.current = setTimeout(() => {
+          clickTimeout.current = null;
+          // single click
+          setSelectedNodeAction(null);
+          setIsFocused(false);
+        }, 250);
+      }
     },
-    [setSelectedNodeAction],
+    [setSelectedNodeAction, setIsFocused, graphRef],
   );
 
-  // Auto focus camera
+  // Fit the camera on initial load
+  const hasInitiallyFit = useRef<boolean>(false);
   const handleEngineStop = () => {
-    if (isFocused) {
-      focusCameraOnNode(graphRef, selectedNode, data);
-    } else {
-      zoomToFit(graphRef);
+    console.debug("Engine stop");
+    if (!hasInitiallyFit.current) {
+      graphRef.current?.zoomToFit(1000);
+      hasInitiallyFit.current = true;
     }
   };
 
   const nodeObjects = useRef<Map<GraphNode, THREE.Sprite>>(new Map());
 
-  const createNodeObject = (node: GraphNode): THREE.Sprite => {
-    const sprite = createNodeSprite(node);
-    updateSpriteHighlight(sprite, highlightedNodes.has(node));
+  const createNodeObject = (
+    node: GraphNode,
+    graphData: GraphData,
+  ): THREE.Sprite => {
+    let sprite;
+    if (enableDynamicNodeSizing)
+      sprite = createNodeSprite(node, graphData, handleNodeSizing(node));
+    else sprite = createNodeSprite(node, graphData, 1);
+    const distance = highlightedNodes.get(node) ?? highlightDistance;
+    updateSpriteHighlight(sprite, distance, highlightDistance);
     return sprite;
   };
 
   const createNodeObjectCached = (node: GraphNode): THREE.Sprite => {
     let sprite = nodeObjects.current.get(node);
     if (!sprite) {
-      sprite = createNodeObject(node);
+      sprite = createNodeObject(node, data);
       nodeObjects.current.set(node, sprite);
     }
     if (sprite) {
-      updateSpriteHighlight(sprite, highlightedNodes.has(node));
+      const distance = highlightedNodes.get(node) ?? highlightDistance;
+      updateSpriteHighlight(sprite, distance, highlightDistance);
     }
     return sprite;
   };
 
-  const [highlightedNodes, setHighlightedNodes] = useState<Set<GraphNode>>(
-    new Set(),
+  // Highlight based on highlightDistance rather than direct neighbours only
+  const [highlightedNodes, setHighlightedNodes] = useState<
+    Map<GraphNode, number>
+  >(new Map());
+  const [highlightedLinks, setHighlightedLinks] = useState<
+    Map<GraphLink, number>
+  >(new Map());
+
+  // Cache BFS results per node — only recompute if the node hasn't been visited before
+  const depthCache = useRef<Map<string | number, Map<string | number, number>>>(
+    new Map(),
   );
-  const [highlightedLinks, setHighlightedLinks] = useState<Set<GraphLink>>(
-    new Set(),
-  );
-  // highlight selected Node, or highlight everything
+
+  // Clear cache when graph structure changes
   useEffect(() => {
-    const HighlightNode = (
-      node: GraphNode | null,
-      nodes: Set<GraphNode>,
-      links: Set<GraphLink>,
-    ) => {
-      if (!node) return;
-      nodes.add(node);
-      data.links.forEach((link) => {
-        if (link.source === node || link.source === node.id) {
-          links.add(link);
-          nodes.add(link.target as GraphNode);
-        } else if (link.target === node || link.target === node.id) {
-          links.add(link);
-          nodes.add(link.source as GraphNode);
-        }
-      });
+    depthCache.current.clear();
+  }, [data.nodes.length, data.links.length]);
+
+  const getDepthsFromNode = useCallback(
+    (nodeId: string | number): Map<string | number, number> => {
+      if (depthCache.current.has(nodeId)) {
+        return depthCache.current.get(nodeId)!;
+      }
+      const depths = computeNodeDepths(nodeId, data, highlightDistance);
+      depthCache.current.set(nodeId, depths);
+      return depths;
+    },
+    [data, highlightDistance],
+  );
+
+  useEffect(() => {
+    const nodes = new Map<GraphNode, number>();
+    const links = new Map<GraphLink, number>();
+
+    if (!selectedNode) {
+      // everything should be visible
+      data.nodes.forEach((node) => nodes.set(node, 0));
+      data.links.forEach((link) => links.set(link, 0));
       setHighlightedNodes(nodes);
       setHighlightedLinks(links);
-    };
-    const nodes = new Set<GraphNode>();
-    const links = new Set<GraphLink>();
-    if (selectedNode) {
-      HighlightNode(selectedNode, nodes, links);
-    } else {
-      data.nodes.forEach((node) => {
-        HighlightNode(node, nodes, links);
-      });
+      return;
     }
-  }, [selectedNode, data, setSelectedNodeAction]);
 
+    const id = resolveID(selectedNode);
+    if (id == null) return;
+
+    const depths = getDepthsFromNode(id);
+
+    data.nodes.forEach((node) => {
+      if (node.id == null) return;
+      const distance = depths.get(node.id) ?? Infinity;
+      if (distance <= highlightDistance) {
+        nodes.set(node, distance);
+      }
+    });
+
+    data.links.forEach((link) => {
+      const src = resolveID(link.source);
+      const tgt = resolveID(link.target);
+      if (src == null || tgt == null) return;
+
+      const srcDepth = depths.get(src) ?? Infinity;
+      const tgtDepth = depths.get(tgt) ?? Infinity;
+      if (srcDepth <= highlightDistance && tgtDepth <= highlightDistance) {
+        links.set(link, Math.min(srcDepth, tgtDepth));
+      }
+    });
+
+    setHighlightedNodes(nodes);
+    setHighlightedLinks(links);
+  }, [selectedNode, data, highlightDistance, getDepthsFromNode]);
+
+  // Dynamically resize the graph if we need to (screen rotations, resizes, etc.)
   const [dimensions, setDimensions] = useState({
     width: 0,
     height: 0,
   });
 
-  // Dynamically resize the graph if we need to (screen rotations, resizes, etc.)
   useEffect(() => {
     const updateDimensions = () => {
       setDimensions({
@@ -209,27 +315,152 @@ export default function Graph({
     };
   }, []);
 
+  // Node sizing
+  const MIN_SIZE_MULTIPLIER = 0.01;
+  const MAX_SIZE_MULTIPLIER = 2;
+
+  // Memoize degree calculations for all nodes
+  const nodeDegrees = useMemo(() => {
+    const degrees = new Map<string | number, number>();
+    data.nodes.forEach((node) => {
+      if (node.id == null) return;
+      degrees.set(node.id, getNodeDegree(node, data));
+    });
+    return degrees;
+  }, [data.nodes.length, data.links.length]); // Only recalc when counts change
+
+  const maxDegree = useMemo(
+    () => Math.max(...Array.from(nodeDegrees.values()), 1),
+    [nodeDegrees],
+  );
+
+  const prevMaxDegree = useRef(maxDegree);
+
+  useEffect(() => {
+    if (prevMaxDegree.current !== maxDegree) {
+      nodeObjects.current.clear();
+      prevMaxDegree.current = maxDegree;
+    }
+  }, [maxDegree]);
+
+  const handleNodeSizing = (node: GraphNode): number => {
+    if (!enableDynamicNodeSizing) return nodeSize;
+    if (!node.id) return nodeSize;
+    const degree = Math.max(nodeDegrees.get(node.id) || 1, 1);
+    const normalizedDegree = degree / maxDegree;
+    const multiplier =
+      MIN_SIZE_MULTIPLIER +
+      normalizedDegree * (MAX_SIZE_MULTIPLIER - MIN_SIZE_MULTIPLIER);
+
+    return nodeSize * multiplier;
+  };
+
+  // Clear the cache when we change the following settings
+  useEffect(() => {
+    nodeObjects.current.clear();
+  }, [enableDynamicNodeSizing, nodeDegrees, nodeSize]);
+
+  // dagMode
+  const handleDagError = useCallback((loopNodeIds: (string | number)[]) => {
+    console.warn("Cycle detected in graph:", loopNodeIds);
+    toast.warning(
+      `Graph contains a cycle involving ${loopNodeIds.length} nodes. DAG layout may be approximate.`,
+      {
+        duration: 5000,
+      },
+    );
+  }, []);
+
+  // Link & Node coloring
+  const rootNode = useMemo(() => getRootNode(data, todaysDate()), [data]);
+
+  const nodeDepths = useMemo(() => {
+    if (edgeColorMode !== "depth" || !rootNode?.id) return new Map();
+    return computeNodeDepths(rootNode.id, data);
+  }, [edgeColorMode, rootNode, data.nodes.length, data.links.length]);
+
+  const maxDepth = useMemo(
+    () => Math.max(...Array.from(nodeDepths.values()), 1),
+    [nodeDepths],
+  );
+
+  const getLinkColor = useCallback(
+    (link: GraphLink): string => {
+      if (edgeColorMode !== "depth" || nodeDepths.size === 0) return "#ffffff";
+      const tgt =
+        typeof link.target === "object"
+          ? (link.target as GraphNode).id!
+          : link.target;
+      const depth = nodeDepths.get(tgt) ?? maxDepth;
+      const color = depthToColor(depth, maxDepth);
+
+      const highlightDist = highlightedLinks.get(link) ?? Infinity;
+      const t =
+        highlightDistance > 0
+          ? Math.min(highlightDist / highlightDistance, 1)
+          : 0;
+      const alpha = Math.round((1 - t * 0.95) * 255)
+        .toString(16)
+        .padStart(2, "0");
+
+      return color + alpha;
+    },
+    [nodeDepths, maxDepth, edgeColorMode, highlightedLinks, highlightDistance],
+  );
+
+  const getNodeColor = useCallback(
+    (node: GraphNode): string => {
+      if (edgeColorMode !== "depth" || nodeDepths.size === 0) return "#ffffff";
+      if (node.id == null) return "#ffffff";
+      const depth = nodeDepths.get(node.id) ?? maxDepth;
+      return depthToColor(depth, maxDepth);
+    },
+    [nodeDepths, maxDepth, edgeColorMode],
+  );
+
+  // Check for system theme
+  const [isDark, setIsDark] = useState<boolean>(
+    typeof window !== "undefined" &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches,
+  );
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    const handler = (e: MediaQueryListEvent) => setIsDark(e.matches);
+
+    mediaQuery.addEventListener("change", handler);
+    return () => mediaQuery.removeEventListener("change", handler);
+  }, []);
+
   return (
     <div className="absolute inset-0">
       <ForceGraph3D
         ref={graphRef}
-        // width={dimensions.squareSize}
-        // height={dimensions.squareSize}
         width={dimensions.width}
         height={dimensions.height}
+        backgroundColor={isDark ? "#050524" : "#99CCFF"}
         graphData={data}
-        enableNodeDrag={false}
+        enableNodeDrag={enableNodeDrag}
         onNodeClick={handleNodeClick}
         onBackgroundClick={handleBackgroundClick}
         nodeAutoColorBy="id"
+        nodeColor={edgeColorMode === "depth" ? getNodeColor : undefined}
         linkAutoColorBy="target"
+        linkColor={edgeColorMode === "depth" ? getLinkColor : undefined}
         linkVisibility={(link) => highlightedLinks.has(link)}
-        linkWidth={1.2}
+        linkWidth={linkWidth}
+        linkOpacity={linkOpacity}
         nodeThreeObjectExtend={false}
-        nodeThreeObject={createNodeObjectCached}
-        showNavInfo={false}
-        cooldownTicks={100}
+        nodeVal={handleNodeSizing}
+        nodeOpacity={nodeOpacity}
+        nodeLabel={(node) => (showLabels ? node.name : "")}
+        nodeThreeObject={showThumbnails ? createNodeObjectCached : undefined}
+        showNavInfo={showNavInfo}
+        cooldownTicks={cooldownTicks}
         onEngineStop={handleEngineStop}
+        dagMode={dagMode || undefined}
+        dagLevelDistance={dagLevelDistance || undefined}
+        onDagError={handleDagError}
       />
     </div>
   );

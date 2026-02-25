@@ -10,8 +10,7 @@ export const WIKI_INFO_BASE = "https://en.wikipedia.org/api/rest_v1";
 export const TFA_API_BASE = "https://api.wikimedia.org/feed/v1/wikipedia";
 
 // Wikipedia Icon URL
-export const WIKIPEDIA_ICON_URL =
-  "https://upload.wikimedia.org/wikipedia/commons/6/63/Wikipedia-logo.png";
+export const WIKIPEDIA_ICON_URL = "/wikipedia.png";
 
 // Backend API Base
 export const API = "/api/wikipedia";

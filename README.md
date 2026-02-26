@@ -9,11 +9,11 @@
     A 3D graph connecting wikipedia articles by their hyperlinks.
 </p>
 <div align="center">
-    
+
 [![Netlify Status](https://api.netlify.com/api/v1/badges/c6c521be-c5c7-41f6-bfd4-b52ecfcebcfd/deploy-status)](https://app.netlify.com/projects/wikigraph3d/deploys)
-</div>   
+[![.github/workflows/release-please.yml](https://github.com/marsponce/wikigraph3D/actions/workflows/release-please.yml/badge.svg)](https://github.com/marsponce/wikigraph3D/actions/workflows/release-please.yml)
 
-
+</div>
 
 ## Getting Started
 

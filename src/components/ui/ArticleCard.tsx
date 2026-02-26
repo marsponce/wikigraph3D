@@ -6,6 +6,7 @@ import {
   SetStateAction,
   memo,
   useCallback,
+  RefObject,
 } from "react";
 import clsx from "clsx";
 import { articleCache } from "@/lib/cache";
@@ -20,6 +21,7 @@ type ArticleCardProps = {
   selectedNode: GraphNode | null;
   setSelectedNode: (node: GraphNode | null) => void;
   setGraphData: Dispatch<SetStateAction<GraphData>>;
+  pendingNodeId: RefObject<number | null>;
 };
 const ArticleCard = memo(function ArticleCard({
   className,
@@ -27,6 +29,7 @@ const ArticleCard = memo(function ArticleCard({
   selectedNode,
   setSelectedNode,
   setGraphData,
+  pendingNodeId,
 }: ArticleCardProps) {
   const [html, setHtml] = useState<string>("");
   const articleRef = useRef<HTMLElement>(null);
@@ -87,11 +90,11 @@ const ArticleCard = memo(function ArticleCard({
         fetchNode(title, sourceID)
           .then((newNode) => {
             // throw new Error("Test error"); // for testing
+            // NOTE: This is where we used to expand the graph locally
+            // now we save the newNode's id (to wait for it to load into the graph)
             if (newNode && selectedNode) {
-              setGraphData((oldData) =>
-                mergeGraphData(selectedNode, [newNode], oldData),
-              );
-              setSelectedNode(newNode);
+              pendingNodeId.current = newNode.id as number;
+              console.debug("pendingNodeId:", pendingNodeId.current);
             }
           })
           .catch((e) => {
@@ -176,7 +179,7 @@ const ArticleCard = memo(function ArticleCard({
         }
       }
     },
-    [selectedNode, setSelectedNode, setGraphData],
+    [pendingNodeId, selectedNode],
   );
 
   // Intercept <a /> clicks

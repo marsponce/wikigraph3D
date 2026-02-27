@@ -30,11 +30,13 @@ import {
   VideoCameraIcon,
   VideoCameraSlashIcon,
   ArrowsPointingOutIcon,
+  QuestionMarkCircleIcon,
 } from "@heroicons/react/24/outline";
 import type { GraphSettings } from "@/components/ui/Graph";
 import { getRootNode, focusCameraOnNode } from "@/lib/graph";
 import { todaysDate } from "@/lib/utils";
 import type { GraphStats } from "@/lib/graph";
+import { useTutorial } from "@/lib/graph";
 
 type SidebarProps = {
   graphRef: RefObject<ForceGraphMethods<GraphNode, GraphLink> | undefined>;
@@ -50,6 +52,7 @@ type SidebarProps = {
   stats: GraphStats | null;
   setStats: (stats: GraphStats | null) => void;
   pendingNodeId: RefObject<number | null>;
+  startTutorial: () => void;
 };
 
 export default function Sidebar({
@@ -66,6 +69,7 @@ export default function Sidebar({
   stats,
   setStats,
   pendingNodeId,
+  startTutorial,
 }: SidebarProps) {
   const [sidebarState, setSidebarState] = useState<string>("closed");
   const [sidebarMode, setSidebarMode] = useState<"fullscreen" | "one-third">(
@@ -259,6 +263,14 @@ export default function Sidebar({
             title={"Focus camera on Graph (G)"}
           >
             <ArrowsPointingOutIcon />
+          </Button>
+          {/* tutorial */}
+          <Button
+            onClick={() => startTutorial()}
+            aria-label={"Replay the tutorial"}
+            title={"Replay the tutorial (T)"}
+          >
+            <QuestionMarkCircleIcon />
           </Button>
         </div>
         <div

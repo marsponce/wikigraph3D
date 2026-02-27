@@ -8,9 +8,8 @@ import type { GraphSettings } from "@/components/ui/Graph";
 import type { ForceGraphMethods } from "react-force-graph-3d";
 import { Toaster } from "sonner";
 import type { GraphStats } from "@/lib/graph";
-import { useGraphRealtime } from "@/lib/graph";
+import { useGraphRealtime, useTutorial } from "@/lib/graph";
 import { todaysDate } from "@/lib/utils";
-import { driver } from "driver.js";
 
 export default function Main() {
   // State for the app
@@ -80,6 +79,9 @@ export default function Main() {
     setStats(null);
   }, [setStats, graphData.nodes, graphData.links]);
 
+  // tutorial
+  const { startTutorial } = useTutorial();
+
   return (
     <div className="relative">
       <Sidebar
@@ -96,6 +98,7 @@ export default function Main() {
         stats={stats}
         setStats={setStats}
         pendingNodeId={pendingNodeId}
+        startTutorial={startTutorial}
       />
       <Graph
         graphRef={graphRef}

@@ -89,19 +89,19 @@ const ArticleCard = memo(function ArticleCard({
       }
       // Make an api call, add the new node to the graph, set selected node to that node
       const loadNewNode = (title: string, sourceID: number) => {
+        title = decodeURIComponent(title).replace(/_/g, " ");
+        // for faster responsiveness client-side
         const existingNode = graphData.nodes.find((n) => n.name === title);
         if (existingNode) {
           setSelectedNode(existingNode);
-          return;
+          console.debug("Found existing node:", existingNode.id);
         }
-        fetchNode(title, sourceID)
+        fetchNode(title, sourceID) // find a new node (or existing) and create a link to it.
           .then((newNode) => {
             // throw new Error("Test error"); // for testing
-            // NOTE: This is where we used to expand the graph locally
-            // now we save the newNode's id (to wait for it to load into the graph)
-            if (newNode && selectedNode) {
+            if (newNode && !existingNode) {
               pendingNodeId.current = newNode.id as number;
-              console.debug("pendingNodeId:", pendingNodeId.current);
+              console.debug("Pending node:", newNode.id);
             }
           })
           .catch((e) => {
@@ -118,8 +118,7 @@ const ArticleCard = memo(function ArticleCard({
       const link = (e.target as HTMLElement).closest("a");
       if (link) {
         const href = link.getAttribute("href");
-        console.log("Link clicked:", href);
-        console.log("INFO:", selectedNode.id);
+        console.debug("Link clicked:", href);
 
         // Handle citation/reference links (internal anchors)
         if (href && href.startsWith("#")) {
@@ -182,11 +181,11 @@ const ArticleCard = memo(function ArticleCard({
             window.open(`https://en.wikipedia.org${href}`, "_blank");
             return;
           }
-          loadNewNode(decodeURIComponent(title), selectedNode!.id as number);
+          loadNewNode(title, selectedNode!.id as number);
         }
       }
     },
-    [pendingNodeId, selectedNode, graphData],
+    [pendingNodeId, selectedNode, graphData, setSelectedNode],
   );
 
   // Intercept <a /> clicks

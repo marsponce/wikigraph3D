@@ -34,9 +34,15 @@ export function mergeGraphRealtime(
     target: resolveEndpoint(newLink.target),
   };
 
+  const isDuplicate = prev.links.some(
+    (l) =>
+      resolveID(l.source) === resolveID(newLink.source) &&
+      resolveID(l.target) === resolveID(newLink.target),
+  );
+
   return {
     nodes: Array.from(nodesMap.values()),
-    links: [...prev.links, resolvedLink],
+    links: isDuplicate ? prev.links : [...prev.links, resolvedLink],
   };
 }
 

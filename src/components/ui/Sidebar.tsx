@@ -282,6 +282,7 @@ export default function Sidebar({
                 name={selectedNode ? selectedNode.name : undefined}
                 selectedNode={selectedNode}
                 setSelectedNode={setSelectedNode}
+                graphData={graphData}
                 setGraphData={setGraphData}
                 pendingNodeId={pendingNodeId}
               />

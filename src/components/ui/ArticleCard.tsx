@@ -20,6 +20,7 @@ type ArticleCardProps = {
   name: string | undefined;
   selectedNode: GraphNode | null;
   setSelectedNode: (node: GraphNode | null) => void;
+  graphData: GraphData;
   setGraphData: Dispatch<SetStateAction<GraphData>>;
   pendingNodeId: RefObject<number | null>;
 };
@@ -28,6 +29,7 @@ const ArticleCard = memo(function ArticleCard({
   name,
   selectedNode,
   setSelectedNode,
+  graphData,
   setGraphData,
   pendingNodeId,
 }: ArticleCardProps) {
@@ -87,6 +89,11 @@ const ArticleCard = memo(function ArticleCard({
       }
       // Make an api call, add the new node to the graph, set selected node to that node
       const loadNewNode = (title: string, sourceID: number) => {
+        const existingNode = graphData.nodes.find((n) => n.name === title);
+        if (existingNode) {
+          setSelectedNode(existingNode);
+          return;
+        }
         fetchNode(title, sourceID)
           .then((newNode) => {
             // throw new Error("Test error"); // for testing
@@ -179,7 +186,7 @@ const ArticleCard = memo(function ArticleCard({
         }
       }
     },
-    [pendingNodeId, selectedNode],
+    [pendingNodeId, selectedNode, graphData],
   );
 
   // Intercept <a /> clicks

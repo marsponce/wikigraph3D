@@ -10,6 +10,7 @@ import { Toaster } from "sonner";
 import type { GraphStats } from "@/lib/graph";
 import { useGraphRealtime } from "@/lib/graph";
 import { todaysDate } from "@/lib/utils";
+import { driver } from "driver.js";
 
 export default function Main() {
   // State for the app
@@ -53,9 +54,9 @@ export default function Main() {
 
   // Store graph settings in localStorage so they persist.
   const [graphSettings, setGraphSettings] = useState<GraphSettings>(() => {
-    if (typeof window === "undefined" || !window.localStorage) return defaults;
+    if (typeof window === "undefined" || !localStorage) return defaults;
     try {
-      const stored = window.localStorage.getItem("graphSettings");
+      const stored = localStorage.getItem("graphSettings");
       return stored ? { ...defaults, ...JSON.parse(stored) } : defaults;
     } catch (error) {
       console.error("Failed to read graphSettings from localStorage:", error);
@@ -64,7 +65,7 @@ export default function Main() {
   });
 
   useEffect(() => {
-    if (typeof window === "undefined" || window.localStorage) return;
+    if (typeof window === "undefined") return;
     try {
       localStorage.setItem("graphSettings", JSON.stringify(graphSettings));
     } catch (error) {

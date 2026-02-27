@@ -89,8 +89,9 @@ const ArticleCard = memo(function ArticleCard({
       }
       // Make an api call, add the new node to the graph, set selected node to that node
       const loadNewNode = (title: string, sourceID: number) => {
-        title = decodeURIComponent(title).replace(/_/g, " ");
+        title = decodeURIComponent(title).split("#")[0].replace(/_/g, " ");
         // for faster responsiveness client-side
+        console.debug("title:", title);
         const existingNode = graphData.nodes.find((n) => n.name === title);
         if (existingNode) {
           setSelectedNode(existingNode);
@@ -181,6 +182,7 @@ const ArticleCard = memo(function ArticleCard({
             window.open(`https://en.wikipedia.org${href}`, "_blank");
             return;
           }
+
           loadNewNode(title, selectedNode!.id as number);
         }
       }

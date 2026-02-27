@@ -8,11 +8,17 @@ import type { GraphSettings } from "@/components/ui/Graph";
 import type { ForceGraphMethods } from "react-force-graph-3d";
 import { Toaster } from "sonner";
 import type { GraphStats } from "@/lib/graph";
+import { useGraphRealtime } from "@/lib/graph";
+import { todaysDate } from "@/lib/utils";
 
 export default function Main() {
   // State for the app
+
+  // graph State
+  // What node is the user "looking at"
   const [selectedNode, setSelectedNode] = useState<GraphNode | null>(null);
   const [isFocused, setIsFocused] = useState<boolean>(false);
+  // the graph itself
   const [graphData, setGraphData] = useState<GraphData>({
     nodes: [],
     links: [],
@@ -20,6 +26,12 @@ export default function Main() {
   const graphRef = useRef<ForceGraphMethods<GraphNode, GraphLink> | undefined>(
     undefined,
   );
+  // for node expansion, wait for <this node> when we expand the graph
+  const pendingNodeId = useRef<number | null>(null);
+
+  // sync the graph to the database
+  const date = todaysDate();
+  useGraphRealtime(date, setGraphData, setSelectedNode, pendingNodeId);
 
   // Graph settings
   const defaults = {
@@ -39,6 +51,7 @@ export default function Main() {
     highlightDistance: 4,
   } as GraphSettings;
 
+  // Store graph settings in localStorage so they persist.
   const [graphSettings, setGraphSettings] = useState<GraphSettings>(() => {
     if (typeof window === "undefined" || !window.localStorage) return defaults;
     try {
@@ -50,7 +63,6 @@ export default function Main() {
     }
   });
 
-  // Store graph settings in localStorage
   useEffect(() => {
     if (typeof window === "undefined" || window.localStorage) return;
     try {
@@ -82,6 +94,7 @@ export default function Main() {
         setGraphSettings={setGraphSettings}
         stats={stats}
         setStats={setStats}
+        pendingNodeId={pendingNodeId}
       />
       <Graph
         graphRef={graphRef}

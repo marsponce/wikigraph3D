@@ -49,6 +49,7 @@ type SidebarProps = {
   setGraphSettings: (graphSettings: GraphSettings) => void;
   stats: GraphStats | null;
   setStats: (stats: GraphStats | null) => void;
+  pendingNodeId: RefObject<number | null>;
 };
 
 export default function Sidebar({
@@ -64,6 +65,7 @@ export default function Sidebar({
   setGraphSettings,
   stats,
   setStats,
+  pendingNodeId,
 }: SidebarProps) {
   const [sidebarState, setSidebarState] = useState<string>("closed");
   const [sidebarMode, setSidebarMode] = useState<"fullscreen" | "one-third">(
@@ -280,7 +282,9 @@ export default function Sidebar({
                 name={selectedNode ? selectedNode.name : undefined}
                 selectedNode={selectedNode}
                 setSelectedNode={setSelectedNode}
+                graphData={graphData}
                 setGraphData={setGraphData}
+                pendingNodeId={pendingNodeId}
               />
               <BreadCrumbs
                 graphData={graphData}

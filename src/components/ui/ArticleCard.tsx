@@ -6,6 +6,7 @@ import {
   SetStateAction,
   memo,
   useCallback,
+  RefObject,
 } from "react";
 import clsx from "clsx";
 import { articleCache } from "@/lib/cache";
@@ -19,14 +20,18 @@ type ArticleCardProps = {
   name: string | undefined;
   selectedNode: GraphNode | null;
   setSelectedNode: (node: GraphNode | null) => void;
+  graphData: GraphData;
   setGraphData: Dispatch<SetStateAction<GraphData>>;
+  pendingNodeId: RefObject<number | null>;
 };
 const ArticleCard = memo(function ArticleCard({
   className,
   name,
   selectedNode,
   setSelectedNode,
+  graphData,
   setGraphData,
+  pendingNodeId,
 }: ArticleCardProps) {
   const [html, setHtml] = useState<string>("");
   const articleRef = useRef<HTMLElement>(null);
@@ -84,14 +89,20 @@ const ArticleCard = memo(function ArticleCard({
       }
       // Make an api call, add the new node to the graph, set selected node to that node
       const loadNewNode = (title: string, sourceID: number) => {
-        fetchNode(title, sourceID)
+        title = decodeURIComponent(title).split("#")[0].replace(/_/g, " ");
+        // for faster responsiveness client-side
+        console.debug("title:", title);
+        const existingNode = graphData.nodes.find((n) => n.name === title);
+        if (existingNode) {
+          setSelectedNode(existingNode);
+          console.debug("Found existing node:", existingNode.id);
+        }
+        fetchNode(title, sourceID) // find a new node (or existing) and create a link to it.
           .then((newNode) => {
             // throw new Error("Test error"); // for testing
-            if (newNode && selectedNode) {
-              setGraphData((oldData) =>
-                mergeGraphData(selectedNode, [newNode], oldData),
-              );
-              setSelectedNode(newNode);
+            if (newNode && !existingNode) {
+              pendingNodeId.current = newNode.id as number;
+              console.debug("Pending node:", newNode.id);
             }
           })
           .catch((e) => {
@@ -108,8 +119,7 @@ const ArticleCard = memo(function ArticleCard({
       const link = (e.target as HTMLElement).closest("a");
       if (link) {
         const href = link.getAttribute("href");
-        console.log("Link clicked:", href);
-        console.log("INFO:", selectedNode.id);
+        console.debug("Link clicked:", href);
 
         // Handle citation/reference links (internal anchors)
         if (href && href.startsWith("#")) {
@@ -172,11 +182,12 @@ const ArticleCard = memo(function ArticleCard({
             window.open(`https://en.wikipedia.org${href}`, "_blank");
             return;
           }
-          loadNewNode(decodeURIComponent(title), selectedNode!.id as number);
+
+          loadNewNode(title, selectedNode!.id as number);
         }
       }
     },
-    [selectedNode, setSelectedNode, setGraphData],
+    [pendingNodeId, selectedNode, graphData, setSelectedNode],
   );
 
   // Intercept <a /> clicks

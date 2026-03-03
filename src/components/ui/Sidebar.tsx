@@ -25,8 +25,6 @@ import {
   ArrowDownTrayIcon,
   CogIcon,
   XMarkIcon,
-  FunnelIcon,
-  ViewfinderCircleIcon,
   VideoCameraIcon,
   VideoCameraSlashIcon,
   ArrowsPointingOutIcon,
@@ -36,7 +34,6 @@ import type { GraphSettings } from "@/components/ui/Graph";
 import { getRootNode, focusCameraOnNode } from "@/lib/graph";
 import { todaysDate } from "@/lib/utils";
 import type { GraphStats } from "@/lib/graph";
-import { useTutorial } from "@/lib/graph";
 
 type SidebarProps = {
   graphRef: RefObject<ForceGraphMethods<GraphNode, GraphLink> | undefined>;
@@ -136,6 +133,9 @@ export default function Sidebar({
             setIsFocused(true);
           }
           break;
+        case "t":
+          startTutorial();
+          break;
         case "Escape":
           if (sidebarState !== "closed") setSidebarState("closed");
           else setSelectedNode(null);
@@ -150,6 +150,7 @@ export default function Sidebar({
       graphData,
       selectedNode,
       setIsFocused,
+      startTutorial,
     ],
   );
 
@@ -166,7 +167,9 @@ export default function Sidebar({
   return (
     <>
       <aside
+        id="sidebar"
         className={clsx(
+          className ?? "",
           // Base styles
           "backdrop-blur-lg",
           "fixed right-0 top-0 z-3",
@@ -210,7 +213,11 @@ export default function Sidebar({
                 : "Close Sidebar (Esc)"
             }
           >
-            {sidebarState === "closed" ? <DocumentTextIcon /> : <XMarkIcon />}
+            {sidebarState === "closed" ? (
+              <DocumentTextIcon id="articles" />
+            ) : (
+              <XMarkIcon id="closesidebar" />
+            )}
           </Button>
           {/* stats button */}
           <Button
@@ -219,7 +226,7 @@ export default function Sidebar({
             aria-label={"Statistics"}
             title={"Statistics (Z)"}
           >
-            <ChartBarIcon />
+            <ChartBarIcon id="stats" />
           </Button>
           {/* download button */}
           <Button
@@ -228,15 +235,16 @@ export default function Sidebar({
             aria-label={"Download"}
             title={"Download (D)"}
           >
-            <ArrowDownTrayIcon />
+            <ArrowDownTrayIcon id="downloads" />
           </Button>
+          {/* settings button */}
           <Button
             onClick={() => setSidebarState("settings")}
             toggled={sidebarState === "settings"}
             aria-label={"Settings"}
             title={"Settings (S)"}
           >
-            <CogIcon />
+            <CogIcon id="settings" />
           </Button>
           {/* focus camera on selectedNode */}
           <Button
@@ -251,7 +259,11 @@ export default function Sidebar({
             toggled={isFocused}
             disabled={!selectedNode}
           >
-            {selectedNode ? <VideoCameraIcon /> : <VideoCameraSlashIcon />}
+            {selectedNode ? (
+              <VideoCameraIcon id="focusnode" />
+            ) : (
+              <VideoCameraSlashIcon id="focusnode" />
+            )}
           </Button>
           {/* reset camera */}
           <Button
@@ -262,7 +274,7 @@ export default function Sidebar({
             aria-label={"Focus camera on Graph"}
             title={"Focus camera on Graph (G)"}
           >
-            <ArrowsPointingOutIcon />
+            <ArrowsPointingOutIcon id="focusgraph" />
           </Button>
           {/* tutorial */}
           <Button
@@ -270,7 +282,7 @@ export default function Sidebar({
             aria-label={"Replay the tutorial"}
             title={"Replay the tutorial (T)"}
           >
-            <QuestionMarkCircleIcon />
+            <QuestionMarkCircleIcon id="tutorial" />
           </Button>
         </div>
         <div

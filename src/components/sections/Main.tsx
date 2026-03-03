@@ -90,7 +90,6 @@ export default function Main() {
         setSelectedNode={setSelectedNode}
         graphData={graphData}
         setGraphData={setGraphData}
-        className=""
         isFocused={isFocused}
         setIsFocused={setIsFocused}
         graphSettings={graphSettings}

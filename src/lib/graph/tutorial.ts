@@ -186,6 +186,7 @@ export function useTutorial() {
       showProgress: true,
       smoothScroll: true,
       allowClose: true,
+      overlayClickBehavior: () => {},
       stagePadding: 5,
       onPopoverRender: (popover) => {
         popover.title.insertAdjacentHTML(

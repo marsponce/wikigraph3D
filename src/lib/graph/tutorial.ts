@@ -72,6 +72,7 @@ const buildSteps = (isMobile: boolean): DriveStep[] => [
       side: "left",
       align: "center",
     },
+    disableActiveInteraction: true,
   },
   {
     element: "#articles",
@@ -82,6 +83,7 @@ const buildSteps = (isMobile: boolean): DriveStep[] => [
       side: "left",
       align: "start",
     },
+    disableActiveInteraction: true,
   },
   {
     element: "#stats",
@@ -92,6 +94,7 @@ const buildSteps = (isMobile: boolean): DriveStep[] => [
       side: "left",
       align: "start",
     },
+    disableActiveInteraction: true,
   },
   {
     element: "#downloads",
@@ -102,6 +105,7 @@ const buildSteps = (isMobile: boolean): DriveStep[] => [
       side: "left",
       align: "start",
     },
+    disableActiveInteraction: true,
   },
   {
     element: "#settings",
@@ -112,6 +116,7 @@ const buildSteps = (isMobile: boolean): DriveStep[] => [
       side: "left",
       align: "start",
     },
+    disableActiveInteraction: true,
   },
   {
     element: "#focusnode",
@@ -122,6 +127,7 @@ const buildSteps = (isMobile: boolean): DriveStep[] => [
       side: "left",
       align: "center",
     },
+    disableActiveInteraction: true,
   },
   {
     element: "#focusgraph",
@@ -132,6 +138,7 @@ const buildSteps = (isMobile: boolean): DriveStep[] => [
       side: "left",
       align: "center",
     },
+    disableActiveInteraction: true,
   },
   ...(!isMobile
     ? [
@@ -142,6 +149,7 @@ const buildSteps = (isMobile: boolean): DriveStep[] => [
             align: "center" as const,
             description: keyboardShortcuts,
           },
+          disableActiveInteraction: true,
         },
       ]
     : []),
@@ -152,6 +160,7 @@ const buildSteps = (isMobile: boolean): DriveStep[] => [
       description:
         "You can replay this tour any time by clicking this button or pressing <kbd>T</kbd>. Happy exploring! 🚀",
     },
+    disableActiveInteraction: true,
   },
 ];
 
@@ -173,10 +182,11 @@ export function useTutorial() {
     driverRef.current = driver({
       steps: buildSteps(isMobile),
       animate: true,
-      disableActiveInteraction: true,
+      disableActiveInteraction: false,
       showProgress: true,
       smoothScroll: true,
-      allowClose: false,
+      allowClose: true,
+      stagePadding: 5,
       onPopoverRender: (popover) => {
         popover.title.insertAdjacentHTML(
           "afterbegin",
@@ -186,12 +196,19 @@ export function useTutorial() {
     });
 
     if (newUser) {
-      localStorage.setItem("newUser", "newUser");
+      try {
+        localStorage.setItem("newUser", "newUser");
+      } catch {
+        console.debug("Failed to set newUser");
+      }
       driverRef.current.drive();
     }
 
     return () => driverRef.current?.destroy();
   }, [newUser]);
 
-  return { startTutorial: () => driverRef.current?.drive() };
+  return {
+    startTutorial: () => driverRef.current?.drive(),
+    isTutorialActive: () => driverRef.current?.isActive() ?? false,
+  };
 }

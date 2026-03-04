@@ -80,7 +80,7 @@ export default function Main() {
   }, [setStats, graphData.nodes, graphData.links]);
 
   // tutorial
-  const { startTutorial } = useTutorial();
+  const { startTutorial, isTutorialActive } = useTutorial();
 
   return (
     <div className="relative">
@@ -98,6 +98,7 @@ export default function Main() {
         setStats={setStats}
         pendingNodeId={pendingNodeId}
         startTutorial={startTutorial}
+        isTutorialActive={isTutorialActive}
       />
       <Graph
         graphRef={graphRef}

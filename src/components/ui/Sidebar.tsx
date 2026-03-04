@@ -50,6 +50,7 @@ type SidebarProps = {
   setStats: (stats: GraphStats | null) => void;
   pendingNodeId: RefObject<number | null>;
   startTutorial: () => void;
+  isTutorialActive: () => boolean;
 };
 
 export default function Sidebar({
@@ -67,6 +68,7 @@ export default function Sidebar({
   setStats,
   pendingNodeId,
   startTutorial,
+  isTutorialActive,
 }: SidebarProps) {
   const [sidebarState, setSidebarState] = useState<string>("closed");
   const [sidebarMode, setSidebarMode] = useState<"fullscreen" | "one-third">(
@@ -100,8 +102,9 @@ export default function Sidebar({
   const handleKeyPress = useCallback(
     (event: KeyboardEvent) => {
       console.debug("Key pressed:", event.key);
-      // Ignore shortcuts if user is typing in an input
+      // Ignore shortcuts if user is typing in an input or in tutorial
       if (
+        isTutorialActive() ||
         event.target instanceof HTMLInputElement ||
         event.target instanceof HTMLTextAreaElement ||
         (event.target instanceof HTMLElement && event.target.isContentEditable)
@@ -151,6 +154,7 @@ export default function Sidebar({
       selectedNode,
       setIsFocused,
       startTutorial,
+      isTutorialActive,
     ],
   );
 
@@ -202,6 +206,7 @@ export default function Sidebar({
         >
           {/* Buttons that change the content rendered in the sidebar */}
           <Button
+            id="articles"
             onClick={toggleSidebar}
             toggled={sidebarState !== "closed"}
             aria-label={
@@ -213,41 +218,41 @@ export default function Sidebar({
                 : "Close Sidebar (Esc)"
             }
           >
-            {sidebarState === "closed" ? (
-              <DocumentTextIcon id="articles" />
-            ) : (
-              <XMarkIcon id="closesidebar" />
-            )}
+            {sidebarState === "closed" ? <DocumentTextIcon /> : <XMarkIcon />}
           </Button>
           {/* stats button */}
           <Button
+            id="stats"
             onClick={() => setSidebarState("stats")}
             toggled={sidebarState === "stats"}
             aria-label={"Statistics"}
             title={"Statistics (Z)"}
           >
-            <ChartBarIcon id="stats" />
+            <ChartBarIcon />
           </Button>
           {/* download button */}
           <Button
+            id="downloads"
             onClick={() => setSidebarState("downloads")}
             toggled={sidebarState === "downloads"}
             aria-label={"Download"}
             title={"Download (D)"}
           >
-            <ArrowDownTrayIcon id="downloads" />
+            <ArrowDownTrayIcon />
           </Button>
           {/* settings button */}
           <Button
+            id="settings"
             onClick={() => setSidebarState("settings")}
             toggled={sidebarState === "settings"}
             aria-label={"Settings"}
             title={"Settings (S)"}
           >
-            <CogIcon id="settings" />
+            <CogIcon />
           </Button>
           {/* focus camera on selectedNode */}
           <Button
+            id="focusnode"
             onClick={() => {
               if (selectedNode) {
                 focusCameraOnNode(graphRef, selectedNode, graphData);
@@ -259,14 +264,11 @@ export default function Sidebar({
             toggled={isFocused}
             disabled={!selectedNode}
           >
-            {selectedNode ? (
-              <VideoCameraIcon id="focusnode" />
-            ) : (
-              <VideoCameraSlashIcon id="focusnode" />
-            )}
+            {selectedNode ? <VideoCameraIcon /> : <VideoCameraSlashIcon />}
           </Button>
           {/* reset camera */}
           <Button
+            id="focusgraph"
             onClick={() => {
               graphRef.current?.zoomToFit(1000);
               setIsFocused(false);
@@ -274,15 +276,16 @@ export default function Sidebar({
             aria-label={"Focus camera on Graph"}
             title={"Focus camera on Graph (G)"}
           >
-            <ArrowsPointingOutIcon id="focusgraph" />
+            <ArrowsPointingOutIcon />
           </Button>
           {/* tutorial */}
           <Button
+            id="tutorial"
             onClick={() => startTutorial()}
             aria-label={"Replay the tutorial"}
             title={"Replay the tutorial (T)"}
           >
-            <QuestionMarkCircleIcon id="tutorial" />
+            <QuestionMarkCircleIcon />
           </Button>
         </div>
         <div

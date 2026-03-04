@@ -437,12 +437,7 @@ export default function Graph({
 
   return (
     <>
-      <div
-        className={clsx(
-          className ?? "",
-          "absolute inset-0 h-screen w-screen isolate",
-        )}
-      >
+      <div id="fakegraph" className="w-screen h-screen">
         <ForceGraph3D
           ref={graphRef}
           width={dimensions.width}
@@ -472,7 +467,6 @@ export default function Graph({
           onDagError={handleDagError}
         />
       </div>
-      <div id="fakegraph" className="w-screen h-screen" />
     </>
   );
 }

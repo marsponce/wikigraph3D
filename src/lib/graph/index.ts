@@ -4,3 +4,4 @@ export * from "./camera";
 export * from "./download";
 export * from "./stats";
 export * from "./graphRealtime";
+export * from "./tutorial";

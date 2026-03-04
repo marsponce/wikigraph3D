@@ -6,6 +6,7 @@ import {
   SetStateAction,
   useCallback,
   useEffect,
+  useRef,
 } from "react";
 import {
   Button,
@@ -24,12 +25,12 @@ import {
   ChartBarIcon,
   ArrowDownTrayIcon,
   CogIcon,
-  XMarkIcon,
-  FunnelIcon,
-  ViewfinderCircleIcon,
   VideoCameraIcon,
   VideoCameraSlashIcon,
   ArrowsPointingOutIcon,
+  QuestionMarkCircleIcon,
+  ChevronRightIcon,
+  ChevronLeftIcon,
 } from "@heroicons/react/24/outline";
 import type { GraphSettings } from "@/components/ui/Graph";
 import { getRootNode, focusCameraOnNode } from "@/lib/graph";
@@ -50,6 +51,8 @@ type SidebarProps = {
   stats: GraphStats | null;
   setStats: (stats: GraphStats | null) => void;
   pendingNodeId: RefObject<number | null>;
+  startTutorial: () => void;
+  isTutorialActive: () => boolean;
 };
 
 export default function Sidebar({
@@ -66,31 +69,29 @@ export default function Sidebar({
   stats,
   setStats,
   pendingNodeId,
+  startTutorial,
+  isTutorialActive,
 }: SidebarProps) {
   const [sidebarState, setSidebarState] = useState<string>("closed");
   const [sidebarMode, setSidebarMode] = useState<"fullscreen" | "one-third">(
     "one-third",
   );
 
-  const toggleSidebar = () => {
-    switch (sidebarState) {
-      case "closed":
-        setSidebarState("article");
-        break;
-      case "downloads":
-        setSidebarState("article");
-        break;
-      case "settings":
-        setSidebarState("article");
-        break;
-      case "stats":
-        setSidebarState("article");
-        break;
-      default:
-        setSidebarState("closed");
-        break;
-    }
-  };
+  const prevSidebarState = useRef<string>("open");
+
+  const toggleSidebar = useCallback(() => {
+    setSidebarState((prev) => {
+      switch (prev) {
+        case "closed":
+          return prevSidebarState.current;
+          break;
+        default:
+          prevSidebarState.current = prev;
+          return "closed";
+          break;
+      }
+    });
+  }, [prevSidebarState]);
 
   const selectRootNode = useCallback(() => {
     setSelectedNode(getRootNode(graphData, todaysDate()));
@@ -99,14 +100,18 @@ export default function Sidebar({
   const handleKeyPress = useCallback(
     (event: KeyboardEvent) => {
       console.debug("Key pressed:", event.key);
-      // Ignore shortcuts if user is typing in an input
+      // Ignore shortcuts if user is typing in an input or in tutorial
       if (
+        isTutorialActive() ||
         event.target instanceof HTMLInputElement ||
         event.target instanceof HTMLTextAreaElement ||
         (event.target instanceof HTMLElement && event.target.isContentEditable)
       )
         return;
       switch (event.key) {
+        case " ":
+          toggleSidebar();
+          break;
         case "a":
           setSidebarState("article");
           break;
@@ -132,8 +137,11 @@ export default function Sidebar({
             setIsFocused(true);
           }
           break;
+        case "t":
+          startTutorial();
+          break;
         case "Escape":
-          if (sidebarState !== "closed") setSidebarState("closed");
+          if (sidebarState !== "closed") toggleSidebar();
           else setSelectedNode(null);
           break;
       }
@@ -146,6 +154,9 @@ export default function Sidebar({
       graphData,
       selectedNode,
       setIsFocused,
+      startTutorial,
+      isTutorialActive,
+      toggleSidebar,
     ],
   );
 
@@ -162,7 +173,9 @@ export default function Sidebar({
   return (
     <>
       <aside
+        id="sidebar"
         className={clsx(
+          className ?? "",
           // Base styles
           "backdrop-blur-lg",
           "fixed right-0 top-0 z-3",
@@ -194,9 +207,31 @@ export default function Sidebar({
           )}
         >
           {/* Buttons that change the content rendered in the sidebar */}
+          {/* Open/Close Sidebar */}
           <Button
+            id="sidebartoggle"
             onClick={toggleSidebar}
             toggled={sidebarState !== "closed"}
+            aria-label={
+              sidebarState === "closed" ? "Open Sidebar" : "Close Sidebar"
+            }
+            title={
+              sidebarState === "closed"
+                ? "Open Sidebar (Space)"
+                : "Close Sidebar (Esc)"
+            }
+          >
+            {sidebarState === "closed" ? (
+              <ChevronLeftIcon />
+            ) : (
+              <ChevronRightIcon />
+            )}
+          </Button>
+          {/* Article Button */}
+          <Button
+            id="articles"
+            onClick={() => setSidebarState("article")}
+            toggled={sidebarState === "article"}
             aria-label={
               sidebarState === "closed" ? "Open Sidebar" : "Close Sidebar"
             }
@@ -206,10 +241,11 @@ export default function Sidebar({
                 : "Close Sidebar (Esc)"
             }
           >
-            {sidebarState === "closed" ? <DocumentTextIcon /> : <XMarkIcon />}
+            <DocumentTextIcon />
           </Button>
           {/* stats button */}
           <Button
+            id="stats"
             onClick={() => setSidebarState("stats")}
             toggled={sidebarState === "stats"}
             aria-label={"Statistics"}
@@ -219,6 +255,7 @@ export default function Sidebar({
           </Button>
           {/* download button */}
           <Button
+            id="downloads"
             onClick={() => setSidebarState("downloads")}
             toggled={sidebarState === "downloads"}
             aria-label={"Download"}
@@ -226,7 +263,9 @@ export default function Sidebar({
           >
             <ArrowDownTrayIcon />
           </Button>
+          {/* settings button */}
           <Button
+            id="settings"
             onClick={() => setSidebarState("settings")}
             toggled={sidebarState === "settings"}
             aria-label={"Settings"}
@@ -236,6 +275,7 @@ export default function Sidebar({
           </Button>
           {/* focus camera on selectedNode */}
           <Button
+            id="focusnode"
             onClick={() => {
               if (selectedNode) {
                 focusCameraOnNode(graphRef, selectedNode, graphData);
@@ -251,6 +291,7 @@ export default function Sidebar({
           </Button>
           {/* reset camera */}
           <Button
+            id="focusgraph"
             onClick={() => {
               graphRef.current?.zoomToFit(1000);
               setIsFocused(false);
@@ -259,6 +300,15 @@ export default function Sidebar({
             title={"Focus camera on Graph (G)"}
           >
             <ArrowsPointingOutIcon />
+          </Button>
+          {/* tutorial */}
+          <Button
+            id="tutorial"
+            onClick={() => startTutorial()}
+            aria-label={"Replay the tutorial"}
+            title={"Replay the tutorial (T)"}
+          >
+            <QuestionMarkCircleIcon />
           </Button>
         </div>
         <div

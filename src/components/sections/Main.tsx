@@ -8,7 +8,7 @@ import type { GraphSettings } from "@/components/ui/Graph";
 import type { ForceGraphMethods } from "react-force-graph-3d";
 import { Toaster } from "sonner";
 import type { GraphStats } from "@/lib/graph";
-import { useGraphRealtime } from "@/lib/graph";
+import { useGraphRealtime, useTutorial } from "@/lib/graph";
 import { todaysDate } from "@/lib/utils";
 
 export default function Main() {
@@ -53,9 +53,9 @@ export default function Main() {
 
   // Store graph settings in localStorage so they persist.
   const [graphSettings, setGraphSettings] = useState<GraphSettings>(() => {
-    if (typeof window === "undefined" || !window.localStorage) return defaults;
+    if (typeof window === "undefined" || !localStorage) return defaults;
     try {
-      const stored = window.localStorage.getItem("graphSettings");
+      const stored = localStorage.getItem("graphSettings");
       return stored ? { ...defaults, ...JSON.parse(stored) } : defaults;
     } catch (error) {
       console.error("Failed to read graphSettings from localStorage:", error);
@@ -64,7 +64,7 @@ export default function Main() {
   });
 
   useEffect(() => {
-    if (typeof window === "undefined" || window.localStorage) return;
+    if (typeof window === "undefined") return;
     try {
       localStorage.setItem("graphSettings", JSON.stringify(graphSettings));
     } catch (error) {
@@ -79,6 +79,9 @@ export default function Main() {
     setStats(null);
   }, [setStats, graphData.nodes, graphData.links]);
 
+  // tutorial
+  const { startTutorial, isTutorialActive } = useTutorial();
+
   return (
     <div className="relative">
       <Sidebar
@@ -87,7 +90,6 @@ export default function Main() {
         setSelectedNode={setSelectedNode}
         graphData={graphData}
         setGraphData={setGraphData}
-        className=""
         isFocused={isFocused}
         setIsFocused={setIsFocused}
         graphSettings={graphSettings}
@@ -95,6 +97,8 @@ export default function Main() {
         stats={stats}
         setStats={setStats}
         pendingNodeId={pendingNodeId}
+        startTutorial={startTutorial}
+        isTutorialActive={isTutorialActive}
       />
       <Graph
         graphRef={graphRef}

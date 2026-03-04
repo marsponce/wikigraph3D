@@ -28,6 +28,7 @@ import {
 import { todaysDate } from "@/lib/utils";
 import type { ForceGraphMethods } from "react-force-graph-3d";
 import { toast } from "sonner";
+import clsx from "clsx";
 
 const ForceGraph3D = dynamic(() => import("react-force-graph-3d"), {
   ssr: false,
@@ -61,6 +62,7 @@ export type GraphSettings = {
 
 type GraphProps = GraphSettings & {
   graphRef: RefObject<ForceGraphMethods<GraphNode, GraphLink> | undefined>;
+  className?: string;
   selectedNode: GraphNode | null;
   setSelectedNodeAction: (node: GraphNode | null) => void;
   data: GraphData;
@@ -71,6 +73,7 @@ type GraphProps = GraphSettings & {
 
 export default function Graph({
   graphRef,
+  className,
   selectedNode,
   setSelectedNodeAction,
   data,
@@ -433,35 +436,37 @@ export default function Graph({
   }, []);
 
   return (
-    <div className="absolute inset-0">
-      <ForceGraph3D
-        ref={graphRef}
-        width={dimensions.width}
-        height={dimensions.height}
-        backgroundColor={isDark ? "#050524" : "#99CCFF"}
-        graphData={data}
-        enableNodeDrag={enableNodeDrag}
-        onNodeClick={handleNodeClick}
-        onBackgroundClick={handleBackgroundClick}
-        nodeAutoColorBy="id"
-        nodeColor={edgeColorMode === "depth" ? getNodeColor : undefined}
-        linkAutoColorBy="target"
-        linkColor={edgeColorMode === "depth" ? getLinkColor : undefined}
-        linkVisibility={(link) => highlightedLinks.has(link)}
-        linkWidth={linkWidth}
-        linkOpacity={linkOpacity}
-        nodeThreeObjectExtend={false}
-        nodeVal={handleNodeSizing}
-        nodeOpacity={nodeOpacity}
-        nodeLabel={(node) => (showLabels ? node.name : "")}
-        nodeThreeObject={showThumbnails ? createNodeObjectCached : undefined}
-        showNavInfo={showNavInfo}
-        cooldownTicks={cooldownTicks}
-        onEngineStop={handleEngineStop}
-        dagMode={dagMode || undefined}
-        dagLevelDistance={dagLevelDistance || undefined}
-        onDagError={handleDagError}
-      />
-    </div>
+    <>
+      <div id="fakegraph" className="w-screen h-screen">
+        <ForceGraph3D
+          ref={graphRef}
+          width={dimensions.width}
+          height={dimensions.height}
+          backgroundColor={isDark ? "#050524" : "#99CCFF"}
+          graphData={data}
+          enableNodeDrag={enableNodeDrag}
+          onNodeClick={handleNodeClick}
+          onBackgroundClick={handleBackgroundClick}
+          nodeAutoColorBy="id"
+          nodeColor={edgeColorMode === "depth" ? getNodeColor : undefined}
+          linkAutoColorBy="target"
+          linkColor={edgeColorMode === "depth" ? getLinkColor : undefined}
+          linkVisibility={(link) => highlightedLinks.has(link)}
+          linkWidth={linkWidth}
+          linkOpacity={linkOpacity}
+          nodeThreeObjectExtend={false}
+          nodeVal={handleNodeSizing}
+          nodeOpacity={nodeOpacity}
+          nodeLabel={(node) => (showLabels ? node.name : "")}
+          nodeThreeObject={showThumbnails ? createNodeObjectCached : undefined}
+          showNavInfo={showNavInfo}
+          cooldownTicks={cooldownTicks}
+          onEngineStop={handleEngineStop}
+          dagMode={dagMode || undefined}
+          dagLevelDistance={dagLevelDistance || undefined}
+          onDagError={handleDagError}
+        />
+      </div>
+    </>
   );
 }

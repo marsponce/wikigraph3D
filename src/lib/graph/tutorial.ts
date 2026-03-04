@@ -91,7 +91,7 @@ const buildSteps = (isMobile: boolean): DriveStep[] => [
     popover: {
       title: "Articles",
       description:
-        "Search current Wikipedia articles and explore the details of any selected node. Press <kbd>A</kbd> to toggle.",
+        "Search current Wikipedia articles and explore the details of any selected node. Expand the graph by <strong>opening links in each article</strong>. Press <kbd>A</kbd> to toggle.",
       side: "left",
       align: "start",
     },

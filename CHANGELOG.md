@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.1.0](https://github.com/marsponce/wikigraph3D/compare/v1.0.0...v1.1.0) (2026-03-04)
+
+
+### Features
+
+* **tutorial:** implement useTutorial hook for reusable tutorial for new users ([dda9cae](https://github.com/marsponce/wikigraph3D/commit/dda9caeb1c5d9b97bdfbdcbea06bc34691314d70))
+
+
+### Bug Fixes
+
+* **tutorial:** implement pr suggestions ([14ae4fa](https://github.com/marsponce/wikigraph3D/commit/14ae4fa85c7e1fcfe37650449f2c30a112fa536e))
+* **tutorial:** prevent clicking on overlay to exit tutorial, maintain close tutorial button ([28a63b6](https://github.com/marsponce/wikigraph3D/commit/28a63b6e72179c04d69a3567ab2aceadd9f3f3d8))
+
 ## 1.0.0 (2026-02-27)
 
 

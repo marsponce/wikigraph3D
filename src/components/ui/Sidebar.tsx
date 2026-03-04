@@ -6,6 +6,7 @@ import {
   SetStateAction,
   useCallback,
   useEffect,
+  useRef,
 } from "react";
 import {
   Button,
@@ -24,11 +25,12 @@ import {
   ChartBarIcon,
   ArrowDownTrayIcon,
   CogIcon,
-  XMarkIcon,
   VideoCameraIcon,
   VideoCameraSlashIcon,
   ArrowsPointingOutIcon,
   QuestionMarkCircleIcon,
+  ChevronRightIcon,
+  ChevronLeftIcon,
 } from "@heroicons/react/24/outline";
 import type { GraphSettings } from "@/components/ui/Graph";
 import { getRootNode, focusCameraOnNode } from "@/lib/graph";
@@ -75,25 +77,21 @@ export default function Sidebar({
     "one-third",
   );
 
-  const toggleSidebar = () => {
-    switch (sidebarState) {
-      case "closed":
-        setSidebarState("article");
-        break;
-      case "downloads":
-        setSidebarState("article");
-        break;
-      case "settings":
-        setSidebarState("article");
-        break;
-      case "stats":
-        setSidebarState("article");
-        break;
-      default:
-        setSidebarState("closed");
-        break;
-    }
-  };
+  const prevSidebarState = useRef<string>("open");
+
+  const toggleSidebar = useCallback(() => {
+    setSidebarState((prev) => {
+      switch (prev) {
+        case "closed":
+          return prevSidebarState.current;
+          break;
+        default:
+          prevSidebarState.current = prev;
+          return "closed";
+          break;
+      }
+    });
+  }, [prevSidebarState]);
 
   const selectRootNode = useCallback(() => {
     setSelectedNode(getRootNode(graphData, todaysDate()));
@@ -111,6 +109,9 @@ export default function Sidebar({
       )
         return;
       switch (event.key) {
+        case " ":
+          toggleSidebar();
+          break;
         case "a":
           setSidebarState("article");
           break;
@@ -140,7 +141,7 @@ export default function Sidebar({
           startTutorial();
           break;
         case "Escape":
-          if (sidebarState !== "closed") setSidebarState("closed");
+          if (sidebarState !== "closed") toggleSidebar();
           else setSelectedNode(null);
           break;
       }
@@ -155,6 +156,7 @@ export default function Sidebar({
       setIsFocused,
       startTutorial,
       isTutorialActive,
+      toggleSidebar,
     ],
   );
 
@@ -205,10 +207,31 @@ export default function Sidebar({
           )}
         >
           {/* Buttons that change the content rendered in the sidebar */}
+          {/* Open/Close Sidebar */}
           <Button
-            id="articles"
+            id="sidebartoggle"
             onClick={toggleSidebar}
             toggled={sidebarState !== "closed"}
+            aria-label={
+              sidebarState === "closed" ? "Open Sidebar" : "Close Sidebar"
+            }
+            title={
+              sidebarState === "closed"
+                ? "Open Sidebar (Space)"
+                : "Close Sidebar (Esc)"
+            }
+          >
+            {sidebarState === "closed" ? (
+              <ChevronLeftIcon />
+            ) : (
+              <ChevronRightIcon />
+            )}
+          </Button>
+          {/* Article Button */}
+          <Button
+            id="articles"
+            onClick={() => setSidebarState("article")}
+            toggled={sidebarState === "article"}
             aria-label={
               sidebarState === "closed" ? "Open Sidebar" : "Close Sidebar"
             }
@@ -218,7 +241,7 @@ export default function Sidebar({
                 : "Close Sidebar (Esc)"
             }
           >
-            {sidebarState === "closed" ? <DocumentTextIcon /> : <XMarkIcon />}
+            <DocumentTextIcon />
           </Button>
           {/* stats button */}
           <Button

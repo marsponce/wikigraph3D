@@ -2,7 +2,7 @@
 import { useEffect, useState, useRef } from "react";
 import { driver, type DriveStep, type Driver } from "driver.js";
 import "driver.js/dist/driver.css";
-import { version, name } from "../../../package.json";
+import { name } from "../../../package.json";
 
 const desktopControls = `
   <table style="width: 100%; border-collapse: collapse;">
@@ -30,6 +30,7 @@ const mobileControls = `
 
 const keyboardShortcuts = `
   <table style="width: 100%; border-collapse: collapse;">
+    <tr><td><kbd>Space</kbd></td><td style="text-align: center;">—</td><td>Open/Close Sidebar</td></tr>
     <tr><td><kbd>A</kbd></td><td style="text-align: center;">—</td><td>Articles</td></tr>
     <tr><td><kbd>S</kbd></td><td style="text-align: center;">—</td><td>Settings</td></tr>
     <tr><td><kbd>D</kbd></td><td style="text-align: center;">—</td><td>Downloads</td></tr>
@@ -75,11 +76,22 @@ const buildSteps = (isMobile: boolean): DriveStep[] => [
     disableActiveInteraction: true,
   },
   {
+    element: "#sidebartoggle",
+    popover: {
+      title: "Open / Close Sidebar",
+      description:
+        "Open / Close the Sidebar. Press <kbd>Space</kbd> to toggle.",
+      side: "left",
+      align: "start",
+    },
+    disableActiveInteraction: true,
+  },
+  {
     element: "#articles",
     popover: {
       title: "Articles",
       description:
-        "Search Wikipedia and explore the details of any selected node. Press <kbd>A</kbd> to toggle.",
+        "Search current Wikipedia articles and explore the details of any selected node. Press <kbd>A</kbd> to toggle.",
       side: "left",
       align: "start",
     },
@@ -101,7 +113,7 @@ const buildSteps = (isMobile: boolean): DriveStep[] => [
     popover: {
       title: "Downloads",
       description:
-        "Export your graph as an image or data file. Press <kbd>D</kbd> to toggle.",
+        "Export your graph as a GBL or JSON file. Press <kbd>D</kbd> to toggle.",
       side: "left",
       align: "start",
     },
@@ -158,7 +170,7 @@ const buildSteps = (isMobile: boolean): DriveStep[] => [
     popover: {
       title: "You're all set!",
       description:
-        "You can replay this tour any time by clicking this button or pressing <kbd>T</kbd>. Happy exploring! 🚀",
+        "You can replay this tour any time by clicking this button or pressing <kbd>T</kbd>.",
     },
     disableActiveInteraction: true,
   },
@@ -191,7 +203,7 @@ export function useTutorial() {
       onPopoverRender: (popover) => {
         popover.title.insertAdjacentHTML(
           "afterbegin",
-          `<small style="float: right; opacity: 0.6;">${name} v${version}</small>`,
+          `<small style="float: right; opacity: 0.6;">${name}</small>`,
         );
       },
     });

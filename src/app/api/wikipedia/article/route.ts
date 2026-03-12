@@ -8,6 +8,7 @@ import { slimArticle } from "@/lib/article";
 async function fetchArticle(title: string) {
   const url = new URL(WIKI_API_BASE);
   url.searchParams.set("action", "parse");
+  url.searchParams.set("parser", "parsoid");
   url.searchParams.set("page", title);
   url.searchParams.set("format", "json");
   url.searchParams.set("prop", "text");

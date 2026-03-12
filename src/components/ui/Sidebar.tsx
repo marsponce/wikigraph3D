@@ -27,7 +27,9 @@ import {
   CogIcon,
   VideoCameraIcon,
   VideoCameraSlashIcon,
+  MagnifyingGlassIcon,
   ArrowsPointingOutIcon,
+  ArrowsPointingInIcon,
   QuestionMarkCircleIcon,
   ChevronRightIcon,
   ChevronLeftIcon,
@@ -92,6 +94,11 @@ export default function Sidebar({
       }
     });
   }, [prevSidebarState]);
+
+  const toggleSidebarMode = () => {
+    if (sidebarMode === "fullscreen") setSidebarMode("one-third");
+    else setSidebarMode("fullscreen");
+  };
 
   const selectRootNode = useCallback(() => {
     setSelectedNode(getRootNode(graphData, todaysDate()));
@@ -190,7 +197,7 @@ export default function Sidebar({
             "w-screen sm:w-1/3": sidebarMode === "one-third",
           },
           {
-            "bg-white/10 dark:bg-white/10 [transform:translateX(calc(100%-4rem))]":
+            "bg-white/10 dark:bg-white/10 [transform:translateX(calc(100%-3rem))]":
               sidebarState === "closed",
             "sm:bg-white/60 dark:sm:bg-black/60": sidebarState !== "closed",
           },
@@ -203,7 +210,7 @@ export default function Sidebar({
             "flex flex-col",
             "place-content-center place-items-center",
             "space-y-2",
-            "w-[4rem] p-3",
+            "w-[3rem]",
           )}
         >
           {/* Buttons that change the content rendered in the sidebar */}
@@ -232,14 +239,8 @@ export default function Sidebar({
             id="articles"
             onClick={() => setSidebarState("article")}
             toggled={sidebarState === "article"}
-            aria-label={
-              sidebarState === "closed" ? "Open Sidebar" : "Close Sidebar"
-            }
-            title={
-              sidebarState === "closed"
-                ? "Open Sidebar (A)"
-                : "Close Sidebar (Esc)"
-            }
+            aria-label={"Articles"}
+            title={"Articles (A)"}
           >
             <DocumentTextIcon />
           </Button>
@@ -299,7 +300,7 @@ export default function Sidebar({
             aria-label={"Focus camera on Graph"}
             title={"Focus camera on Graph (G)"}
           >
-            <ArrowsPointingOutIcon />
+            <MagnifyingGlassIcon />
           </Button>
           {/* tutorial */}
           <Button
@@ -310,11 +311,25 @@ export default function Sidebar({
           >
             <QuestionMarkCircleIcon />
           </Button>
+          {/* sidebar mode */}
+          <Button
+            id="tutorial"
+            onClick={() => toggleSidebarMode()}
+            aria-label={"Set sidebarMode"}
+            title={"Set sidebarMode"}
+          >
+            {sidebarMode === "fullscreen" ? (
+              <ArrowsPointingInIcon />
+            ) : (
+              <ArrowsPointingOutIcon />
+            )}
+          </Button>
         </div>
         <div
           // Sidebar container
           className={clsx(
-            "flex flex-col p-[1em]",
+            "flex flex-col",
+            "p-3 pl-1",
             "h-full w-full",
             "overflow-hidden",
           )}
@@ -335,6 +350,7 @@ export default function Sidebar({
                 graphData={graphData}
                 setGraphData={setGraphData}
                 pendingNodeId={pendingNodeId}
+                sidebarMode={sidebarMode}
               />
               <BreadCrumbs
                 graphData={graphData}

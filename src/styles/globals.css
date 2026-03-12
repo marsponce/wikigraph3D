@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 @theme {
-  --text-xs: 18px;
+  --text-xs: 12px;
 }
 
 @layer base {

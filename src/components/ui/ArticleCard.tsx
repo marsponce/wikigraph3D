@@ -23,6 +23,7 @@ type ArticleCardProps = {
   graphData: GraphData;
   setGraphData: Dispatch<SetStateAction<GraphData>>;
   pendingNodeId: RefObject<number | null>;
+  sidebarMode: string;
 };
 const ArticleCard = memo(function ArticleCard({
   className,
@@ -32,6 +33,7 @@ const ArticleCard = memo(function ArticleCard({
   graphData,
   setGraphData,
   pendingNodeId,
+  sidebarMode,
 }: ArticleCardProps) {
   const [html, setHtml] = useState<string>("");
   const articleRef = useRef<HTMLElement>(null);
@@ -62,7 +64,7 @@ const ArticleCard = memo(function ArticleCard({
         fetchArticle(name)
           .then((html) => {
             setHtml(html);
-            articleCache.set(name, html);
+            articleCache.set(name, html, { maxAge: 1 });
             console.log(name, "miss");
             setError(null);
             setRetries(0);
@@ -147,6 +149,8 @@ const ArticleCard = memo(function ArticleCard({
                 "ring-4",
                 "ring-white-400",
                 "ring-opacity-50",
+                "transition-all",
+                "duration-1000",
                 "rounded-xl",
               );
             }, 2000);
@@ -154,10 +158,15 @@ const ArticleCard = memo(function ArticleCard({
           return;
         }
 
-        // If the href is an internal link, it will start with /wiki.
-        if (href && href.startsWith("/wiki/")) {
+        // If the href is an internal link, it will start with one of the <hrefStarters>
+        const hrefStarters = ["//en.wikipedia.org/wiki/", "/wiki"];
+        let hrefStarter;
+        if (href) {
+          hrefStarter = hrefStarters.find((h) => href.startsWith(h));
+        }
+        if (href && hrefStarter) {
           e.preventDefault();
-          const title = href.replace("/wiki/", "");
+          const title = href.replace(hrefStarter, "");
           const externalNamespaces = [
             "File:",
             "Image:",
@@ -179,7 +188,7 @@ const ArticleCard = memo(function ArticleCard({
           );
 
           if (isExternal || title.includes("_talk:")) {
-            window.open(`https://en.wikipedia.org${href}`, "_blank");
+            window.open(href, "_blank");
             return;
           }
 
@@ -212,15 +221,15 @@ const ArticleCard = memo(function ArticleCard({
     <>
       <article
         ref={articleRef}
+        data-sidebar-mode={sidebarMode}
         className={clsx(
           "w-full",
           "articlecard",
-          "p-[1em]",
           "overflow-y-auto",
-          "[content-visibility:auto] [contain-intrinsic-size:0_500px]",
           "transition-opacity duration-300",
           "pb-12",
           "opacity-100",
+          "mw-parser-output",
           className ?? "",
         )}
         dangerouslySetInnerHTML={{ __html: html }}

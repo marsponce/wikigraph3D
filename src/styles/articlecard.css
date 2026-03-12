@@ -1,12 +1,19 @@
-@import "tailwindcss";
+@reference "tailwindcss";
 
 @layer components {
-  /* ArticleCard */
+  /* ─── BASE ─────────────────────────────────────────────────── */
+
   .articlecard {
-    @apply text-justify pt-2;
-    @apply flow-root;
+    @apply text-justify;
     @apply border-transparent;
     content-visibility: auto;
+    @apply flow-root;
+    @apply mb-12;
+  }
+
+  .articlecard[data-sidebar-mode="fullscreen"] > div {
+    @apply ml-67;
+    @apply mr-70;
   }
 
   .articlecard section {
@@ -14,101 +21,299 @@
   }
 
   .articlecard a {
-    @apply text-sky-400;
+    @apply text-sky-600 dark:text-sky-400;
+    @apply hover:underline;
   }
 
   .articlecard p {
-    @apply p-0;
-    @apply py-1.5;
+    @apply p-0 py-1.5;
+  }
+
+  /* ─── HEADINGS ──────────────────────────────────────────────── */
+
+  /* Parsoid wraps every heading in a .mw-heading div */
+  .articlecard .mw-heading {
+    /* @apply clear-both; */
   }
 
   .articlecard h2 {
-    @apply border-b;
-    @apply border-b-white;
-    @apply mb-1;
+    @apply border-b border-b-gray-300 dark:border-b-gray-600;
+    @apply mb-1 mt-4;
     @apply flow-root;
     @apply text-xl md:text-2xl lg:text-3xl;
+    @apply font-semibold;
   }
 
-  .articlecard img {
-    @apply p-2;
-    @apply mx-auto;
+  .articlecard h3 {
+    @apply text-lg md:text-xl;
+    @apply font-semibold;
+    @apply mt-3 mb-1;
   }
 
-  /* Hide the MathML, show only the SVG image */
-  .articlecard span:has(> math) > math {
+  .articlecard h4 {
+    @apply text-base;
+    @apply font-semibold;
+    @apply mt-2 mb-1;
+  }
+
+  /* Hide the [edit source] spans Parsoid injects next to every heading */
+  .articlecard .mw-heading span:not([id]) {
     @apply hidden;
   }
 
-  /* Style the math image */
-  .articlecard span:has(> math) > img,
-  img[src*="wikimedia.org/api/rest_v1/media/math/render/svg/"] {
-    @apply invert inline-block align-middle;
-    @appy mx-0;
+  /* ─── FIGURES & IMAGES ──────────────────────────────────────── */
+
+  /*
+   * Parsoid structure:
+   *   <figure class="mw-default-size [mw-halign-right|left]">
+   *     <a class="mw-file-description"><img class="mw-file-element"></a>
+   *     <figcaption>
+   *       <div class="thumbinner">
+   *         <div class="thumbimage">…</div>
+   *         <div class="thumbcaption">…</div>
+   *       </div>
+   *     </figcaption>
+   *   </figure>
+   */
+
+  .articlecard figure {
+    @apply rounded;
+    @apply bg-black/5 dark:bg-white/5;
+    @apply p-1.5 my-2;
+    @apply text-center;
   }
+
+  .articlecard[data-sidebar-mode="fullscreen"] figure {
+    @apply max-w-1/3;
+  }
+
+  .articlecard[data-sidebar-mode="one-third"] figure {
+    @apply w-full;
+  }
+
+  /* Right-float: default Wikipedia behaviour */
+  .articlecard figure.mw-halign-right,
+  .articlecard figure.mw-default-size,
+  .articlecard figure[typeof="mw:File/Thumb"] {
+    @apply float-right clear-right ml-4 mr-0;
+  }
+
+  .articlecard figure.mw-halign-left {
+    @apply float-left clear-left mr-4 ml-0;
+  }
+
+  /* Inline images — stay in text flow */
+  .articlecard .mw-file-element {
+    @apply inline h-auto rounded-sm;
+  }
+
+  /* Images inside figures can be block and centred */
+  .articlecard figure .mw-file-element {
+    @apply block mx-auto;
+  }
+
+  /* The decorative link wrapper around the image */
+  .articlecard .mw-file-description {
+    @apply no-underline;
+  }
+
+  /* Inline file spans — keep images in flow */
+  .articlecard span[typeof="mw:File"] {
+    @apply inline-block align-middle;
+  }
+
+  /* thumbinner: card-like wrapper inside a figure */
+  .articlecard .thumbinner {
+    @apply bg-gray-100 dark:bg-gray-800;
+    @apply border border-gray-300 dark:border-gray-600;
+    @apply rounded p-1;
+    @apply text-xs leading-snug;
+    @apply inline-block max-w-full overflow-x-auto;
+  }
+
+  /* thumbcaption: caption text below the image */
+  .articlecard .thumbcaption {
+    @apply px-1 pt-1;
+    @apply text-xs leading-snug;
+    @apply text-gray-500 dark:text-gray-400;
+    @apply text-start italic;
+  }
+
+  .articlecard figcaption {
+    @apply italic m-2;
+    @apply text-start;
+    @apply text-xs text-gray-500 dark:text-gray-400;
+    @apply max-w-full;
+  }
+
+  /* Global img defaults — no mx-auto (would break inline images) */
+  .articlecard img {
+    @apply m-1 bg-white w-auto;
+  }
+
+  .articlecard .skin-invert-image {
+    @apply dark:invert;
+  }
+
+  /* ─── MULTI-IMAGE BLOCKS ────────────────────────────────────── */
+
+  .articlecard .multiimageinner {
+    @apply rounded;
+    @apply bg-black/5 dark:bg-white/5;
+    @apply p-1.5 my-2 block;
+  }
+
+  .articlecard[data-sidebar-mode="fullscreen"] .multiimageinner {
+    @apply float-right clear-right ml-4 mr-0;
+  }
+
+  .articlecard .trow {
+    @apply flex flex-wrap gap-0.5 justify-center mb-0.5;
+  }
+
+  .articlecard .tsingle {
+    @apply flex-1 min-w-0 h-full;
+  }
+
+  .articlecard .thumbimage {
+    @apply h-full mx-auto;
+  }
+
+  .articlecard .thumbimage img {
+    @apply w-full h-full object-cover;
+  }
+
+  /* ─── LOCATION MAPS ─────────────────────────────────────────── */
+
+  .articlecard .locmap {
+    @apply float-right clear-right ml-4 mr-0 my-2;
+  }
+
+  .articlecard .pr {
+    @apply text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap;
+  }
+
+  /* ─── TABLES ────────────────────────────────────────────────── */
+
+  /*
+   * .wikitable — standard article tables
+   * .infobox   — right-floating summary panel
+   */
 
   .articlecard table {
     @apply rounded;
-    @apply bg-white/30;
-    @apply mx-auto;
-    @apply sm:float-right sm:clear-right;
-    @apply m-3 sm:m-0 sm:ml-3 sm:mb-3 sm:mt-2;
+    @apply bg-black/5 dark:bg-white/5;
+    @apply p-0 border-collapse text-sm;
+  }
+
+  .articlecard table.wikitable {
+    @apply w-fit my-3;
+    @apply block overflow-x-auto;
+  }
+
+  .articlecard[data-sidebar-mode="one-third"] table.infobox {
+    @apply w-full! text-xs my-2;
+  }
+
+  .articlecard[data-sidebar-mode="fullscreen"] table.infobox {
+    @apply float-right clear-right;
+    @apply ml-4 mb-2 mt-0;
+    @apply w-1/3!;
+  }
+
+  .articlecard .infobox-title {
+    @apply bg-gray-300 dark:bg-gray-700;
+    @apply text-base font-bold;
+  }
+
+  .articlecard table[role="navigation"] {
+    @apply float-right clear-right ml-4 mr-0;
+  }
+
+  /* All cells */
+  .articlecard table th,
+  .articlecard table td {
+    @apply border border-gray-300 dark:border-gray-600;
+    @apply px-2.5 py-1.5;
+    @apply align-middle text-center;
+  }
+
+  /* Header cells */
+  .articlecard table th {
+    @apply bg-gray-200 dark:bg-gray-700;
+    @apply font-semibold text-center;
+  }
+
+  /* Infobox title row */
+  .articlecard table.infobox > tbody > tr:first-child > th {
+    @apply bg-sky-100 dark:bg-sky-900/40;
+    @apply text-center font-semibold text-sm py-2;
+  }
+
+  /* Zebra rows on wikitable */
+  .articlecard table.wikitable > tbody > tr:nth-child(even) > td {
+    @apply bg-black/5 dark:bg-white/5;
   }
 
   .articlecard table * {
     @apply list-none;
   }
 
+  .articlecard .infobox ul {
+    @apply list-none;
+  }
+
+  /* Legend-style flex lists inside table cells */
   .articlecard table td div ul {
-    @apply flex;
-    @apply text-center;
+    @apply flex text-center;
   }
 
   .articlecard table td div ul li {
-    @apply flex-auto;
-    @apply text-center uppercase;
+    @apply flex-auto text-center uppercase list-disc list-inside;
+  }
+
+  /* ─── GALLERY ───────────────────────────────────────────────── */
+
+  .articlecard .gallery {
+    @apply rounded;
+    @apply bg-black/10 dark:bg-white/10;
+    @apply p-3 my-2;
+    @apply flex flex-wrap gap-2 list-none;
+  }
+
+  .articlecard .gallerybox {
+    @apply list-none;
+    @apply flex flex-auto flex-col items-center;
+    @apply text-xs text-center text-gray-500 dark:text-gray-400;
+  }
+
+  .articlecard .gallerybox div.thumb {
+    @apply rounded;
+    @apply bg-black/10 dark:bg-white/10;
+    @apply flex items-center justify-center;
+  }
+
+  .articlecard .gallerybox div.thumb span,
+  .articlecard .gallerybox div.thumb a {
+    @apply p-1 flex items-center justify-center h-full w-full;
+  }
+
+  .articlecard .gallerybox div.thumb img {
+    @apply max-w-full max-h-full object-contain m-0;
+  }
+
+  .articlecard .mw-gallery-nolines {
+    @apply bg-transparent;
+  }
+
+  /* ─── LISTS ─────────────────────────────────────────────────── */
+
+  .articlecard ul {
     @apply list-disc list-inside;
   }
 
-  .articlecard figure {
-    @apply rounded;
-    @apply bg-white/30;
-    @apply mx-auto;
-    @apply sm:float-right sm:clear-right;
-    @apply m-3 sm:m-0 sm:ml-3 sm:mb-3 sm:mt-2;
-  }
-
-  .articlecard figure.mw-halign-left {
-    @apply sm:float-left sm:clear-left;
-    @apply m-3 sm:m-0 sm:mr-3 sm:mb-3 sm:mt-2;
-  }
-
-  .articlecard figcaption {
-    @apply italic m-2;
-    @apply text-start;
-    @apply table-caption;
-    @apply w-fit;
-  }
-
-  .articlecard table {
-    @apply rounded;
-    @apply m-2;
-  }
-
-  .articlecard table tr {
-    @apply p-2;
-    @apply border-white;
-  }
-
-  .articlecard .infobox {
-    @apply sm:float-right sm:clear-right;
-    @apply w-min;
-    @apply bg-white/30;
-    @apply text-xs;
-  }
-
-  .articlecard .infobox ul {
-    @apply list-none;
+  .articlecard ol {
+    @apply list-decimal list-outside;
   }
 
   .articlecard li {
@@ -116,49 +321,198 @@
     @apply text-start;
   }
 
-  .articlecard ul {
-    @apply list-disc list-outside;
+  .articlecard ol li {
+    @apply ml-[3rem];
   }
 
-  .articlecard ol {
-    @apply list-decimal list-outside;
+  /* Multi-column list wrappers */
+  .articlecard .div-col {
+    column-width: 20rem;
+    @apply gap-4;
   }
 
+  .articlecard .div-col span,
+  .articlecard .div-col a,
+  .articlecard .div-col img {
+    @apply p-0 m-0;
+  }
+
+  /* ─── DEFINITION LISTS ──────────────────────────────────────── */
+
+  .articlecard dl {
+    @apply my-1;
+  }
+
+  .articlecard dt {
+    @apply font-semibold;
+  }
+
+  .articlecard dd {
+    @apply ml-10;
+  }
+
+  /* ─── BLOCKQUOTES & PULL QUOTES ─────────────────────────────── */
+
+  .articlecard blockquote {
+    @apply ml-10 mr-5 italic;
+  }
+
+  .articlecard .quotebox {
+    @apply rounded float-right clear-right ml-4 mb-2 w-1/3;
+    @apply bg-black/5 dark:bg-white/5;
+    @apply p-3 my-2;
+    @apply text-sm italic;
+    @apply border-l-4 border-sky-400 dark:border-sky-600;
+  }
+
+  .articlecard[data-sidebar-mode="one-third"] .quotebox {
+    @apply w-full float-none;
+  }
+
+  /* ─── NOTES & ASIDES ────────────────────────────────────────── */
+
+  .articlecard *[role="note"] {
+    @apply rounded;
+    @apply pl-10 my-1;
+    @apply italic text-sm;
+    @apply border border-transparent;
+  }
+
+  /* ─── REFERENCES & CITATIONS ────────────────────────────────── */
+
+  /* Inline superscript: [1] */
+  .articlecard sup.mw-ref,
+  .articlecard sup.reference {
+    @apply text-xs leading-none align-super;
+  }
+
+  .articlecard .mw-reflink-text {
+    @apply text-sky-600 dark:text-sky-400 text-xs;
+  }
+
+  .articlecard .cite-bracket {
+    @apply text-gray-400 dark:text-gray-500;
+  }
+
+  /* Reference list container */
+  .articlecard .mw-references-wrap,
+  .articlecard .reflist {
+    @apply text-xs leading-relaxed;
+    @apply text-gray-500 dark:text-gray-400;
+    @apply mt-3 pt-2;
+  }
+
+  /* Multi-column reference layout */
+  .articlecard .mw-references-columns {
+    column-width: 18rem;
+    @apply gap-4;
+  }
+
+  .articlecard ol.references,
+  .articlecard .references {
+    @apply text-start columns-[18rem] gap-4;
+  }
+
+  .articlecard .reference-text {
+    @apply text-gray-500 dark:text-gray-400;
+  }
+
+  .articlecard cite.citation {
+    @apply not-italic;
+  }
+
+  .articlecard cite.citation a {
+    @apply text-sky-600 dark:text-sky-400;
+  }
+
+  /* Bibliography / "Further reading" */
   .articlecard .refbegin ul {
-    @apply list-none;
-    @apply ml-0;
-    @apply text-start;
-    @apply columns-[24rem];
-    @apply -indent-[3rem];
+    @apply list-none ml-0 text-start;
+    @apply columns-[24rem] -indent-[3rem];
   }
 
   .articlecard .refbegin ul li {
     @apply ml-[3rem];
   }
 
-  .articlecard ol li {
-    @apply ml-[3rem];
-  }
-
-  .articlecard .references {
-    @apply text-start;
-    @apply columns-[18rem] gap-4;
-  }
+  /* ─── PORTAL BOX ────────────────────────────────────────────── */
 
   .articlecard ul.portalbox {
-    @apply sm:float-right sm:clear-right sm:ml-3 sm:mb-2 sm:max-w-[16rem];
-    @apply bg-white/50 rounded;
-    @apply p-2;
-    @apply m-2;
+    @apply bg-white/50 dark:bg-white/5;
+    @apply border border-gray-200 dark:border-gray-700;
+    @apply rounded p-2 m-2 list-none;
   }
 
-  /* each item: icon + label inline */
   .articlecard .portalbox li {
     @apply flex items-center gap-2 py-1 leading-tight;
   }
 
-  /* the tiny icon (there are nested spans, so just target the img) */
   .articlecard .portalbox li img {
     @apply p-0;
+  }
+
+  /* ─── SIDE BOXES (sister site links etc.) ───────────────────── */
+
+  .articlecard .side-box {
+    @apply rounded;
+    @apply bg-black/5 dark:bg-white/5;
+    @apply border border-gray-200 dark:border-gray-700;
+    @apply p-2 my-2 text-sm;
+  }
+
+  .articlecard .side-box-right {
+    @apply float-right clear-right ml-4;
+    @apply w-fit max-w-xs;
+  }
+
+  .articlecard .side-box-flex {
+    @apply flex items-center gap-3;
+  }
+
+  .articlecard .side-box-image {
+    @apply shrink-0;
+  }
+
+  .articlecard .side-box-image img {
+    @apply m-0 bg-transparent;
+  }
+
+  .articlecard .side-box-text {
+    @apply text-gray-600 dark:text-gray-400;
+    @apply text-sm leading-snug;
+  }
+
+  /* ─── CATEGORY LINKS ────────────────────────────────────────── */
+
+  .articlecard .catlinks {
+    @apply text-xs;
+    @apply border-t border-gray-200 dark:border-gray-700;
+    @apply pt-2 mt-6;
+    @apply text-gray-500 dark:text-gray-400;
+    @apply clear-both;
+  }
+
+  /* ─── MATH ──────────────────────────────────────────────────── */
+
+  /* Hide MathML, show only the SVG image */
+  .articlecard span:has(> math) > math {
+    @apply hidden;
+  }
+
+  .articlecard span:has(> math) > img,
+  img[src*="wikimedia.org/api/rest_v1/media/math/render/svg/"] {
+    @apply invert inline-block align-middle mx-0;
+  }
+
+  /* Math SVG fallback images — invert in light mode only */
+  .articlecard .mw-invert,
+  .articlecard .skin-invert,
+  img[src*="wikimedia.org/api/rest_v1/media/math/render/svg/"] {
+    @apply dark:invert invert-0;
+    @apply inline-block align-middle mx-0;
+  }
+
+  .articlecard .texhtml {
+    @apply not-italic;
   }
 }

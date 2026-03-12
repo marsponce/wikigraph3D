@@ -30,6 +30,10 @@ export function slimArticle(fullHtml: string | null): string {
     ".navbox-inner",
     ".navbox-subgroup",
     ".mw-collapsible",
+    ".sidebar",
+    ".sister-bar",
+    ".noprint",
+    ".metadata",
   ];
   DROP.forEach((sel) => $(sel).remove());
 
@@ -125,15 +129,6 @@ export function slimArticle(fullHtml: string | null): string {
     else $elt.removeAttr("class");
   });
 
-  //  const KEEP_INLINE_STYLES = new Set(["od", "thumbinner", "footballbox"]);
-  //
-  //  $("[class]").each((_, el) => {
-  //    const $el = $(el);
-  //    const classes = ($el.attr("class") || "").split(/\s+/).filter(Boolean);
-  //    const shouldKeep = classes.some((cls) => KEEP_INLINE_STYLES.has(cls));
-  //    if (!shouldKeep) $el.removeAttr("style");
-  //  });
-
   // Remove all default styling
   // $("[style]").removeAttr("style");
 
@@ -147,6 +142,9 @@ export function slimArticle(fullHtml: string | null): string {
       $(link).attr("rel", "noopener noreferrer");
     }
   });
+
+  // Add scrollable containers to tables
+  $("table:not([class])").wrap('<div class="overflow-wrap"></div>');
 
   // Cleanup
   $("span:empty. p:empty").remove();

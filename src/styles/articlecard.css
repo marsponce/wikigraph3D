@@ -1,5 +1,17 @@
 @reference "tailwindcss";
 
+/*
+ * TODO: Fix this
+@layer utilities {
+  .articlecard .color-diagram {
+    @variant dark {
+      filter: invert(1) hue-rotate(180deg);
+      @apply text-black;
+    }
+  }
+}
+*/
+
 @layer components {
   /* ─── BASE ─────────────────────────────────────────────────── */
 
@@ -9,11 +21,16 @@
     content-visibility: auto;
     @apply flow-root;
     @apply mb-12;
+    @apply overflow-x-hidden;
   }
 
   .articlecard[data-sidebar-mode="fullscreen"] > div {
     @apply ml-67;
     @apply mr-70;
+  }
+
+  .articlecard > * {
+    @apply max-w-full;
   }
 
   .articlecard section {
@@ -104,7 +121,7 @@
 
   /* Inline images — stay in text flow */
   .articlecard .mw-file-element {
-    @apply inline h-auto rounded-sm;
+    @apply block w-full h-auto rounded-sm;
   }
 
   /* Images inside figures can be block and centred */
@@ -115,9 +132,10 @@
   /* The decorative link wrapper around the image */
   .articlecard .mw-file-description {
     @apply no-underline;
+    @apply block w-full;
   }
 
-  /* Inline file spans — keep images in flow */
+  /* Inline file spans — keep images in flow colour */
   .articlecard span[typeof="mw:File"] {
     @apply inline-block align-middle;
   }
@@ -128,7 +146,12 @@
     @apply border border-gray-300 dark:border-gray-600;
     @apply rounded p-1;
     @apply text-xs leading-snug;
-    @apply inline-block max-w-full overflow-x-auto;
+    @apply inline-block;
+    @apply max-w-full overflow-x-auto;
+  }
+
+  .articlecard[data-sidebar-mode="one-third"] .thumbinner {
+    @apply w-full;
   }
 
   /* thumbcaption: caption text below the image */
@@ -161,6 +184,19 @@
     @apply rounded;
     @apply bg-black/5 dark:bg-white/5;
     @apply p-1.5 my-2 block;
+    @apply overflow-x-auto max-w-full;
+  }
+
+  .articlecard[data-sidebar-mode="one-third"] .thumb {
+    @apply flex justify-center;
+  }
+
+  .articlecard[data-sidebar-mode="one-third"] .multiimageinner {
+    @apply float-none; /* cancel any inherited float */
+  }
+
+  .articlecard[data-sidebar-mode="one-third"] .multiimageinner {
+    @apply float-none;
   }
 
   .articlecard[data-sidebar-mode="fullscreen"] .multiimageinner {
@@ -204,6 +240,11 @@
     @apply rounded;
     @apply bg-black/5 dark:bg-white/5;
     @apply p-0 border-collapse text-sm;
+    @apply overflow-x-scroll max-w-full;
+  }
+
+  .articlecard color-diagram {
+    @apply text-black;
   }
 
   .articlecard table.wikitable {
@@ -329,6 +370,7 @@
   .articlecard .div-col {
     column-width: 20rem;
     @apply gap-4;
+    @apply overflow-x-auto max-w-full;
   }
 
   .articlecard .div-col span,
@@ -514,5 +556,21 @@
 
   .articlecard .texhtml {
     @apply not-italic;
+  }
+
+  .articlecard pre {
+    @apply overflow-x-auto max-w-full;
+    @apply bg-black/5 dark:bg-white/5;
+    @apply rounded p-3 my-2;
+    @apply text-sm font-mono;
+  }
+
+  /* --- MISC -──────────────────────────────────────────────────── */
+
+  .articlecard[data-sidebar-mode="one-third"] .overflow-wrap {
+    @apply overflow-x-auto max-w-full;
+  }
+
+  .articlecard[data-sidebar-mode="fullscreen"] .overflow-wrap {
   }
 }

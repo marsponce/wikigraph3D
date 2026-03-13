@@ -146,6 +146,33 @@ export function slimArticle(fullHtml: string | null): string {
   // Add scrollable containers to tables
   $("table:not([class])").wrap('<div class="overflow-wrap"></div>');
 
+  // Clean colour styling from table
+  $("table.infobox th, table.infobox td").each((_, el) => {
+    const $el = $(el);
+    const style = $el.attr("style") || "";
+    const cleaned = style
+      .split(";")
+      .map((s) => s.trim())
+      .filter((s) => !s.startsWith("background") && !s.startsWith("color"))
+      .join("; ");
+
+    if (cleaned) $el.attr("style", cleaned);
+    else $el.removeAttr("style");
+  });
+
+  // Mark styled tables for styling
+  $("table").each((_, el) => {
+    const $el = $(el);
+    const hasColorStyling = $el
+      .find("[style]")
+      .toArray()
+      .some((child) => {
+        const style = $(child).attr("style") || "";
+        return style.match(/background|color/i);
+      });
+    if (hasColorStyling) $el.wrap('<div class="color-diagram"></div>');
+  });
+
   // Cleanup
   $("span:empty. p:empty").remove();
   $("*")
